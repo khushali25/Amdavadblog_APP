@@ -18,8 +18,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.alexvasilkov.android.commons.adapters.ItemsAdapter;
+import com.alexvasilkov.android.commons.ui.ContextHelper;
 import com.alexvasilkov.android.commons.ui.Views;
 import com.example.xps.amdavadblog_app.R;
+import com.example.xps.amdavadblog_app.UnfoldableDetailsActivity;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
@@ -42,7 +44,7 @@ import static Model.Post.getItems;
 
 
 public class PostContentAdapter extends ItemsAdapter<Post, PostContentAdapter.ViewHolder>
-        implements View.OnClickListener {
+       {
 
     public ImageLoader imgloader;
     Context context;
@@ -54,12 +56,6 @@ public class PostContentAdapter extends ItemsAdapter<Post, PostContentAdapter.Vi
         //  setItemsList(getItems1());
         imgloader = ImageLoader.getInstance();
     }
-
-    @Override
-    public void onClick(View view) {
-
-    }
-
     static class ViewHolder extends ItemsAdapter.ViewHolder {
         public TextView Title;
         public ImageView Art;
@@ -89,7 +85,7 @@ public class PostContentAdapter extends ItemsAdapter<Post, PostContentAdapter.Vi
         PostContentAdapter.ViewHolder vh = new PostContentAdapter.ViewHolder(view);
         imgloader.init(ImageLoaderConfiguration
                 .createDefault(parent.getContext()));
-        vh.Art.setOnClickListener(this);
+
         return vh;
     }
 
@@ -98,7 +94,7 @@ public class PostContentAdapter extends ItemsAdapter<Post, PostContentAdapter.Vi
 
         PostContentAdapter.ViewHolder vh = viewHolder;
         AssetManager am = context.getApplicationContext().getAssets();
-        Typeface custom_font = Typeface.createFromAsset(am, "font/Amaranth-Bold.ttf");
+        Typeface custom_font = Typeface.createFromAsset(am, "font/Amaranth-Regular.ttf");
         Typeface custom_font1 = Typeface.createFromAsset(am, "font/WorkSans-Regular.ttf");
         Typeface custom_font2 = Typeface.createFromAsset(am, "font/Martel-Regular.ttf");
         Typeface custom_font3 = Typeface.createFromAsset(am, "font/Martel-Bold.ttf");
@@ -133,42 +129,69 @@ public class PostContentAdapter extends ItemsAdapter<Post, PostContentAdapter.Vi
                     .build();
             imgloader.displayImage(imageUri, vh.Art, options);
         }
-    }
+        //vh.Art.setTag(R.id.postimage, item);
+        vh.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent;
+                intent = new Intent(context, UnfoldableDetailsActivity.class);
 
-    private void getDateWithServerTimeStamp() {
-        Date now = new Date();
-        Instant format = null;
-        String format2 = null;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            format = Instant.parse("2018-06-26T16:17:55");
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat(String.valueOf(format), Locale.US);
-            String formattedNow = simpleDateFormat.format(now);
-            String dateConvertBack = null;
-            try {
-                dateConvertBack = String.valueOf(simpleDateFormat.parse(formattedNow));
-                // post.setDate(dateConvertBack);
-            } catch (ParseException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                intent.putExtra("BlogId", item.id);
+                intent.putExtra("Title", item.title);
+                intent.putExtra("Author", item.author);
+                intent.putExtra("Excepts", item.excerpt);
+                intent.putExtra("Image", item.imagePath);
+                context.startActivity(intent);
             }
-        }
-       // if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            format2 = "2018-06-26T16:17:55";
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat(format2, Locale.US);
-            String formattedNow = simpleDateFormat.format(now);
-            String dateConvertBack = null;
-            try {
-                dateConvertBack = String.valueOf(simpleDateFormat.parse(formattedNow));
-                // post.setDate(dateConvertBack);
-            } catch (ParseException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-      //  }
-
-
-
+        });
     }
+//    @Override
+//    public void onClick(View view) {
+//        Post item = (Post) view.getTag(R.id.postimage);
+//       final Activity activity = ContextHelper.asActivity(view.getContext());
+//
+//                    Intent intent = new Intent(context,UnfoldableDetailsActivity);
+//                    intent.PutExtra("BlogId", post.id);
+//                    intent.PutExtra("Title", post.title.rendered);
+//                    intent.PutExtra("Image", post.imagePath);
+//                    context.StartActivityForResult(intent, 0);
+//
+//    }
+
+//    private void getDateWithServerTimeStamp() {
+//        Date now = new Date();
+//        Instant format = null;
+//        String format2 = null;
+//        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+//            format = Instant.parse("2018-06-26T16:17:55");
+//            SimpleDateFormat simpleDateFormat = new SimpleDateFormat(String.valueOf(format), Locale.US);
+//            String formattedNow = simpleDateFormat.format(now);
+//            String dateConvertBack = null;
+//            try {
+//                dateConvertBack = String.valueOf(simpleDateFormat.parse(formattedNow));
+//                // post.setDate(dateConvertBack);
+//            } catch (ParseException e) {
+//                // TODO Auto-generated catch block
+//                e.printStackTrace();
+//            }
+//        }
+//       // if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+//            format2 = "2018-06-26T16:17:55";
+//            SimpleDateFormat simpleDateFormat = new SimpleDateFormat(format2, Locale.US);
+//            String formattedNow = simpleDateFormat.format(now);
+//            String dateConvertBack = null;
+//            try {
+//                dateConvertBack = String.valueOf(simpleDateFormat.parse(formattedNow));
+//                // post.setDate(dateConvertBack);
+//            } catch (ParseException e) {
+//                // TODO Auto-generated catch block
+//                e.printStackTrace();
+//            }
+//      //  }
+//
+//
+//
+//    }
 }
 
 

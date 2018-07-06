@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="#ffffff"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <ScrollView
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_above="@+id/footer"
+        android:fillViewport="true">
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
+            <TextView
+                android:layout_height="wrap_content"
+                android:textSize="20dp"
+                android:textColor="#114e57"
+                android:layout_width="match_parent"
+                android:id="@+id/posttitletext"
+                android:text="textview"
+                android:layout_below="@+id/imgpost"
+                android:textStyle="bold"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="20dp"
+                app:layout_scrollFlags="scroll|enterAlwaysCollapsed" />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_below="@id/posttitletext"
+                android:layout_marginTop="11dp"
+                android:background="#b3b9bf" />
+            <ImageView
+                android:id="@+id/webviewloading"
+                android:layout_width="match_parent"
+                android:layout_gravity="center_horizontal"
+                android:layout_height="100dp" />
+        <!-- android:src="@anim/LoadingAnimation"-->
+            <android.webkit.WebView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/webView1"
+                android:layout_marginTop="30dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginBottom="50dp"
+                android:layout_below="@id/posttitletext" />
+        </LinearLayout>
+    </ScrollView>
+</RelativeLayout>

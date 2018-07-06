@@ -38,7 +38,7 @@
             android:id="@+id/posttitletext"
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
-            android:textSize="30dp"
+            android:textSize="28dp"
             android:text="title"
             android:textColor="#201D1C"
             android:paddingLeft="10dp" />

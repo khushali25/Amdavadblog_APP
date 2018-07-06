@@ -96,26 +96,26 @@ public class Post {
                 post.setTitle("Enjoy this tasty food treat in rainy season");
                 post.setAuthor("By Palak Madlani");
                 post.setCategory("#Flavors of Amdavad");
-                post.setExcerpt("Enjoy this tasty food treat in rainy season Treats for the season of joy! Finally! Yes, the time is here.");
+                post.setExcerpt("Enjoy this tasty food treat in rainy season Treats for the season of joy! Finally! Yes, the time is here...");
                 post.setImagePath("drawable://" + R.drawable.rainy);
                 post.setDate("2018-06-26T16:17:55");
 
         post1.setTitle("Hair care tips for the rainy season");
         post1.setAuthor("By Sirisha Bhavaraju");
         post1.setCategory("#Things to do");
-        post1.setExcerpt("Hair care tips for the rainy season Dancing in the rain is so romantic, and that wet hair look is.");
+        post1.setExcerpt("Hair care tips for the rainy season Dancing in the rain is so romantic, and that wet hair look is...");
         post1.setImagePath("drawable://" + R.drawable.rainhair);
 
         post2.setTitle("The Best Ways to Overcome Laziness");
         post2.setAuthor("By Palak Madlani");
         post2.setCategory("#Things to do");
-        post2.setExcerpt("The Best Ways to Overcome Laziness Mind matters- let go the laziness There are days in one’s life when laziness");
+        post2.setExcerpt("The Best Ways to Overcome Laziness Mind matters- let go the laziness There are days in one’s life when laziness...");
         post2.setImagePath("drawable://" + R.drawable.lazy);
 
         post3.setTitle("Get max discount on food by using these apps in ahmedabad");
         post3.setAuthor("By Palak Madlani");
         post3.setCategory("#News");
-        post3.setExcerpt("Get max discount on food by using these apps in ahmedabad Take the name of Gujarat &amp; the flavour of");
+        post3.setExcerpt("Get max discount on food by using these apps in ahmedabad Take the name of Gujarat &amp; the flavour of...");
         post3.setImagePath("drawable://" + R.drawable.coupn);
 
                 postlist.add(post);
