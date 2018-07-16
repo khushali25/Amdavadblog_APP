@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animation-list xmlns:android="http://schemas.android.com/apk/res/android" android:oneshot="false">
+    <item android:drawable="@drawable/search00" android:duration="112"/>
+    <item android:drawable="@drawable/search01" android:duration="112"/>
+    <item android:drawable="@drawable/search02" android:duration="112"/>
+    <item android:drawable="@drawable/search03" android:duration="112"/>
+    <item android:drawable="@drawable/search04" android:duration="112"/>
+    <item android:drawable="@drawable/search05" android:duration="112"/>
+    <item android:drawable="@drawable/search06" android:duration="112"/>
+    <item android:drawable="@drawable/search07" android:duration="112"/>
+    <item android:drawable="@drawable/search08" android:duration="112"/>
+    <item android:drawable="@drawable/search09" android:duration="112"/>
+    <item android:drawable="@drawable/search10" android:duration="112"/>
+</animation-list>

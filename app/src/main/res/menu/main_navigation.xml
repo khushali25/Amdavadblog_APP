@@ -1,9 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item android:id="@+id/searchitem"
+        android:title="Type something..."
+        android:icon="@drawable/search"
+        app:showAsAction="always"
+        >
+    </item>
+    <item android:id="@+id/subscribepost"
+        android:title="Subscribe">
+
+    </item>
+    <item android:id="@+id/feedbackpost"
+        android:title="Feedback">
+    </item>
+
     <item
-        android:id="@+id/action_settings"
-        android:orderInCategory="100"
-        android:title="@string/action_settings"
-        app:showAsAction="never" />
+        android:id="@+id/rateus"
+        android:title="Rate this App">
+
+    </item>
+    <item android:id="@+id/shareApp"
+        android:title="Share App">
+
+    </item>
+    <item android:id="@+id/settings"
+        android:title="Settings">
+
+    </item>
 </menu>

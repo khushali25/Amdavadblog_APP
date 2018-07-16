@@ -1,9 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:local="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".BrowserActivity">
+    android:background="#ffffff">
+    <android.support.design.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true">
+        <android.support.design.widget.AppBarLayout
+            android:layout_height="45dp"
+            android:textAlignment="center"
+            android:layout_width="match_parent"
+            android:weightSum="3">
+            <android.support.v7.widget.Toolbar
+                android:layout_height="55dp"
+                android:layout_width="match_parent"
+                android:id="@+id/toolbarbrowser"
+                android:background="@drawable/gradient_colors">
+                <EditText
+                    android:layout_height="30dp"
+                    android:layout_width="match_parent"
+                    android:layout_marginRight="15dp"
+                    android:gravity="center"
+                    android:paddingTop="6dp"
+                    android:layout_margin="10dp"
+                    android:textIsSelectable="true"
+                    android:focusable="true"
+                    android:longClickable="true"
+                    android:id="@+id/toolbartitle"
+                    android:textSize="12dp"
+                    android:singleLine="true"
+                    android:textColor="@color/textColorPrimary" />
+            </android.support.v7.widget.Toolbar>
+        </android.support.design.widget.AppBarLayout>
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="50dp"
+            android:background="#ffffff">
+            <android.webkit.WebView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/webviewbrowser"
+                android:layout_marginTop="20dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp" />
+            <ImageView
+                android:id="@+id/browserloading"
 
-</android.support.constraint.ConstraintLayout>
+                android:layout_width="match_parent"
+                android:layout_gravity="center_horizontal"
+                android:layout_height="100dp" />
+        </LinearLayout>
+        <RelativeLayout
+            android:id="@+id/footer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom">
+            <com.google.android.gms.ads.AdView
+                android:id="@+id/adView3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                local:adSize="BANNER"
+                local:adUnitId="ca-app-pub-1870433400625480/7574195045" />
+        </RelativeLayout>
+    </android.support.design.widget.CoordinatorLayout>
+</LinearLayout>

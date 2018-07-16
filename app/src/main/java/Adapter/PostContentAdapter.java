@@ -5,21 +5,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetManager;
 import android.graphics.Typeface;
-import android.os.Build;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.alexvasilkov.android.commons.adapters.ItemsAdapter;
-import com.alexvasilkov.android.commons.ui.ContextHelper;
-import com.alexvasilkov.android.commons.ui.Views;
 import com.example.xps.amdavadblog_app.R;
 import com.example.xps.amdavadblog_app.UnfoldableDetailsActivity;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
@@ -27,16 +20,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
 import java.io.File;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.Instant;
-import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
-import java.util.TimeZone;
-import java.util.zip.Inflater;
 
 import Model.Post;
 

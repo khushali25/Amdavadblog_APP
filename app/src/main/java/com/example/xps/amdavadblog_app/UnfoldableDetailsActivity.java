@@ -162,10 +162,12 @@ public class UnfoldableDetailsActivity extends AppCompatActivity {
 
         AppBarLayout appBarLayout = (AppBarLayout)findViewById(R.id.applayout);
         appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
+             boolean isShow = false;
+             int scrollRange = -1;
+
             @Override
             public void onOffsetChanged(AppBarLayout appBarLayout, int i) {
-                boolean isShow = false;
-                int scrollRange = -1;
+
                 if (scrollRange == -1)
                 {
                     scrollRange = appBarLayout.getTotalScrollRange();
@@ -180,25 +182,20 @@ public class UnfoldableDetailsActivity extends AppCompatActivity {
                 }
                 else if (isShow)
                 {
-                    ctl.setTitle("");
+                    ctl.setTitle(" ");
                     isShow = false;
                 }
              }
     });
-
             InitializeAds();
             GetBlogDetails();
             GetFragment();
-
             //EventServices.Instance.GenericEvent(EventType.PostDetailActivityComplete, param);
-
     }
-
     @SuppressLint("RestrictedApi")
     private void ShowFabMenu()
     {
         isFabOpen = true;
-
         fabcontainer1.setVisibility(VISIBLE);
         //fabcontainer1.requestLayout();
         fabcontainer2.setVisibility(VISIBLE);
@@ -231,7 +228,6 @@ public class UnfoldableDetailsActivity extends AppCompatActivity {
     private void CloseFabMenu()
     {
         isFabOpen = false;
-
         fabcontainer.animate().rotation(0f);
         bgFabMenu.animate().alpha(0f);
         subscribetxt.setVisibility(View.GONE);
@@ -294,7 +290,6 @@ public class UnfoldableDetailsActivity extends AppCompatActivity {
                         //Loop through each of the palettes available
                         //and put them as a small square
                         for (Palette.Swatch p : palette.getSwatches()) {
-
                             if (p == null)
                                 continue;
                             View view = new View(getApplicationContext());
@@ -305,7 +300,6 @@ public class UnfoldableDetailsActivity extends AppCompatActivity {
                     }
                 });
             }
-
             @Override
             public void onBitmapFailed(Exception e, Drawable errorDrawable) {
                 android.util.Log.e("Initialize UI failed", e.getMessage());
@@ -396,7 +390,6 @@ public class UnfoldableDetailsActivity extends AppCompatActivity {
             fab3 = fabcontainer3;
             fab4 = fabcontainer4;
         }
-
         @Override
         public void onAnimationStart(Animator animator) {
 

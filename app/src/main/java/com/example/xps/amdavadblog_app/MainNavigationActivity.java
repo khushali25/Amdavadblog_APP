@@ -1,5 +1,6 @@
 package com.example.xps.amdavadblog_app;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -16,6 +17,8 @@ import android.widget.TextView;
 
 import com.google.android.gms.ads.AdView;
 
+import Helper.SocialMethod;
+
 public class MainNavigationActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -29,16 +32,6 @@ public class MainNavigationActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.newtoolbar);
         setSupportActionBar(toolbar);
 
-
-//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-//            }
-//        });
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -49,7 +42,6 @@ public class MainNavigationActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
         InitializeFirstScreenUI();
     }
-
     private void InitializeFirstScreenUI() {
         try
         {
@@ -58,7 +50,6 @@ public class MainNavigationActivity extends AppCompatActivity
             txt.setText(appTitle);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getStatusBarHeight();
-//            getSupportActionBar().setHomeButtonEnabled(true);
             android.support.v4.app.FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             ft.replace(R.id.content_frame, new FoldableListFragment(), "Fragment1");
             ft.addToBackStack("AddFragment1");
@@ -69,7 +60,6 @@ public class MainNavigationActivity extends AppCompatActivity
             android.util.Log.e("Initialize UI failed", ex.getMessage());
         }
     }
-
     private int getStatusBarHeight() {
         int result = 0;
         int resourceId = MainNavigationActivity.this.getResources().getIdentifier("status_bar_height", "dimen", "android");
@@ -82,7 +72,7 @@ public class MainNavigationActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = (DrawerLayout)findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
@@ -102,15 +92,47 @@ public class MainNavigationActivity extends AppCompatActivity
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
+//        if (this.drawerToggle.OnOptionsItemSelected(item))
+//            return true;
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
+        switch (id) {
+            case R.id.searchitem:
+                Intent intent = new Intent(this,SearchActivity.class);
+                startActivity(intent);
+                return true;
 
-        return super.onOptionsItemSelected(item);
-    }
+            case R.id.subscribepost:
+                //android.content.Context mContext = android.app.Application.Context;
+                Services.PrefService ap = new Services.PrefService(getApplicationContext());
+                //String subscribed = ap.getAccessKey(AppConstants.EmailKey);
+               // if (subscribed == "") {
+                    SocialMethod.showSubscription(this);
+               // } else {
+                  //  SocialMethod.alreadySubscribed(this);
+               // }
+                return true;
+            case R.id.feedbackpost:
+                SocialMethod.showFeedback(this);
+                return true;
+            case R.id.rateus:
+                SocialMethod.showRateApp(this);
+                return true;
+            case R.id.shareApp:
+                SocialMethod.shareIt(this);
+                return true;
+            case R.id.settings:
+                Intent i = new Intent(this,SettingsActivity.class);
+                startActivity(i);
+                return true;
+
+            //noinspection SimplifiableIfStatement
+//        if (id == R.id.action_settings) {
+//            return true;
+          }
+
+            return super.onOptionsItemSelected(item);
+        }
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override

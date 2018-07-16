@@ -144,7 +144,7 @@ public class UnfoldableDetailsFragment extends Fragment {
        // String deatilblog = AsyncHelpers.RunSync(async () => await ApiHelper.Instance.GetPostDetailById(id, lang));
         String stylestr = "<html><head><style type=\"text/css\" link rel=\"stylesheet\" href=\"style.css\" />img{display: inline; height: auto; max-width: 100%;}@font-face {font-family: MyFont;src: url(\"file:///android_asset/fonts/PT_Serif-Web-Regular.ttf\")}body {font-family: MyFont;color: #6d6c6c;line-height: 30px;font-size: 18px;text-align: justify;} iframe {display: block;max-width:100%;margin-top:10px;margin-bottom:10px;}</style></head><body>";
         String pas = "</body></html>";
-        detail = stylestr + "hello world...!!!" + pas;
+        detail = stylestr + "https://amdavadblog.com" + pas;
         Bundle param = new Bundle();
        // param.putString("id", id.);
         //EventServices.Instance.GenericEvent(EventType.PostDetailsReceived);
@@ -159,7 +159,8 @@ public class UnfoldableDetailsFragment extends Fragment {
         webSetting.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);
         webviewLayout.setWebViewClient(new MyWebChromeClient(getActivity()));
         webviewLayout.setInitialScale(335);
-        webviewLayout.loadDataWithBaseURL(null, detail, "text/html", "UTF-8", null);
+        //webviewLayout.loadDataWithBaseURL(null, "https://amdavadblog.com", "text/html", "UTF-8", null);
+        webviewLayout.loadUrl("https://amdavadblog.com");
     }
 
     private class MyWebChromeClient extends WebViewClient
