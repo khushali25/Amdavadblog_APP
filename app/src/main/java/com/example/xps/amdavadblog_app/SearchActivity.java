@@ -69,6 +69,7 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
         try
         {
             searchView = (SearchView) menu.findItem(R.id.action_search1).getActionView();
+            foldableListLayout.setVisibility(View.GONE);
         }
         catch (Exception exx)
         {
