@@ -4,6 +4,7 @@ android {
     compileSdkVersion 28
     defaultConfig {
         applicationId "com.example.xps.amdavadblog_app"
+        useLibrary 'org.apache.http.legacy'
         minSdkVersion 23
         targetSdkVersion 28
         versionCode 1
@@ -40,4 +41,6 @@ dependencies {
     implementation 'com.squareup.okhttp:okhttp:2.0.0'
     implementation 'com.facebook.android:facebook-login:[4,5)'
     implementation 'de.hdodenhof:circleimageview:1.2.1'
+    implementation 'com.squareup.retrofit2:retrofit:2.4.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.4.0'
 }

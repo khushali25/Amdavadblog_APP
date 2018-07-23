@@ -50,8 +50,8 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
         layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
 
         foldableListLayout = findViewById(R.id.foldable_list_search);
-        postContentAdapter = new PostContentAdapter(this);
-        foldableListLayout.setAdapter(postContentAdapter);
+       // postContentAdapter = new PostContentAdapter(this);
+       // foldableListLayout.setAdapter(postContentAdapter);
         UpdateView();
     }
 
