@@ -20,4 +20,7 @@ public interface WordPressService {
 
     @GET("/wp-json/wp/v2/posts")
     Call<List<Post>> getAllPostByCategoryId(@Query("categories") int id);
+
+    @GET("/wp-json/wp/v2/posts")
+    Call<List<Post>> getPostsByQuerySearch(@Query("search") String searchterm);
 }
