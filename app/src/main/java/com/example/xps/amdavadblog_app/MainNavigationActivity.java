@@ -120,7 +120,6 @@ public class MainNavigationActivity extends AppCompatActivity
             fbphoto.setImageURI(null);
             fbphoto.setImageBitmap(img);
         }
-
         initfacebooklogin();
     }
 

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetManager;
 import android.graphics.Typeface;
+import android.provider.MediaStore;
 import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,7 +24,11 @@ import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import java.io.File;
 import java.util.List;
 
+import Core.WordPressService;
 import Model.Post;
+import retrofit2.Call;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 //import static Model.Post.getItems;
 
@@ -58,10 +63,17 @@ public class PostContentAdapter extends ItemsAdapter<Post, PostContentAdapter.Vi
                public Post getItem(int position) {
                    return post.get(position);
                }
+
            public void setData(List<Post> questionList) {
                this.post=questionList;
            }
-   class ViewHolder extends ItemsAdapter.ViewHolder {
+
+           public void notify(List<Post> postList) {
+               this.post = postList;
+               notifyDataSetChanged();
+           }
+
+           class ViewHolder extends ItemsAdapter.ViewHolder {
         public TextView Title;
         public ImageView Art;
         public TextView Category;
@@ -112,9 +124,9 @@ public class PostContentAdapter extends ItemsAdapter<Post, PostContentAdapter.Vi
         vh.Excerpts.setText(Html.fromHtml(item.excerpt.rendered+" .."));
         vh.Excerpts.setTypeface(custom_font2);
 
-        //getDateWithServerTimeStamp();
-//        vh.date.setText(Html.fromHtml(item.getDate()));
+
         if (item.imagePath != null) {
+
             File file = ImageLoader.getInstance().getDiskCache().get(item.getImagePath());
             if (!file.exists()) {
                 DisplayImageOptions options = new DisplayImageOptions.Builder()

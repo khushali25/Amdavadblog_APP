@@ -35,6 +35,18 @@ public class Post {
     @SerializedName("imagePath")
     @Expose
     public String imagePath;
+    @SerializedName("featured_media")
+    @Expose
+    public int featured_media;
+
+    public int getFeatured_media() {
+        return featured_media;
+    }
+
+    public void setFeatured_media(int featured_media) {
+        this.featured_media = featured_media;
+    }
+
     public class title
     {
         public String rendered;
