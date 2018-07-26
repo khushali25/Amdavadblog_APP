@@ -12,9 +12,12 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
 
+import java.util.ArrayList;
 import java.util.List;
 import Adapter.PostContentAdapter;
 import Core.WordPressService;
+import Model.Author;
+import Model.Category;
 import Model.Media;
 import Model.Post;
 import Model.SynchronousCallAdapterFactory;
@@ -79,9 +82,15 @@ public class FoldableListFragment extends Fragment {
             public void onResponse(Call<List<Post>> call, Response<List<Post>> response) {
                 Log.d("myResponse:", "Total Post:" + response.body().size());
                 Media resp2 = null;
-                for (final Post post : response.body()) {
+                List<Integer> cat = null;
+                Author Auth = null;
+                for (Post post : response.body()) {
                     if (response.isSuccessful()) {
                         // handle
+                       cat = wordPressService.getPostCategoryById(post.categories);
+                     // post.categoryname = cat.get();
+                        Auth = wordPressService.getPostAuthorById(post.author);
+                        post.authorname = Auth.name;
                         resp2 = wordPressService.getFeaturedImageById(post.featured_media);
                         post.imagePath = resp2.media_details.sizes.medium_large.source_url.toString();
                     }

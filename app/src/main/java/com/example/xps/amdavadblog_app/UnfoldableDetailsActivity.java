@@ -254,15 +254,16 @@ public class UnfoldableDetailsActivity extends AppCompatActivity {
         AppImageLoader = ImageLoader.getInstance();
         DisplayImageOptions opts = new DisplayImageOptions.Builder().imageScaleType(ImageScaleType.NONE).build();
         img1 = this.getIntent().getStringExtra("Image");
+        AppImageLoader.displayImage(img1, postfeaturedimage, opts);
        // int productImageId = getResources().getIdentifier(img1,"string", getPackageName());
       //  img1.getDrawable();
-        loadBitmap(R.drawable.demo);
+        loadBitmap(img1);
         //postfeaturedimage.setTag(loadtarget);
-        AppImageLoader.displayImage(img1, postfeaturedimage, opts);
+
 
     }
 
-    private void loadBitmap(int demo) {
+    private void loadBitmap(String demo) {
 //        if (loadtarget == null)
        loadtarget = new Target() {
             @Override

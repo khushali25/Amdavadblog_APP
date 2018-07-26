@@ -53,7 +53,7 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.back);
        // imageView = findViewById(R.id.searchloading);
-       // txtnotfound = findViewById(R.id.txtnodatafound);
+        txtnotfound = findViewById(R.id.txtnodatafound);
         //recyclerView = findViewById(R.id.searchpostrecycler);
        // recyclerView.hasFixedSize();
         layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
@@ -125,21 +125,32 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
             @Override
             public void onResponse(Call<List<Post>> call, Response<List<Post>> response) {
                 Media resp2 = null;
-                for (final Post post : response.body()) {
-                    if (response.isSuccessful()) {
-                        // handle
-                        foldableListLayout.setVisibility(View.VISIBLE);
-                        resp2 = wordPressService.getFeaturedImageById(post.featured_media);
-                        post.imagePath = resp2.media_details.sizes.medium_large.source_url.toString();
+                if (response.isSuccessful()) {
+                    int postsize =response.body().size();
+                    if(postsize != 0) {
+
+                        for (final Post post : response.body()) {
+
+                            // handle
+                            foldableListLayout.setVisibility(View.VISIBLE);
+                            resp2 = wordPressService.getFeaturedImageById(post.featured_media);
+                            post.imagePath = resp2.media_details.sizes.medium_large.source_url.toString();
+                        }
                     }
+                    else
+                    {
+                        foldableListLayout.setVisibility(View.GONE);
+                        txtnotfound.setVisibility(View.VISIBLE);
+                    }
+                }
                     else
                         {
 
+
                         }
+                postContentAdapter.setData(response.body());
+                postContentAdapter.notifyDataSetChanged();
                     }
-                    postContentAdapter.setData(response.body());
-                    postContentAdapter.notifyDataSetChanged();
-                }
 
             @Override
             public void onFailure(Call<List<Post>> call, Throwable t) {
@@ -153,7 +164,7 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
     public boolean onQueryTextChange(String s) {
        // imageView.setVisibility(View.GONE);
         foldableListLayout.setVisibility(View.GONE);
-      //  txtnotfound.setVisibility(View.GONE);
+       txtnotfound.setVisibility(View.GONE);
         return false;
     }
 }

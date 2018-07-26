@@ -117,9 +117,9 @@ public class PostContentAdapter extends ItemsAdapter<Post, PostContentAdapter.Vi
         final Post item = getItem(position);
         vh.Title.setText(Html.fromHtml(item.title.rendered));
         vh.Title.setTypeface(custom_font);
-       // vh.Category.setText(Html.fromHtml(item.getCategory()));
-      //  vh.Category.setTypeface(custom_font1);
-        vh.Author.setText(Html.fromHtml(item.getAuthor()));
+        //vh.Category.setText(Html.fromHtml(item.getCategoryname()));
+        //vh.Category.setTypeface(custom_font1);
+        vh.Author.setText(Html.fromHtml(item.getAuthorname()));
         vh.Author.setTypeface(custom_font3);
         vh.Excerpts.setText(Html.fromHtml(item.excerpt.rendered+" .."));
         vh.Excerpts.setTypeface(custom_font2);

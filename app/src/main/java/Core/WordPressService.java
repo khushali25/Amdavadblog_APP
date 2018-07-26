@@ -1,9 +1,9 @@
 package Core;
 
-import android.provider.MediaStore;
-
 import java.util.List;
 
+import Model.Author;
+import Model.Category;
 import Model.Media;
 import Model.Post;
 import retrofit2.Call;
@@ -23,4 +23,13 @@ public interface WordPressService {
 
     @GET("/wp-json/wp/v2/posts")
     Call<List<Post>> getPostsByQuerySearch(@Query("search") String searchterm);
+
+    @GET("/wp-json/wp/v2/users/{id}")
+    Author getPostAuthorById(@Path("id") int id);
+
+    @GET("/wp-json/wp/v2/categories/{id}")
+    List<Integer> getPostCategoryById(@Path("id") List<Integer> id);
+
+    @GET("/wp-json/wp/v2/posts/{id}")
+    Call<Post.PostDetail> getPostDetailById(@Path("id") int id);
 }

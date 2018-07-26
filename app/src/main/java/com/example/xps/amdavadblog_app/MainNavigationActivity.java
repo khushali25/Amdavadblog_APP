@@ -63,6 +63,7 @@ public class MainNavigationActivity extends AppCompatActivity
     Intent main;
      View headerView;
     Bitmap img;
+    NavigationView navigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,7 +80,7 @@ public class MainNavigationActivity extends AppCompatActivity
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         headerView = navigationView.getHeaderView(0);
         fbname = (TextView)headerView.findViewById(R.id.fbname);
@@ -194,8 +195,6 @@ public class MainNavigationActivity extends AppCompatActivity
         };
         tracker1.startTracking();
     }
-
-
     public Bitmap getBitmapFromURL(String src)
     {
         try {
@@ -254,9 +253,18 @@ public class MainNavigationActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout)findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
         }
+        else if(catInstance.CategoryId ==100)
+        {
+            finish();
+        }
+        else {
+            onNavigationItemSelected(navigationView.getMenu().getItem(0));
+        }
+//         else {
+//            super.onBackPressed();
+//        }
+
     }
 
     @Override
@@ -304,10 +312,6 @@ public class MainNavigationActivity extends AppCompatActivity
                 Intent i = new Intent(this,SettingsActivity.class);
                 startActivity(i);
                 return true;
-
-            //noinspection SimplifiableIfStatement
-//        if (id == R.id.action_settings) {
-//            return true;
           }
 
             return super.onOptionsItemSelected(item);
@@ -356,7 +360,4 @@ public class MainNavigationActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
-
-
-
 }

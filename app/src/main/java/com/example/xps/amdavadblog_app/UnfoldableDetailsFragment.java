@@ -12,6 +12,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,7 +29,17 @@ import com.alexvasilkov.foldablelayout.UnfoldableView;
 import com.alexvasilkov.foldablelayout.shading.GlanceFoldShading;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
+import java.util.List;
+
+import Core.WordPressService;
+//import Helper.IFrameParser;
 import Model.Post;
+import Model.SynchronousCallAdapterFactory;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 
 /**
@@ -49,7 +60,7 @@ public class UnfoldableDetailsFragment extends Fragment {
     ImageView imageView;
     private WebView webviewLayout;
     TextView titleTextView;
-    //  private ImageView postfeaturedimage;
+    Retrofit retrofitallpost;
     private int fontSize;
     static Toast toast;
     android.graphics.drawable.AnimationDrawable animation;
@@ -86,6 +97,11 @@ public class UnfoldableDetailsFragment extends Fragment {
        // animation = (android.graphics.drawable.AnimationDrawable)imageView.getDrawable();
 //        animation.start();
         //CacheService.ClearAllCache();
+        retrofitallpost = new Retrofit.Builder()
+                .baseUrl("https://amdavadblogs.apps-1and1.com/")
+                .addConverterFactory(GsonConverterFactory.create())
+                .addCallAdapterFactory(SynchronousCallAdapterFactory.create())
+                .build();
 
         WebViewInitialize();
       //  backgroundworker1.RunWorkerAsync();
@@ -133,7 +149,7 @@ public class UnfoldableDetailsFragment extends Fragment {
 
     private void WebViewInitialize() {
 
-        int id = this.getActivity().getIntent().getIntExtra("BlogId", 0);
+        final int id1 = this.getActivity().getIntent().getIntExtra("BlogId", 0);
         String title = this.getActivity().getIntent().getStringExtra("Title");
         String replacedtitle = title.replace(" ", "-");
         posturl = "http://amdavadblogs.apps-1and1.com/en/" + replacedtitle.toLowerCase();
@@ -141,26 +157,39 @@ public class UnfoldableDetailsFragment extends Fragment {
         {
             posturl = getActivity().getIntent().getStringExtra("posturl");
         }
-       // String deatilblog = AsyncHelpers.RunSync(async () => await ApiHelper.Instance.GetPostDetailById(id, lang));
-        String stylestr = "<html><head><style type=\"text/css\" link rel=\"stylesheet\" href=\"style.css\" />img{display: inline; height: auto; max-width: 100%;}@font-face {font-family: MyFont;src: url(\"file:///android_asset/fonts/PT_Serif-Web-Regular.ttf\")}body {font-family: MyFont;color: #6d6c6c;line-height: 30px;font-size: 18px;text-align: justify;} iframe {display: block;max-width:100%;margin-top:10px;margin-bottom:10px;}</style></head><body>";
-        String pas = "</body></html>";
-        detail = stylestr + "https://amdavadblog.com" + pas;
-        Bundle param = new Bundle();
-       // param.putString("id", id.);
-        //EventServices.Instance.GenericEvent(EventType.PostDetailsReceived);
+        final String stylestr = "<html><head><style type=\"text/css\" link rel=\"stylesheet\" href=\"style.css\" />img{display: inline; height: auto; max-width: 100%;}@font-face {font-family: MyFont;src: url(\"file:///android_asset/fonts/PT_Serif-Web-Regular.ttf\")}body {font-family: MyFont;color: #6d6c6c;line-height: 30px;font-size: 18px;text-align: justify;} iframe {display: block;max-width:100%;margin-top:10px;margin-bottom:10px;}</style></head><body>";
+        final String pas = "</body></html>";
+        final WordPressService wordPressService = retrofitallpost.create(WordPressService.class);
+        Call<Post.PostDetail> call = null;
+        call = wordPressService.getPostDetailById(id1);
+        call.enqueue(new Callback<Post.PostDetail>() {
+            @Override
+            public void onResponse(Call<Post.PostDetail> call, Response<Post.PostDetail> response) {
+                String tobeParsed = response.body().content.rendered;
+                //String afterParsed = IFrameParser.urlUpdate(tobeParsed);
+                //return afterParsed;
+                // String BlogContent = Html.fromHtml(call.getClass().);
+                detail = stylestr + tobeParsed + pas;
+                Bundle param = new Bundle();
+                param.putInt("id",id1);
+                WebSettings webSetting = webviewLayout.getSettings();
+                webSetting.setTextSize(WebSettings.TextSize.SMALLER);
+                webSetting.getJavaScriptEnabled();
+                webSetting.getLoadWithOverviewMode();
+                webSetting.getLoadsImagesAutomatically();
+                webSetting.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);
+                //webviewLayout.setWebViewClient(new MyWebChromeClient(getActivity()));
+                webviewLayout.setInitialScale(335);
+                webviewLayout.loadDataWithBaseURL(null,detail,"text/html","UTF-8",null);
+            }
 
-//        animation.stop();
+            @Override
+            public void onFailure(Call<Post.PostDetail> call, Throwable t) {
+
+            }
+        });
         imageView.setVisibility(View.GONE);
-        WebSettings webSetting = webviewLayout.getSettings();
-        webSetting.setTextSize(WebSettings.TextSize.SMALLER);
-        webSetting.getJavaScriptEnabled();
-        webSetting.getLoadWithOverviewMode();
-        webSetting.getLoadsImagesAutomatically();
-        webSetting.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);
-        webviewLayout.setWebViewClient(new MyWebChromeClient(getActivity()));
-        webviewLayout.setInitialScale(335);
-        //webviewLayout.loadDataWithBaseURL(null, "https://amdavadblog.com", "text/html", "UTF-8", null);
-        webviewLayout.loadUrl("https://amdavadblog.com");
+
     }
 
     private class MyWebChromeClient extends WebViewClient
@@ -238,40 +267,5 @@ public class UnfoldableDetailsFragment extends Fragment {
 //        }
 //    }
 //
-//    public void openDetails(View coverView, Post post) {
 //
-//        final ImageView image = Views.find(detailsLayout, R.id.details_image);
-//        final TextView title = Views.find(detailsLayout, R.id.details_title);
-//        final TextView description = Views.find(detailsLayout, R.id.details_text);
-//        detailsLayout = Views.find(coverView,R.id.details_layout);
-//        detailsLayout.setVisibility(View.INVISIBLE);
-//        final TextView newtxt = Views.find(detailsLayout, R.id.details_title);
-//        String imageUri = "drawable://" + R.drawable.demo;
-//        // DisplayImageOptions options = new DisplayImageOptions.Builder()
-//        // .cacheOnDisk(true)
-//        //.build();
-//        //imgloader.init(ImageLoaderConfiguration
-//        //.createDefault(coverView.getContext()));
-//        //imgloader.displayImage(image);
-//        //  image.setImageURI(Uri.parse(post.imagePath));
-//        //ImageLoader.loadPaintingImage(image, post);
-//        title.setText(post.getTitle());
-//
-//        SpannableBuilder builder = new SpannableBuilder(coverView.getContext());
-//        builder
-//                .createStyle().setFont(Typeface.DEFAULT_BOLD).apply()
-//                .append(R.string.year).append(": ")
-//                .clearStyle()
-//                .append(post.getAuthor()).append("\n")
-//                .createStyle().setFont(Typeface.DEFAULT_BOLD).apply()
-//                .append(R.string.location).append(": ")
-//                .clearStyle()
-//                .append(post.getLocation());
-//        description.setText(builder.build());
-//
-//        unfoldableView.unfold(coverView, detailsLayout);
-//    }
-
-
-
 
