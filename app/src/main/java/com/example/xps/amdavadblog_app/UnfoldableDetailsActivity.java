@@ -3,6 +3,7 @@ package com.example.xps.amdavadblog_app;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -22,6 +23,7 @@ import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.Toolbar;
@@ -255,55 +257,40 @@ public class UnfoldableDetailsActivity extends AppCompatActivity {
         DisplayImageOptions opts = new DisplayImageOptions.Builder().imageScaleType(ImageScaleType.NONE).build();
         img1 = this.getIntent().getStringExtra("Image");
         AppImageLoader.displayImage(img1, postfeaturedimage, opts);
-       // int productImageId = getResources().getIdentifier(img1,"string", getPackageName());
-      //  img1.getDrawable();
-        loadBitmap(img1);
-        //postfeaturedimage.setTag(loadtarget);
 
-
-    }
-
-    private void loadBitmap(String demo) {
-//        if (loadtarget == null)
-       loadtarget = new Target() {
+        Target target;
+        target = new Target() {
             @Override
             public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
                 Palette.from(bitmap).generate(new Palette.PaletteAsyncListener() {
                     @Override
                     public void onGenerated(@Nullable Palette palette) {
-                        if (palette == null)
-                            return;
-                        if (palette.getLightVibrantSwatch() != null) {
-                            int lightVibrant = palette.getLightVibrantSwatch().getRgb();
-                            //palette lightVibrant = new android.graphics.Color(palette.getLightVibrantSwatch().getRgb());
-                            //  Palette.Swatch lightVibrant = palette.getLightVibrantSwatch();
-                            // int color = new android.graphics.Color(lightVibrant);
-
-                            if ((int) Build.VERSION.SDK_INT >= 21)
-                                getWindow().setStatusBarColor(lightVibrant);
-                            fabcontainer1.setBackgroundTintList(android.content.res.ColorStateList.valueOf(lightVibrant));
-                            fabcontainer2.setBackgroundTintList(android.content.res.ColorStateList.valueOf(lightVibrant));
-                            fabcontainer3.setBackgroundTintList(android.content.res.ColorStateList.valueOf(lightVibrant));
-                            fabcontainer4.setBackgroundTintList(android.content.res.ColorStateList.valueOf(lightVibrant));
-                            fabcontainer.setBackgroundTintList(android.content.res.ColorStateList.valueOf(lightVibrant));
+                        Palette.Swatch lightVibrantSwatch = palette.getLightVibrantSwatch();
+                        if (lightVibrantSwatch == null) {
+                            Palette.Swatch mutedSwatch = palette.getLightMutedSwatch();
+                            getWindow().setStatusBarColor(mutedSwatch.getRgb());
+                            fabcontainer1.setBackgroundTintList(android.content.res.ColorStateList.valueOf(mutedSwatch.getRgb()));
+                            fabcontainer2.setBackgroundTintList(android.content.res.ColorStateList.valueOf(mutedSwatch.getRgb()));
+                            fabcontainer3.setBackgroundTintList(android.content.res.ColorStateList.valueOf(mutedSwatch.getRgb()));
+                            fabcontainer4.setBackgroundTintList(android.content.res.ColorStateList.valueOf(mutedSwatch.getRgb()));
+                            fabcontainer.setBackgroundTintList(android.content.res.ColorStateList.valueOf(mutedSwatch.getRgb()));
                         }
-                        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(30, 30);
-                        //Loop through each of the palettes available
-                        //and put them as a small square
-                        for (Palette.Swatch p : palette.getSwatches()) {
-                            if (p == null)
-                                continue;
-                            View view = new View(getApplicationContext());
-                            view.setBackgroundColor(p.getRgb());
-                            view.getLayoutParams();
-                            //Android.Graphics.Color.AddView(view, 0);
+                        //int lightVibrant = palette.getLightVibrantSwatch().getRgb();
+                        else {
+                            getWindow().setStatusBarColor(lightVibrantSwatch.getRgb());
+                            fabcontainer1.setBackgroundTintList(android.content.res.ColorStateList.valueOf(lightVibrantSwatch.getRgb()));
+                            fabcontainer2.setBackgroundTintList(android.content.res.ColorStateList.valueOf(lightVibrantSwatch.getRgb()));
+                            fabcontainer3.setBackgroundTintList(android.content.res.ColorStateList.valueOf(lightVibrantSwatch.getRgb()));
+                            fabcontainer4.setBackgroundTintList(android.content.res.ColorStateList.valueOf(lightVibrantSwatch.getRgb()));
+                            fabcontainer.setBackgroundTintList(android.content.res.ColorStateList.valueOf(lightVibrantSwatch.getRgb()));
                         }
                     }
                 });
             }
+
             @Override
             public void onBitmapFailed(Exception e, Drawable errorDrawable) {
-                android.util.Log.e("Initialize UI failed", e.getMessage());
+
             }
 
             @Override
@@ -311,74 +298,74 @@ public class UnfoldableDetailsActivity extends AppCompatActivity {
 
             }
         };
-        Picasso.get().load(demo).into(loadtarget);
-    }
-    @Override
-    protected void onPause() {
-        super.onPause();
-        adView.pause();
-    }
+        Picasso.get()
+                .load(img1).into(target);
+//        imageView.setTag(target);
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-       adView.resume();
     }
+            @Override
+            protected void onPause() {
+                super.onPause();
+                adView.pause();
+            }
 
-    private void GetFragment()
-    {
-        android.support.v4.app.FragmentManager fm = getSupportFragmentManager();
-        android.support.v4.app.FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.frcontent, new UnfoldableDetailsFragment());
-        ft.commit();
-    }
-    public void onBackPressed()
-    {
-        android.support.v4.app.NavUtils.navigateUpFromSameTask(this);
-    }
+            @Override
+            protected void onResume() {
+                super.onResume();
+                adView.resume();
+            }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        Bundle param = new Bundle();
-        param.putString("name", String.valueOf(item.getItemId()));
-        //EventServices.Instance.GenericEvent(EventType.MenuItemSelect, param);
+            private void GetFragment() {
+                android.support.v4.app.FragmentManager fm = getSupportFragmentManager();
+                android.support.v4.app.FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                ft.replace(R.id.frcontent, new UnfoldableDetailsFragment());
+                ft.commit();
+            }
 
-        android.support.v4.app.FragmentManager fm = getSupportFragmentManager();
-        android.support.v4.app.FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        switch (item.getItemId())
-        {
-           // case R.id.shareApp:
-              //  SocialMethod.shareIt(this);
-              //  return true;
+            public void onBackPressed() {
+                android.support.v4.app.NavUtils.navigateUpFromSameTask(this);
+            }
 
-            case android.R.id.home:
-              //  android.support.v4.app.NavUtils.navigateUpFromSameTask(this);
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
+            @Override
+            public boolean onOptionsItemSelected(MenuItem item) {
+                Bundle param = new Bundle();
+                param.putString("name", String.valueOf(item.getItemId()));
+                //EventServices.Instance.GenericEvent(EventType.MenuItemSelect, param);
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+                android.support.v4.app.FragmentManager fm = getSupportFragmentManager();
+                android.support.v4.app.FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                switch (item.getItemId()) {
+                    // case R.id.shareApp:
+                    //  SocialMethod.shareIt(this);
+                    //  return true;
+
+                    case android.R.id.home:
+                          android.support.v4.app.NavUtils.navigateUpFromSameTask(this);
+                        return true;
+                }
+                return super.onOptionsItemSelected(item);
+            }
+
+            @Override
+            public boolean onCreateOptionsMenu(Menu menu) {
 //        MenuInflater inflater = getMenuInflater();
 //        inflater.inflate(R.menu.ActionBarMenuItemForPostDetail, menu);
-        return true;
-    }
+                return true;
+            }
 
-    public void shareBlog()
-    {
-        int id = this.getIntent().getIntExtra("BlogId", 0);
-        String title = this.getIntent().getStringExtra("Title");
-        String replacedtitle = title.replace(" ", "-");
-        String finaltitle = replacedtitle.toLowerCase();
-        Intent sendIntent = new Intent();
-        sendIntent.setAction(Intent.ACTION_SEND);
-        sendIntent.putExtra(Intent.EXTRA_COMPONENT_NAME, "http://amdavadblogs.apps-1and1.com/en/" + finaltitle);
-        sendIntent.setType("text/plain");
-        startActivity(Intent.createChooser(sendIntent, "Share Blog via"));
-    }
+            public void shareBlog() {
+                int id = this.getIntent().getIntExtra("BlogId", 0);
+                String title = this.getIntent().getStringExtra("Title");
+                String replacedtitle = title.replace(" ", "-");
+                String finaltitle = replacedtitle.toLowerCase();
+                Intent sendIntent = new Intent();
+                sendIntent.setAction(Intent.ACTION_SEND);
+                sendIntent.putExtra(Intent.EXTRA_COMPONENT_NAME, "http://amdavadblogs.apps-1and1.com/en/" + finaltitle);
+                sendIntent.setType("text/plain");
+                startActivity(Intent.createChooser(sendIntent, "Share Blog via"));
+            }
 
-    private class FabAnimatorListener implements Animator.AnimatorListener {
+      private class FabAnimatorListener implements Animator.AnimatorListener {
         View bgfabmenu;
         FloatingActionButton fab1;
         FloatingActionButton fab2;

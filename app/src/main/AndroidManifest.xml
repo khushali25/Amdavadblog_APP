@@ -16,7 +16,8 @@
         android:supportsRtl="true"
         android:theme="@style/MyBaseTheme"
         tools:ignore="HardcodedDebugMode">
-        <activity android:name=".MainNavigationActivity">
+        <activity android:name=".MainNavigationActivity"
+            android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

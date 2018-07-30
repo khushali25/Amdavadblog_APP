@@ -164,7 +164,7 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
     public boolean onQueryTextChange(String s) {
        // imageView.setVisibility(View.GONE);
         foldableListLayout.setVisibility(View.GONE);
-       txtnotfound.setVisibility(View.GONE);
+        txtnotfound.setVisibility(View.GONE);
         return false;
     }
 }

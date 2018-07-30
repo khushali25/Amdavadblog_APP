@@ -74,6 +74,7 @@ public class UnfoldableDetailsFragment extends Fragment {
     }
 
     public ImageLoader AppImageLoader;
+
     public UnfoldableDetailsFragment() {
         // Required empty public constructor
     }
@@ -83,7 +84,7 @@ public class UnfoldableDetailsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view =  inflater.inflate(R.layout.fragment_unfoldable_details, container, false);
+        View view = inflater.inflate(R.layout.fragment_unfoldable_details, container, false);
         AssetManager am = getActivity().getApplicationContext().getAssets();
         webviewLayout = view.findViewById(R.id.webView1);
         titleTextView = view.findViewById(R.id.posttitletext);
@@ -94,7 +95,7 @@ public class UnfoldableDetailsFragment extends Fragment {
 
         imageView = view.findViewById(R.id.webviewloading);
         imageView.setVisibility(View.VISIBLE);
-       // animation = (android.graphics.drawable.AnimationDrawable)imageView.getDrawable();
+        // animation = (android.graphics.drawable.AnimationDrawable)imageView.getDrawable();
 //        animation.start();
         //CacheService.ClearAllCache();
         retrofitallpost = new Retrofit.Builder()
@@ -104,7 +105,7 @@ public class UnfoldableDetailsFragment extends Fragment {
                 .build();
 
         WebViewInitialize();
-      //  backgroundworker1.RunWorkerAsync();
+        //  backgroundworker1.RunWorkerAsync();
         return view;
 //        listTouchInterceptor = Views.find(this, R.id.touch_interceptor_view);
 //        listTouchInterceptor.setClickable(false);
@@ -153,8 +154,7 @@ public class UnfoldableDetailsFragment extends Fragment {
         String title = this.getActivity().getIntent().getStringExtra("Title");
         String replacedtitle = title.replace(" ", "-");
         posturl = "http://amdavadblogs.apps-1and1.com/en/" + replacedtitle.toLowerCase();
-        if (!android.text.TextUtils.isEmpty(getActivity().getIntent().getStringExtra("posturl")))
-        {
+        if (!android.text.TextUtils.isEmpty(getActivity().getIntent().getStringExtra("posturl"))) {
             posturl = getActivity().getIntent().getStringExtra("posturl");
         }
         final String stylestr = "<html><head><style type=\"text/css\" link rel=\"stylesheet\" href=\"style.css\" />img{display: inline; height: auto; max-width: 100%;}@font-face {font-family: MyFont;src: url(\"file:///android_asset/fonts/PT_Serif-Web-Regular.ttf\")}body {font-family: MyFont;color: #6d6c6c;line-height: 30px;font-size: 18px;text-align: justify;} iframe {display: block;max-width:100%;margin-top:10px;margin-bottom:10px;}</style></head><body>";
@@ -171,16 +171,16 @@ public class UnfoldableDetailsFragment extends Fragment {
                 // String BlogContent = Html.fromHtml(call.getClass().);
                 detail = stylestr + tobeParsed + pas;
                 Bundle param = new Bundle();
-                param.putInt("id",id1);
+                param.putInt("id", id1);
                 WebSettings webSetting = webviewLayout.getSettings();
                 webSetting.setTextSize(WebSettings.TextSize.SMALLER);
                 webSetting.getJavaScriptEnabled();
                 webSetting.getLoadWithOverviewMode();
                 webSetting.getLoadsImagesAutomatically();
                 webSetting.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);
-                //webviewLayout.setWebViewClient(new MyWebChromeClient(getActivity()));
+                webviewLayout.setWebViewClient(new MyWebChromeClient(getActivity()));
                 webviewLayout.setInitialScale(335);
-                webviewLayout.loadDataWithBaseURL(null,detail,"text/html","UTF-8",null);
+                webviewLayout.loadDataWithBaseURL(null, detail, "text/html", "UTF-8", null);
             }
 
             @Override
@@ -192,23 +192,22 @@ public class UnfoldableDetailsFragment extends Fragment {
 
     }
 
-    private class MyWebChromeClient extends WebViewClient
-    {
+    private class MyWebChromeClient extends WebViewClient {
         public Context con;
 
-            public MyWebChromeClient(Context con)
-        {
+        public MyWebChromeClient(Context con) {
             this.con = con;
         }
-        public void displayToast(String message)
-        {
+
+        public void displayToast(String message) {
             if (toast != null)
                 toast.cancel();
-           // toast = Toast.makeText(con, message, ToastLength.Long);
+            // toast = Toast.makeText(con, message, ToastLength.Long);
             toast.show();
         }
-     //   public boolean isOnline()
-      //  {
+
+        //   public boolean isOnline()
+        //  {
 //            ConnectivityManager cm = (ConnectivityManager)con.getSystemService(Context.CONNECTIVITY_SERVICE);
 //            //NetworkInfo netInfo = cm.getActiveNetworkInfo();
 //            if (netInfo != null && netInfo.isConnectedOrConnecting())
@@ -220,52 +219,25 @@ public class UnfoldableDetailsFragment extends Fragment {
 //                return false;
 //            }
         //}
-        public boolean shouldOverrideUrlLoading(WebView view, String url)
-        {
-            //string s = "http://amdavadblogs.apps-1and1.com/wp-content/uploads/";
-            //if (url.Contains(s))
-            //{
-            //    LayoutInflater layoutinflater = LayoutInflater.From(con);
-            //    ViewGroup vg = (ViewGroup)layoutinflater.Inflate(Resource.Layout.PopupImageWebview, null);
-            //    var alert1 = new Android.Support.V7.App.AlertDialog.Builder(con);
-
-            //    ImageView image = (ImageView)vg.FindViewById(Resource.Id.imgpopup);
-            //    Java.Net.URL url2 = new Java.Net.URL(url);
-            //    Bitmap bmp = BitmapFactory.DecodeStream(url2.OpenConnection().InputStream);
-            //    image.SetImageBitmap(bmp);
-            //    alert1.SetView(vg);
-
-            //    var _dialog = alert1.Create();
-            //    _dialog.Show();
-            //}
-            //else
+        public boolean shouldOverrideUrlLoading(WebView view, String url) {
             openInAppBrowser(url);
             return true;
         }
-        private void openInAppBrowser(String url)
-        {
+
+        private void openInAppBrowser(String url) {
 //            if (isOnline())
 //            {
-                Intent intent = new Intent(con, BrowserActivity.class);
-                intent.putExtra("url", url);
-                con.startActivity(intent);
+            Intent intent = new Intent(con, BrowserActivity.class);
+            intent.putExtra("url", url);
+            con.startActivity(intent);
+        }
+    }
 //            }
 //            else {
 //                displayToast("Please check your internet connection");
 //            }
-        }
-    }
-
 }
-//    @Override
-//    public void onBackPressed() {
-//        if (unfoldableView != null
-//                && (unfoldableView.isUnfolded() || unfoldableView.isUnfolding())) {
-//            unfoldableView.foldBack();
-//        } else {
-//            super.onBackPressed();
-//        }
-//    }
+
 //
 //
 

@@ -16,7 +16,7 @@
         android:layout_width="match_parent"
         android:id="@+id/result"
         android:text="error"
-        android:visibility="visible"
+        android:visibility="gone"
         android:textColor="@color/colorAccent"
         android:layout_marginLeft="20dp" />
 </LinearLayout>

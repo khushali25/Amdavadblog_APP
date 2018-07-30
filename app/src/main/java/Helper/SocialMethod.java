@@ -98,19 +98,20 @@ public class SocialMethod
                 {
                     try
                     {
-                        showResult.setVisibility(View.VISIBLE);
+
                         showResult.setText("Please enter email id");
+                        showResult.setVisibility(View.VISIBLE);
                     }
                     catch (Exception ex)
                     {
                        new Error(ex.getMessage());
                     }
                 }
-               else if (emailResult == false)
-                {
-                    showResult.setVisibility(View.VISIBLE);
-                    showResult.setText("Please enter valid email address");
-                }
+//               else if (emailResult == false)
+//                {
+//                    showResult.setVisibility(View.VISIBLE);
+//                    showResult.setText("Please enter valid email address");
+//                }
                 else
                 {
                     showResult.setVisibility(View.INVISIBLE);

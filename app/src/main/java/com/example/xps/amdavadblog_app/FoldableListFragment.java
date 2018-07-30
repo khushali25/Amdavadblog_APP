@@ -92,7 +92,12 @@ public class FoldableListFragment extends Fragment {
                         Auth = wordPressService.getPostAuthorById(post.author);
                         post.authorname = Auth.name;
                         resp2 = wordPressService.getFeaturedImageById(post.featured_media);
-                        post.imagePath = resp2.media_details.sizes.medium_large.source_url.toString();
+                        if(resp2 == null)
+                        {
+                            post.imagePath = String.valueOf(R.drawable.demo);
+                        }
+                        else
+                            post.imagePath = resp2.media_details.sizes.medium_large.source_url.toString();
                     }
                     else
                         {

@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.EventLog;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.webkit.WebBackForwardList;
 import android.webkit.WebChromeClient;
@@ -96,48 +97,16 @@ public class BrowserActivity extends AppCompatActivity {
         webView.clearCache(true);
         webView.clearHistory();
         webView.getSettings().setJavaScriptEnabled(true);
-//        webView.setWebChromeClient(new MyWebChromeClient(this));
-//        webView.setWebViewClient(new WebViewClient() {
-//                                     @Override
-//                                     public void onPageStarted(WebView view, String url, Bitmap favicon) {
-//                                         super.onPageStarted(view, url, favicon);
-//                                        // progressBar.setVisibility(View.VISIBLE);
-//                                         invalidateOptionsMenu();
-//                                     }
+    }
 
-  //                                   @Override
-//                                     public boolean shouldOverrideUrlLoading(WebView view, String url) {
-//                                         if (somethingHappened == true)
-//                                             //somethingHappened(url);
-//
-//                                         view.loadUrl(url);
-//
-//                                         return true;
-//                                     }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.homeAsUp)
+        {
+            finish();
+        }
 
-//            private void somethingHappened(String url) {
-//                getSupportActionBar().setTitle(url);
-//                txt.setText(getSupportActionBar().getTitle());
-//                txt.setBackgroundResource(R.drawable.browsertoolbartitile);
-//            }
-
-//            @Override
-//            public void onPageFinished(WebView view, String url) {
-//                super.onPageFinished(view, url);
-//               // progressBar.setVisibility(View.GONE);
-//                invalidateOptionsMenu();
-//            }
-//
-//            @Override
-//            public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
-//                super.onReceivedError(view, request, error);
-//                //progressBar.setVisibility(View.GONE);
-//                invalidateOptionsMenu();
-//            }
-//        });
-        //MyWebChromeClient.
-
-        //webView.SetHorizontalScrollbarOverlay(false);
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
