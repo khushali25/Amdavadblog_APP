@@ -152,6 +152,7 @@ public class UnfoldableDetailsFragment extends Fragment {
 
         final int id1 = this.getActivity().getIntent().getIntExtra("BlogId", 0);
         String title = this.getActivity().getIntent().getStringExtra("Title");
+        final String Content = this.getActivity().getIntent().getStringExtra("Content");
         String replacedtitle = title.replace(" ", "-");
         posturl = "http://amdavadblogs.apps-1and1.com/en/" + replacedtitle.toLowerCase();
         if (!android.text.TextUtils.isEmpty(getActivity().getIntent().getStringExtra("posturl"))) {
@@ -165,11 +166,17 @@ public class UnfoldableDetailsFragment extends Fragment {
         call.enqueue(new Callback<Post.PostDetail>() {
             @Override
             public void onResponse(Call<Post.PostDetail> call, Response<Post.PostDetail> response) {
-                String tobeParsed = response.body().content.rendered;
-                //String afterParsed = IFrameParser.urlUpdate(tobeParsed);
-                //return afterParsed;
-                // String BlogContent = Html.fromHtml(call.getClass().);
-                detail = stylestr + tobeParsed + pas;
+                if(id1 == 0)
+                {
+                    detail = stylestr + Content + pas;
+                }
+                else {
+                    String tobeParsed = response.body().content.rendered;
+                    //String afterParsed = IFrameParser.urlUpdate(tobeParsed);
+                    //return afterParsed;
+                    // String BlogContent = Html.fromHtml(call.getClass().);
+                    detail = stylestr + tobeParsed + pas;
+                }
                 Bundle param = new Bundle();
                 param.putInt("id", id1);
                 WebSettings webSetting = webviewLayout.getSettings();

@@ -5,8 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetManager;
 import android.graphics.Typeface;
-import android.provider.MediaStore;
 import android.text.Html;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +17,7 @@ import android.widget.TextView;
 import com.alexvasilkov.android.commons.adapters.ItemsAdapter;
 import com.example.xps.amdavadblog_app.R;
 import com.example.xps.amdavadblog_app.UnfoldableDetailsActivity;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
@@ -24,11 +25,10 @@ import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import java.io.File;
 import java.util.List;
 
-import Core.WordPressService;
 import Model.Post;
-import retrofit2.Call;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
+import services.MyFirebaseMessagingService;
+
+import static com.facebook.AccessTokenManager.TAG;
 
 //import static Model.Post.getItems;
 
@@ -123,7 +123,9 @@ public class PostContentAdapter extends ItemsAdapter<Post, PostContentAdapter.Vi
         vh.Author.setTypeface(custom_font3);
         vh.Excerpts.setText(Html.fromHtml(item.excerpt.rendered+" .."));
         vh.Excerpts.setTypeface(custom_font2);
-
+               String refreshedToken = FirebaseInstanceId.getInstance().getToken();
+               Log.d(TAG, "Refreshed token: " + refreshedToken);
+               //MyFirebaseMessagingService.onMessageReceived()
 
         if (item.imagePath != null) {
 

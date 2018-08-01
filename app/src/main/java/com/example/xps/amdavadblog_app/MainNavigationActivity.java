@@ -1,6 +1,5 @@
 package com.example.xps.amdavadblog_app;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -32,6 +31,10 @@ import com.facebook.appevents.AppEventsLogger;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.iid.FirebaseInstanceId;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -41,6 +44,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Random;
 
 import Helper.PrefService;
 import Helper.SocialMethod;
@@ -59,7 +63,7 @@ public class MainNavigationActivity extends AppCompatActivity
     private FoldableListFragment catInstance;
     URL profilePicture;
     String userId,email1,personname,gen,add,dob;
-    ProgressDialog mProgressDialog;
+    private FirebaseAnalytics mFirebaseAnalytics;
     Intent main;
      View headerView;
     Bitmap img;
@@ -70,8 +74,15 @@ public class MainNavigationActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_navigation);
         Toolbar toolbar = (Toolbar) findViewById(R.id.newtoolbar);
-
         setSupportActionBar(toolbar);
+
+        InitiaalizeGoogleAppConfig();
+        FirebaseApp app = FirebaseApp.initializeApp(this);
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
+        mFirebaseAnalytics.setAnalyticsCollectionEnabled(true);
+        mFirebaseAnalytics.setMinimumSessionDuration(20000);
+        //Sets the user ID property.
+        mFirebaseAnalytics.setUserId(String.valueOf(GetRandomIndex()));
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -82,6 +93,7 @@ public class MainNavigationActivity extends AppCompatActivity
 
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
         headerView = navigationView.getHeaderView(0);
         fbname = (TextView)headerView.findViewById(R.id.fbname);
         fbemail = (TextView)headerView.findViewById(R.id.fbemail);
@@ -112,6 +124,38 @@ public class MainNavigationActivity extends AppCompatActivity
         }
         initfacebooklogin();
     }
+    private void InitiaalizeGoogleAppConfig()
+    {
+        ////0.Initialize Firebase token.
+        //if (!GetString(Resource.String.google_app_id).Equals(AppConstants.GOOGLE_APP_ID))
+        //{
+        //    FirebaseCrash.Report(new System.Exception("Invalid Json file"));
+        //}
+
+      Runnable Task = new Runnable() {
+          @Override
+          public void run() {
+              FirebaseInstanceId instanceId = FirebaseInstanceId.getInstance();
+              try {
+                  instanceId.deleteInstanceId();
+              } catch (IOException e) {
+                  e.printStackTrace();
+              }
+              //                  Log.d("TAG", "{0} {1}",
+//                          instanceId.getToken(getString(R.string.default_notification_channel_id),
+//                                  FirebaseMessaging.INSTANCE_ID_SCOPE));
+          }
+      };
+
+    }
+
+    private int GetRandomIndex() {
+        int min = 0;
+        int max = 15000;
+        Random rand = new Random();
+        return min + rand.nextInt((max - min) + 1);
+    }
+
     private void initfacebooklogin() {
         callbackManager = CallbackManager.Factory.create();
         fbloginbutton = (LoginButton)headerView.findViewById(R.id.login_button);
@@ -290,7 +334,7 @@ public class MainNavigationActivity extends AppCompatActivity
 
             case R.id.subscribepost:
                 //android.content.Context mContext = android.app.Application.Context;
-                Services.PrefService ap = new Services.PrefService(getApplicationContext());
+                services.PrefService ap = new services.PrefService(getApplicationContext());
                 //String subscribed = ap.getAccessKey(AppConstants.EmailKey);
                // if (subscribed == "") {
                     SocialMethod.showSubscription(this);
