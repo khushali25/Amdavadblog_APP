@@ -33,6 +33,7 @@ import java.util.List;
 
 import Core.WordPressService;
 //import Helper.IFrameParser;
+import Helper.IFrameParser;
 import Model.Post;
 import Model.SynchronousCallAdapterFactory;
 import retrofit2.Call;
@@ -172,10 +173,11 @@ public class UnfoldableDetailsFragment extends Fragment {
                 }
                 else {
                     String tobeParsed = response.body().content.rendered;
+                    String afterparsed = IFrameParser.urlUpdate(tobeParsed);
                     //String afterParsed = IFrameParser.urlUpdate(tobeParsed);
                     //return afterParsed;
                     // String BlogContent = Html.fromHtml(call.getClass().);
-                    detail = stylestr + tobeParsed + pas;
+                    detail = stylestr + afterparsed + pas;
                 }
                 Bundle param = new Bundle();
                 param.putInt("id", id1);

@@ -25,5 +25,6 @@ public class PrefService
 
     public void saveAccessKey(String key, String value) {
         namePrefsEditor.putString(key,value);
+        namePrefsEditor.commit();
     }
 }

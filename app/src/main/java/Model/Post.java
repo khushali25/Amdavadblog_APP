@@ -19,9 +19,9 @@ public class Post {
     @Expose
     public title title;
 
-    @SerializedName("categories")
-    @Expose
-    public List<Integer> categories = new ArrayList<Integer> ();
+//    @SerializedName("categories")
+//    @Expose
+//    public int categories;
 
     @SerializedName("author")
     @Expose
@@ -63,13 +63,13 @@ public class Post {
         this.authorname = authorname;
     }
 //
-    public List<Integer> getCategories() {
-        return categories;
-    }
-
-    public void setCategories(List<Integer> categories) {
-        this.categories = categories;
-    }
+//    public int getCategories() {
+//        return categories;
+//    }
+//
+//    public void setCategories(int categories) {
+//        this.categories = categories;
+//    }
 
     public String getCategoryname() {
         return categoryname;
@@ -120,8 +120,6 @@ public class Post {
         this.date = date;
     }
 
-
-
     public int getAuthor() {
         return author;
     }
@@ -138,7 +136,6 @@ public class Post {
 //        this.excerpt = excerpt;
 //    }
 //
-
     public int getId() {
         return id;
     }

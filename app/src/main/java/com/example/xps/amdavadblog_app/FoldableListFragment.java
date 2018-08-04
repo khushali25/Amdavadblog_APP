@@ -87,7 +87,7 @@ public class FoldableListFragment extends Fragment {
                 for (Post post : response.body()) {
                     if (response.isSuccessful()) {
                         // handle
-                       cat = wordPressService.getPostCategoryById(post.categories);
+                      // cat = wordPressService.getPostCategoryById(post.categories);
                      // post.categoryname = cat.get();
                         Auth = wordPressService.getPostAuthorById(post.author);
                         post.authorname = Auth.name;

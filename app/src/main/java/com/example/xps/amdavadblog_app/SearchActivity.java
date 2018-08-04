@@ -22,6 +22,8 @@ import java.util.List;
 
 import Adapter.PostContentAdapter;
 import Core.WordPressService;
+import Model.Author;
+import Model.Category;
 import Model.Media;
 import Model.Post;
 import Model.SynchronousCallAdapterFactory;
@@ -120,21 +122,31 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
 
         final WordPressService wordPressService = retrofitallpost.create(WordPressService.class);
         Call<List<Post>> call = null;
+
         call = wordPressService.getPostsByQuerySearch(searchText);
         call.enqueue(new Callback<List<Post>>() {
             @Override
             public void onResponse(Call<List<Post>> call, Response<List<Post>> response) {
                 Media resp2 = null;
+                Author Auth = null;
+                Category category = null;
                 if (response.isSuccessful()) {
                     int postsize =response.body().size();
                     if(postsize != 0) {
-
                         for (final Post post : response.body()) {
-
-                            // handle
+                            //category = wordPressService.getPostCategoryById(post.categories);
+                            // post.categoryname = category.getName();
                             foldableListLayout.setVisibility(View.VISIBLE);
+                            Auth = wordPressService.getPostAuthorById(post.author);
+                            post.authorname = Auth.name;
                             resp2 = wordPressService.getFeaturedImageById(post.featured_media);
-                            post.imagePath = resp2.media_details.sizes.medium_large.source_url.toString();
+                            if(resp2 == null)
+                            {
+                                post.imagePath = String.valueOf(R.drawable.demo);
+                            }
+                            else
+                                post.imagePath = resp2.media_details.sizes.medium_large.source_url.toString();
+                        }
                         }
                     }
                     else
@@ -142,12 +154,8 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
                         foldableListLayout.setVisibility(View.GONE);
                         txtnotfound.setVisibility(View.VISIBLE);
                     }
-                }
-                    else
-                        {
 
 
-                        }
                 postContentAdapter.setData(response.body());
                 postContentAdapter.notifyDataSetChanged();
                     }

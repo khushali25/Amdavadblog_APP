@@ -101,7 +101,7 @@ public class MainNavigationActivity extends AppCompatActivity
         InitializeFirstScreenUI();
         FacebookSdk.sdkInitialize(getApplicationContext());
         AppEventsLogger.activateApp(this);
-        PrefService ap = new PrefService(getApplicationContext());
+        PrefService ap = new PrefService(this);
         String name = ap.getAccessKey("Username");
         String emailid = ap.getAccessKey("Password");
         String photo = ap.getAccessKey("loginkey");
@@ -200,9 +200,9 @@ public class MainNavigationActivity extends AppCompatActivity
                                 fbphoto.setImageBitmap(img);
                             }
                             PrefService ap = new PrefService(getApplicationContext());
-                            ap.saveAccessKey("name",nametostore);
-                            ap.saveAccessKey("email",emailtostore);
-                            ap.saveAccessKey("photo",imgfb);
+                            ap.saveAccessKey("Username",nametostore);
+                            ap.saveAccessKey("Password",emailtostore);
+                            ap.saveAccessKey("loginkey",imgfb);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         } catch (MalformedURLException e) {

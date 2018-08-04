@@ -1,14 +1,13 @@
 package Model;
 
-public class Category
-{
-    public int getId() {
-        return id;
-    }
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
-    public void setId(int id) {
-        this.id = id;
-    }
+import java.util.ArrayList;
+import java.util.List;
+
+public class Category  {
+
 
     public String getName() {
         return name;
@@ -26,7 +25,17 @@ public class Category
         this.img = img;
     }
 
-    public int id ;
+//    public int getId() {
+//        return id;
+//    }
+//
+//    public void setId(int id) {
+//        this.id = id;
+//    }
+//
+//    @SerializedName("id")
+//    @Expose
+//    public int id;
 
     public String name ;
     public int img;

@@ -300,7 +300,7 @@ public class UnfoldableDetailsActivity extends AppCompatActivity {
         };
         Picasso.get()
                 .load(img1).into(target);
-//        imageView.setTag(target);
+        postfeaturedimage.setTag(target);
 
     }
             @Override

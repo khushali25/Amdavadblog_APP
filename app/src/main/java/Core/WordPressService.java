@@ -27,8 +27,8 @@ public interface WordPressService {
     @GET("/wp-json/wp/v2/users/{id}")
     Author getPostAuthorById(@Path("id") int id);
 
-    @GET("/wp-json/wp/v2/categories/{id}")
-    List<Integer> getPostCategoryById(@Path("id") List<Integer> id);
+//    @GET("/wp-json/wp/v2/categories/{id}")
+//    Category getPostCategoryById(@Path("id") int id);
 
     @GET("/wp-json/wp/v2/posts/{id}")
     Call<Post.PostDetail> getPostDetailById(@Path("id") int id);
