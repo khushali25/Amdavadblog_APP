@@ -183,9 +183,10 @@ public class UnfoldableDetailsFragment extends Fragment {
                 param.putInt("id", id1);
                 WebSettings webSetting = webviewLayout.getSettings();
                 webSetting.setTextSize(WebSettings.TextSize.SMALLER);
-                webSetting.getJavaScriptEnabled();
-                webSetting.getLoadWithOverviewMode();
-                webSetting.getLoadsImagesAutomatically();
+                webSetting.setJavaScriptEnabled(true);
+                webSetting.setMediaPlaybackRequiresUserGesture(false);
+                webSetting.setLoadWithOverviewMode(true);
+                webSetting.setLoadsImagesAutomatically(true);
                 webSetting.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);
                 webviewLayout.setWebViewClient(new MyWebChromeClient(getActivity()));
                 webviewLayout.setInitialScale(335);

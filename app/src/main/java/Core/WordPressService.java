@@ -15,6 +15,9 @@ public interface WordPressService {
     @GET("/wp-json/wp/v2/posts")
     Call<List<Post>> getAllPost();
 
+    @GET("/wp-json/wp/v2/posts")
+    Call<List<Post>> getAllPostPerPage(@Query("page") int id);
+
     @GET("/wp-json/wp/v2/media/{id}")
     Media getFeaturedImageById(@Path("id") int id);
 
@@ -27,8 +30,8 @@ public interface WordPressService {
     @GET("/wp-json/wp/v2/users/{id}")
     Author getPostAuthorById(@Path("id") int id);
 
-//    @GET("/wp-json/wp/v2/categories/{id}")
-//    Category getPostCategoryById(@Path("id") int id);
+    @GET("/wp-json/wp/v2/categories/{id}")
+   Category getPostCategoryById(@Path("id") int id);
 
     @GET("/wp-json/wp/v2/posts/{id}")
     Call<Post.PostDetail> getPostDetailById(@Path("id") int id);

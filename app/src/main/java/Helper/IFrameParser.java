@@ -13,7 +13,6 @@ public class IFrameParser {
         String pattern = "\\ssrc=\"\\/\\/\\b(\\S *)\\b";
         String retval = "";
 
-
         Pattern p = Pattern.compile("\\ssrc=\"\\/\\/\\b(\\S *)\\b", Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
         Matcher m1 = p.matcher(htmlResponse);
 
@@ -32,7 +31,6 @@ public class IFrameParser {
                 }
             }
 
-            //m1.n
         }
 
         return htmlResponse;

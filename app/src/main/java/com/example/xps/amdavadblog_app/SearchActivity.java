@@ -108,6 +108,11 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
         return super.onOptionsItemSelected(item);
     }
 
+//    @Override
+//    public void onBackPressed() {
+//        //android.support.v4.app.NavUtils.navigateUpFromSameTask(this);
+//    }
+
     @Override
     public boolean onQueryTextSubmit(String s) {
         searchText = s;
@@ -154,8 +159,6 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
                         foldableListLayout.setVisibility(View.GONE);
                         txtnotfound.setVisibility(View.VISIBLE);
                     }
-
-
                 postContentAdapter.setData(response.body());
                 postContentAdapter.notifyDataSetChanged();
                     }

@@ -333,14 +333,16 @@ public class MainNavigationActivity extends AppCompatActivity
                 return true;
 
             case R.id.subscribepost:
-                //android.content.Context mContext = android.app.Application.Context;
-                services.PrefService ap = new services.PrefService(getApplicationContext());
-                //String subscribed = ap.getAccessKey(AppConstants.EmailKey);
-               // if (subscribed == "") {
+                PrefService ap = new PrefService(this);
+                String subscribed = ap.getAccessKey("subscribe");
+                if (subscribed == "")
+                {
                     SocialMethod.showSubscription(this);
-               // } else {
-                  //  SocialMethod.alreadySubscribed(this);
-               // }
+                }
+                else
+                {
+                    SocialMethod.alreadySubscribed(this);
+                }
                 return true;
             case R.id.feedbackpost:
                 SocialMethod.showFeedback(this);

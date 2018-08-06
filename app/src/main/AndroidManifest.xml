@@ -28,7 +28,10 @@
             android:name=".UnfoldableDetailsActivity"
             android:parentActivityName=".MainNavigationActivity" />
         <activity android:name=".BrowserActivity" />
-        <activity android:name=".SearchActivity" />
+        <activity android:name=".SearchActivity"
+            android:launchMode="singleTop"
+            android:windowSoftInputMode="stateVisible"
+            />
         <activity
             android:name=".SettingsActivity"
             android:label="@string/title_activity_settings" />

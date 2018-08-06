@@ -63,13 +63,17 @@ public class Post {
         this.authorname = authorname;
     }
 //
-//    public int getCategories() {
-//        return categories;
-//    }
-//
-//    public void setCategories(int categories) {
-//        this.categories = categories;
-//    }
+
+
+    public List<Integer> getCategories() {
+        return categories;
+    }
+
+    public void setCategories(List<Integer> categories) {
+        this.categories = categories;
+    }
+
+    public List<Integer> categories;
 
     public String getCategoryname() {
         return categoryname;

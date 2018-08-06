@@ -6,6 +6,7 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.text.method.DialerKeyListener;
 import android.util.Log;
 import android.util.Patterns;
@@ -20,55 +21,45 @@ import com.example.xps.amdavadblog_app.R;
 
 import java.io.Console;
 
-public class SocialMethod
-{
-    public static void showRateApp(Context con)
-    {
+import static com.facebook.FacebookSdk.getApplicationContext;
+
+public class SocialMethod {
+    public static void showRateApp(Context con) {
         Intent intent = new Intent(Intent.ACTION_VIEW);
         //Try Google play
         intent.setData(android.net.Uri.parse("market://details?id=com.cubeactive.qnotelistfree"));
-        if (!MyStartActivity(intent, con))
-        {
+        if (!MyStartActivity(intent, con)) {
             //Market (Google play) app seems not installed, let's try to open a webbrowser
             intent.setData(android.net.Uri.parse("https://play.google.com/store/apps/details?[Id]"));
-            if (!MyStartActivity(intent, con))
-            {
+            if (!MyStartActivity(intent, con)) {
                 //Well if this also fails, we have run out of options, inform the user.
                 Toast.makeText(con, "Could not open Android market, please install the market app.", Toast.LENGTH_LONG).show();
             }
         }
     }
-    public static boolean MyStartActivity(Intent intent, Context con)
-    {
-        try
-        {
+
+    public static boolean MyStartActivity(Intent intent, Context con) {
+        try {
             con.startActivity(intent);
             return true;
-        }
-        catch (ActivityNotFoundException e)
-        {
+        } catch (ActivityNotFoundException e) {
             return false;
         }
     }
 
-    public static void showFeedback(Context context)
-    {
+    public static void showFeedback(Context context) {
         Intent emailIntent = new Intent(Intent.ACTION_SENDTO);
         emailIntent.setData(android.net.Uri.parse("mailto:"));
-        emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[] { "amdavadblogs@gmail.com" });
+        emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{"amdavadblogs@gmail.com"});
         emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Amdavad Blog Feedback");
-        try
-        {
+        try {
             context.startActivity(Intent.createChooser(emailIntent, "Send mail..."));
-        }
-        catch (ActivityNotFoundException ex)
-        {
+        } catch (ActivityNotFoundException ex) {
             Toast.makeText(context, "There is no email client installed.", Toast.LENGTH_LONG).show();
         }
     }
 
-    public static void shareIt(Context context)
-    {
+    public static void shareIt(Context context) {
         Intent sharingIntent = new Intent(Intent.ACTION_SEND);
         sharingIntent.setType("text/plain");
         sharingIntent.putExtra(Intent.EXTRA_SUBJECT, "Amdavad Blogs");
@@ -76,80 +67,82 @@ public class SocialMethod
         context.startActivity(Intent.createChooser(sharingIntent, "Share via"));
     }
 
-    public static void showSubscription(final Context context)
-    {
+    public static void showSubscription(final Context context) {
         LayoutInflater layoutinflater = LayoutInflater.from(context);
         final View promptView = layoutinflater.inflate(R.layout.subscriptionview, null);
-
-        final android.support.v7.app.AlertDialog.Builder alert1 = new android.support.v7.app.AlertDialog.Builder(context);
-
-        alert1.setView(promptView);
-        alert1.setTitle("Subscribe");
-
-        alert1.setPositiveButton("Subscribe", new DialogInterface.OnClickListener() {
+        final AlertDialog alertDialog = new AlertDialog.Builder(context)
+                .setView(promptView)
+                .setTitle("Subsribe")
+                .setPositiveButton("Subscribe", null)
+                .setNegativeButton("Cancel", null)
+                .create();
+        alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
             @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                EditText userEmail = promptView.findViewById(R.id.emailid);
-                TextView showResult = (TextView)promptView.findViewById(R.id.result);
-                String userValue = userEmail.getText().toString();
-                boolean emailResult = isValidEmail(userValue);
-                Toast.makeText(context,userValue,Toast.LENGTH_LONG).show();
-                if (userValue.equals(""))
-                {
-                    try
-                    {
+            public void onShow(DialogInterface dialog) {
 
-                        showResult.setText("Please enter email id");
-                        showResult.setVisibility(View.VISIBLE);
-                    }
-                    catch (Exception ex)
-                    {
-                       new Error(ex.getMessage());
-                    }
-                }
-//               else if (emailResult == false)
-//                {
-//                    showResult.setVisibility(View.VISIBLE);
-//                    showResult.setText("Please enter valid email address");
-//                }
-                else
-                {
-                    showResult.setVisibility(View.INVISIBLE);
-                    dialogInterface.dismiss();
+                Button buttonPositive = ((AlertDialog) dialog).getButton(DialogInterface.BUTTON_POSITIVE);
+                buttonPositive.setOnClickListener(new View.OnClickListener() {
 
-                }
+                    @Override
+                    public void onClick(View view) {
+                        EditText userEmail = promptView.findViewById(R.id.emailid);
+                        TextView showResult = (TextView) promptView.findViewById(R.id.result);
+                        String userValue = userEmail.getText().toString();
+                        boolean emailResult = isValidEmail(userValue);
+                        if (userValue.equals("")) {
+                            try {
+                                showResult.setText("Please enter email id");
+                                showResult.setVisibility(View.VISIBLE);
+                            } catch (Exception ex) {
+                                new Error(ex.getMessage());
+                            }
+                        } else if (emailResult == false) {
+                            showResult.setVisibility(View.VISIBLE);
+                            showResult.setText("Please enter valid email address");
+                        } else {
+                            PrefService ap = new PrefService(context);
+                            ap.saveAccessKey("subscribe", userValue);
+                            showResult.setVisibility(View.INVISIBLE);
+                            alertDialog.dismiss();
+
+                        }
+                    }
+                });
+                Button buttonNegative = ((AlertDialog) dialog).getButton(DialogInterface.BUTTON_NEGATIVE);
+                buttonNegative.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        alertDialog.dismiss();
+                    }
+                });
             }
         });
-        alert1.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                dialogInterface.dismiss();
-            }
-        });
-
-      android.support.v7.app.AlertDialog dialog = alert1.create();
-       dialog.show();
-
+        alertDialog.show();
     }
-    public static boolean isValidEmail(String email)
-    {
+
+    public static boolean isValidEmail(String email) {
         return Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
 
-    public static void alreadySubscribed(Context context)
-    {
-        LayoutInflater layoutinflater = LayoutInflater.from(context);
-        android.support.v7.app.AlertDialog.Builder alert2 = new android.support.v7.app.AlertDialog.Builder(context);
-        final Dialog _dialog = alert2.create();
-        _dialog.show();
+    public static void alreadySubscribed(Context context) {
 
-        alert2.setMessage("You have already been subscribed..!!");
-        alert2.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+        LayoutInflater layoutinflater = LayoutInflater.from(context);
+        final AlertDialog alertDialog = new AlertDialog.Builder(context)
+                .setTitle("You have already been subscribed..!!")
+                 .setPositiveButton("Cancel", null)
+                .create();
+        alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
             @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                _dialog.dismiss();
+            public void onShow(DialogInterface dialogInterface) {
+                Button buttonPositive = ((AlertDialog) alertDialog).getButton(DialogInterface.BUTTON_POSITIVE);
+                buttonPositive.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        alertDialog.dismiss();
+                    }
+                });
             }
         });
+        alertDialog.show();
     }
-
 }
