@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import com.alexvasilkov.foldablelayout.FoldableListLayout;
+import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
@@ -78,9 +79,6 @@ public class FoldableListFragment extends Fragment {
                 }
             }
         });
-
-
-
 //        LetCall(1);
         Retrofit retrofitallpost=new Retrofit.Builder()
                 .baseUrl("https://amdavadblogs.apps-1and1.com/")
@@ -109,6 +107,7 @@ public class FoldableListFragment extends Fragment {
                 for (Post post : AllPost) {
                     if (response.isSuccessful()) {
                         Integer catId = post.categories.get(0);
+
                         Auth = wordPressService.getPostAuthorById(post.author);
                         post.authorname = Auth.name;
                         cat = wordPressService.getPostCategoryById(catId);
@@ -228,8 +227,6 @@ public class FoldableListFragment extends Fragment {
 
         });
     }
-
-
     private void InitializeAds(View view) {
         try
         {
@@ -242,6 +239,19 @@ public class FoldableListFragment extends Fragment {
         {
             android.util.Log.e("Couldnt initialize ads", ex.getMessage());
         }
+        adView.setAdListener(new AdListener() {
+            @Override
+            public void onAdLoaded() {
+                super.onAdLoaded();
+                adView.setTag(true); // Set tag true if adView is loaded
+            }
+
+            @Override
+            public void onAdFailedToLoad(int i) {
+                super.onAdFailedToLoad(i);
+                adView.setTag(false); // Set tag false if loading failed
+            }
+        });
     }
 
 }

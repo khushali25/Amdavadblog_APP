@@ -33,11 +33,13 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
@@ -47,6 +49,9 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
+
+import Helper.PrefService;
+import Helper.SocialMethod;
 
 import static android.view.View.VISIBLE;
 
@@ -95,7 +100,6 @@ public class UnfoldableDetailsActivity extends AppCompatActivity {
 
        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_itemdetail);
         setSupportActionBar(toolbar);
-
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         //getSupportActionBar().setHomeAsUpIndicator(R.drawable.back);
         postfeaturedimage = (ImageView)findViewById(R.id.imgpost);
@@ -124,31 +128,30 @@ public class UnfoldableDetailsActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 CloseFabMenu();
-//              //  Android.Content.Context mContext = Android.App.Application.Context;
-//                //Services.PrefService ap = new Services.PrefService(mContext);
-//                //String subscribed = ap.getAccessKey(AppConstants.EmailKey);
-//              //  if (subscribed == "")
-//                {
-//                    //SocialMethod.showSubscription(this);
-//                }
-//                else
-//                {
-//                   // SocialMethod.alreadySubscribed(this);
-//                }
+                PrefService ap = new PrefService(getApplication());
+                String subscribed = ap.getAccessKey("subscribe");
+                if (subscribed == "")
+                {
+                    SocialMethod.showSubscription(UnfoldableDetailsActivity.this);
+                }
+                else
+                {
+                   SocialMethod.alreadySubscribed(UnfoldableDetailsActivity.this);
+                }
             }
         });
         fabcontainer2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 CloseFabMenu();
-               // SocialMethod.showFeedback(this);
+                SocialMethod.showFeedback(UnfoldableDetailsActivity.this);
             }
         });
         fabcontainer3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 CloseFabMenu();
-                //SocialMethod.showRateApp(this);
+                SocialMethod.showRateApp(UnfoldableDetailsActivity.this);
             }
         });
         fabcontainer4.setOnClickListener(new View.OnClickListener() {
@@ -199,7 +202,6 @@ public class UnfoldableDetailsActivity extends AppCompatActivity {
     {
         isFabOpen = true;
         fabcontainer1.setVisibility(VISIBLE);
-        //fabcontainer1.requestLayout();
         fabcontainer2.setVisibility(VISIBLE);
         fabcontainer3.setVisibility(VISIBLE);
         fabcontainer4.setVisibility(VISIBLE);
@@ -252,7 +254,6 @@ public class UnfoldableDetailsActivity extends AppCompatActivity {
     }
     private void GetBlogDetails() {
         int id = this.getIntent().getIntExtra("BlogId", 0);
-        //titleTextView.Text = title;
         AppImageLoader = ImageLoader.getInstance();
         DisplayImageOptions opts = new DisplayImageOptions.Builder().imageScaleType(ImageScaleType.NONE).build();
         img1 = this.getIntent().getStringExtra("Image");
@@ -287,12 +288,10 @@ public class UnfoldableDetailsActivity extends AppCompatActivity {
                     }
                 });
             }
-
             @Override
             public void onBitmapFailed(Exception e, Drawable errorDrawable) {
 
             }
-
             @Override
             public void onPrepareLoad(Drawable placeHolderDrawable) {
 
@@ -308,13 +307,11 @@ public class UnfoldableDetailsActivity extends AppCompatActivity {
                 super.onPause();
                 adView.pause();
             }
-
             @Override
             protected void onResume() {
                 super.onResume();
                 adView.resume();
             }
-
             private void GetFragment() {
                 android.support.v4.app.FragmentManager fm = getSupportFragmentManager();
                 android.support.v4.app.FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
@@ -422,5 +419,18 @@ public class UnfoldableDetailsActivity extends AppCompatActivity {
         {
             android.util.Log.e("Initialize UI failed", ex.getMessage());
         }
+        adView.setAdListener(new AdListener() {
+            @Override
+            public void onAdLoaded() {
+                super.onAdLoaded();
+                adView.setTag(true); // Set tag true if adView is loaded
+            }
+
+            @Override
+            public void onAdFailedToLoad(int i) {
+                super.onAdFailedToLoad(i);
+                adView.setTag(false); // Set tag false if loading failed
+            }
+        });
     }
 }

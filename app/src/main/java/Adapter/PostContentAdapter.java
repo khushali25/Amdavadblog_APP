@@ -23,10 +23,14 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
 import java.io.File;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import Model.Post;
-import services.MyFirebaseMessagingService;
 
 import static com.facebook.AccessTokenManager.TAG;
 
@@ -34,12 +38,13 @@ import static com.facebook.AccessTokenManager.TAG;
 
 
 public class PostContentAdapter extends ItemsAdapter<Post, PostContentAdapter.ViewHolder>
-       {
-
+{
     public ImageLoader imgloader;
     Context context;
     private int index;
     List<Post> post;
+    Post item;
+    PostContentAdapter.ViewHolder vh;
 
     public PostContentAdapter(List<Post> posts,Activity context) {
         this.post = posts;
@@ -48,7 +53,6 @@ public class PostContentAdapter extends ItemsAdapter<Post, PostContentAdapter.Vi
         //  setItemsList(getItems1());
         imgloader = ImageLoader.getInstance();
     }
-
            @Override
            public int getCount() {
                int itemCount = 0;
@@ -58,8 +62,7 @@ public class PostContentAdapter extends ItemsAdapter<Post, PostContentAdapter.Vi
                }
                return itemCount;
            }
-
-               @Override
+           @Override
                public Post getItem(int position) {
                    return post.get(position);
                }
@@ -72,8 +75,7 @@ public class PostContentAdapter extends ItemsAdapter<Post, PostContentAdapter.Vi
                this.post = postList;
                notifyDataSetChanged();
            }
-
-           class ViewHolder extends ItemsAdapter.ViewHolder {
+    class ViewHolder extends ItemsAdapter.ViewHolder {
         public TextView Title;
         public ImageView Art;
         public TextView Category;
@@ -90,7 +92,7 @@ public class PostContentAdapter extends ItemsAdapter<Post, PostContentAdapter.Vi
             Category = itemView.findViewById(R.id.category);
             Author = itemView.findViewById(R.id.author);
             Excerpts = itemView.findViewById(R.id.excerpt);
-            date = itemView.findViewById(R.id.date);
+            date = itemView.findViewById(R.id.date1);
         }
     }
     @Override
@@ -103,29 +105,27 @@ public class PostContentAdapter extends ItemsAdapter<Post, PostContentAdapter.Vi
                 .createDefault(parent.getContext()));
         return vh;
     }
-
-           @Override
+    @Override
     protected void onBindHolder(PostContentAdapter.ViewHolder viewHolder, int position) {
-
-        PostContentAdapter.ViewHolder vh = viewHolder;
+        String refreshedToken = FirebaseInstanceId.getInstance().getToken();
+        Log.d(TAG, "Refreshed token: " + refreshedToken);
+        vh = viewHolder;
         AssetManager am = context.getApplicationContext().getAssets();
         Typeface custom_font = Typeface.createFromAsset(am, "font/Amaranth-Regular.ttf");
         Typeface custom_font1 = Typeface.createFromAsset(am, "font/WorkSans-Regular.ttf");
         Typeface custom_font2 = Typeface.createFromAsset(am, "font/Martel-Regular.ttf");
         Typeface custom_font3 = Typeface.createFromAsset(am, "font/Martel-Bold.ttf");
 
-        final Post item = getItem(position);
+        item = getItem(position);
         vh.Title.setText(Html.fromHtml(item.title.rendered));
         vh.Title.setTypeface(custom_font);
-        vh.Category.setText(Html.fromHtml(item.getCategoryname()));
+        vh.Category.setText(Html.fromHtml("#" + item.getCategoryname()));
         vh.Category.setTypeface(custom_font1);
         vh.Author.setText(Html.fromHtml(item.getAuthorname()));
         vh.Author.setTypeface(custom_font3);
-        vh.Excerpts.setText(Html.fromHtml(item.excerpt.rendered+" .."));
+        vh.Excerpts.setText(Html.fromHtml(item.excerpt.rendered));
         vh.Excerpts.setTypeface(custom_font2);
-               String refreshedToken = FirebaseInstanceId.getInstance().getToken();
-               Log.d(TAG, "Refreshed token: " + refreshedToken);
-               //MyFirebaseMessagingService.onMessageReceived()
+        GetDateTime();
 
         if (item.imagePath != null) {
 
@@ -160,5 +160,75 @@ public class PostContentAdapter extends ItemsAdapter<Post, PostContentAdapter.Vi
                 context.startActivity(intent);
             }
         });
+    }
+
+    private void GetDateTime() {
+
+        String input = item.getDate();
+        String Postdatetime = null;
+        String currentDateTime = null;
+
+        DateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        DateFormat outputFormat = new SimpleDateFormat("dd-MM-yyyy KK:mm a");
+        try {
+            System.out.println(outputFormat.format(inputFormat.parse(input)));
+            Postdatetime = outputFormat.format(inputFormat.parse(input));
+            vh.date.setText(outputFormat.format(inputFormat.parse(input)));
+
+            SimpleDateFormat sdf1 = new SimpleDateFormat("dd-MM-yyyy KK:mm a");
+            currentDateTime = sdf1.format(new Date());
+            System.out.print("Time.........." + currentDateTime + "....End");
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy KK:mm a");
+
+        Date d1 = null;
+        Date d2 = null;
+
+        try {
+            d1 = format.parse(Postdatetime);
+            d2 = format.parse(currentDateTime);
+
+            //in milliseconds
+            long diff = d2.getTime() - d1.getTime();
+
+            long diffSeconds = diff / 1000 % 60;
+            long diffMinutes = diff / (60 * 1000) % 60;
+            long diffHours = diff / (60 * 60 * 1000) % 24;
+            long diffDays = diff / (24 * 60 * 60 * 1000);
+
+            System.out.print(diffDays + " days, ");
+            System.out.print(diffHours + " hours, ");
+            System.out.print(diffMinutes + " minutes, ");
+            System.out.print(diffSeconds + " seconds.");
+
+            if(diffDays > 0)
+            {
+                vh.date.setText(Html.fromHtml(String.valueOf(diffDays + "d")));
+            }
+            else if(diffDays == 0)
+            {
+                vh.date.setText(Html.fromHtml(String.valueOf(diffHours + "h")));
+            }
+            else if(diffDays == 0 && diffHours == 0)
+            {
+                vh.date.setText(Html.fromHtml(String.valueOf(diffMinutes + "m")));
+            }
+            else if(diffDays == 0 && diffHours == 0 && diffMinutes == 0)
+            {
+                vh.date.setText(Html.fromHtml(String.valueOf(diffMinutes + "s")));
+            }
+            else
+            {
+                vh.date.setVisibility(View.GONE);
+            }
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 }

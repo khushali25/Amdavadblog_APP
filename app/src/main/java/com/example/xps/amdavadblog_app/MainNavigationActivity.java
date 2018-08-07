@@ -31,6 +31,9 @@ import com.facebook.appevents.AppEventsLogger;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.iid.FirebaseInstanceId;
@@ -54,6 +57,7 @@ public class MainNavigationActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     TextView txt,fbname,fbemail;
+    AdView adview;
     CircleImageView fbphoto;
     String appTitle;
     LoginButton fbloginbutton;
@@ -99,6 +103,7 @@ public class MainNavigationActivity extends AppCompatActivity
         fbemail = (TextView)headerView.findViewById(R.id.fbemail);
         fbphoto = (CircleImageView) headerView.findViewById(R.id.circleView);
         InitializeFirstScreenUI();
+
         FacebookSdk.sdkInitialize(getApplicationContext());
         AppEventsLogger.activateApp(this);
         PrefService ap = new PrefService(this);
@@ -260,14 +265,16 @@ public class MainNavigationActivity extends AppCompatActivity
     private void InitializeFirstScreenUI() {
         try
         {
-            //SupportActionBar.Title = appTitle = Categories[v].name;
-            //txt.Text = SupportActionBar.Title;
-
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+//             SupportActionBar.Title = appTitle = Categories[v].name;
+//             txt.Text = SupportActionBar.Title;
+            txt = findViewById(R.id.toolbartxt);
+            getSupportActionBar().setTitle("Home");
+            txt.setText("Home");
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getStatusBarHeight();
-            android.support.v4.app.FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            catInstance = new FoldableListFragment(100);
             ft.replace(R.id.content_frame, new FoldableListFragment(100), "Fragment1");
-            ft.addToBackStack("AddFragment1");
             ft.commit();
         }
         catch (Exception ex)
@@ -288,7 +295,6 @@ public class MainNavigationActivity extends AppCompatActivity
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         callbackManager.onActivityResult(requestCode, resultCode, data);
-
     }
 
     @Override
@@ -297,12 +303,14 @@ public class MainNavigationActivity extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         }
-        else if(catInstance.CategoryId ==100)
+        else if(catInstance.CategoryId == 100)
         {
             finish();
         }
         else {
             onNavigationItemSelected(navigationView.getMenu().getItem(0));
+            getSupportActionBar().setTitle("Home");
+            txt.setText("Home");
         }
 //         else {
 //            super.onBackPressed();
@@ -375,45 +383,54 @@ public class MainNavigationActivity extends AppCompatActivity
             catInstance = new FoldableListFragment(100);
             ft.replace(R.id.content_frame, new FoldableListFragment(100), "Fragment1");
             ft.commit();
-            this.appTitle = (String) this.getTitle();
-            txt.setText(appTitle);
+            getSupportActionBar().setTitle("Home");
+            txt.setText("Home");
+
         }
         else if (id == R.id.explore)
         {
             catInstance = new FoldableListFragment(35);
             ft.replace(R.id.content_frame, new FoldableListFragment(35), "Fragment1");
             ft.commit();
-            this.appTitle = (String) this.getTitle();
-            txt.setText(appTitle);
+            getSupportActionBar().setTitle("Explore Amdavad");
+            txt.setText("Explore Amdavad");
         }
         else if (id == R.id.flavor)
         {
             catInstance = new FoldableListFragment(36);
             ft.replace(R.id.content_frame, new FoldableListFragment(36), "Fragment1");
             ft.commit();
-            this.appTitle = (String) this.getTitle();
-            txt.setText(appTitle);
+            getSupportActionBar().setTitle("Flavors of Amdavad");
+            txt.setText("Flavors of Amdavad");
         }
         else if (id == R.id.news)
         {
             catInstance = new FoldableListFragment(5);
             ft.replace(R.id.content_frame, new FoldableListFragment(5), "Fragment1");
             ft.commit();
-            this.appTitle = (String) this.getTitle();
-            txt.setText(appTitle);
+            getSupportActionBar().setTitle("News");
+            txt.setText("News");
         }
         else if (id == R.id.thingstodo)
         {
             catInstance = new FoldableListFragment(37);
             ft.replace(R.id.content_frame, new FoldableListFragment(37), "Fragment1");
             ft.commit();
-            this.appTitle = (String) this.getTitle();
-            txt.setText(appTitle);
+            getSupportActionBar().setTitle("Things to Do");
+            txt.setText("Things to Do");
         }
         else if (id == R.id.nav_send) {
         }
+
+        Bundle param = new Bundle();
+        param.putString("name", String.valueOf(getSupportActionBar().getTitle()));
+      //  param.putString("id", v.ToString());
+        //EventServices.Instance.GenericEvent(EventType.CategorySelect, param);
+
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        //drawer.se(v, true);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
 }

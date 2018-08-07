@@ -124,7 +124,7 @@ public class SocialMethod {
         return Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
 
-    public static void alreadySubscribed(Context context) {
+    public static void alreadySubscribed(final Context context) {
 
         LayoutInflater layoutinflater = LayoutInflater.from(context);
         final AlertDialog alertDialog = new AlertDialog.Builder(context)

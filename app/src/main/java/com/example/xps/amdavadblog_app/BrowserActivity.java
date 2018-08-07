@@ -8,21 +8,15 @@ import android.graphics.Color;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.EventLog;
-import android.util.Log;
 import android.view.MenuItem;
-import android.view.View;
 import android.webkit.WebBackForwardList;
-import android.webkit.WebChromeClient;
-import android.webkit.WebResourceError;
-import android.webkit.WebResourceRequest;
-import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toolbar;
 
+import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
@@ -88,6 +82,19 @@ public class BrowserActivity extends AppCompatActivity {
         {
             //Log.ERROR("Couldnt initialize ads", ex.getMessage());
         }
+        adView.setAdListener(new AdListener() {
+            @Override
+            public void onAdLoaded() {
+                super.onAdLoaded();
+                adView.setTag(true); // Set tag true if adView is loaded
+            }
+
+            @Override
+            public void onAdFailedToLoad(int i) {
+                super.onAdFailedToLoad(i);
+                adView.setTag(false); // Set tag false if loading failed
+            }
+        });
     }
 
     private void initWebView()

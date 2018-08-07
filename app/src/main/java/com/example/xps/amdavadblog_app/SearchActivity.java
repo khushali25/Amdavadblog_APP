@@ -136,29 +136,26 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
                 Author Auth = null;
                 Category category = null;
                 if (response.isSuccessful()) {
-                    int postsize =response.body().size();
-                    if(postsize != 0) {
+                    int postsize = response.body().size();
+                    if (postsize != 0) {
                         for (final Post post : response.body()) {
-                            //category = wordPressService.getPostCategoryById(post.categories);
-                            // post.categoryname = category.getName();
+                            Integer catId = post.categories.get(0);
+                            category = wordPressService.getPostCategoryById(catId);
+                            post.categoryname = category.name;
                             foldableListLayout.setVisibility(View.VISIBLE);
                             Auth = wordPressService.getPostAuthorById(post.author);
                             post.authorname = Auth.name;
                             resp2 = wordPressService.getFeaturedImageById(post.featured_media);
-                            if(resp2 == null)
-                            {
+                            if (resp2 == null) {
                                 post.imagePath = String.valueOf(R.drawable.demo);
-                            }
-                            else
+                            } else
                                 post.imagePath = resp2.media_details.sizes.medium_large.source_url.toString();
                         }
-                        }
-                    }
-                    else
-                    {
+                    } else {
                         foldableListLayout.setVisibility(View.GONE);
                         txtnotfound.setVisibility(View.VISIBLE);
                     }
+                }
                 postContentAdapter.setData(response.body());
                 postContentAdapter.notifyDataSetChanged();
                     }
