@@ -11,42 +11,43 @@ import com.example.xps.amdavadblog_app.UnfoldableDetailsActivity;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
+import java.util.Map;
+
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
     String TAG = "MyFirebaseIDService";
+    String getVALUE;
 
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
 
-    //SendNotification(message.GetNotification().Body);
-
-    String id = "";
         if(remoteMessage.getData().size() > 0)
-
-    {
-        Log.d(TAG, "Message data payload: " + remoteMessage.getData());
-        id = remoteMessage.getMessageId();
-    }
-
-      String clickAction = remoteMessage.getNotification().getClickAction();
-
-        if(!(id==null) || id.trim().equals(""))
         {
-            SendNotification(remoteMessage.getNotification().getBody(),remoteMessage.getNotification().getTitle());
-        }
-        else
-        {
-            SendNotification(remoteMessage.getNotification().getBody(), id, clickAction);
+            Log.d(TAG, "Message data payload: " + remoteMessage.getData());
 
+        for (Map.Entry<String, String> entry : remoteMessage.getData().entrySet()) {
+            String getKEY = entry.getKey();
+            getVALUE = entry.getValue();
+            entry.getKey().equals("id");
+            Log.d(TAG, "key, " + getKEY + " value " + getVALUE);
         }
+        String postid = remoteMessage.getData().get("id");
+        String postimage = remoteMessage.getData().get("image");
+        String posttitle = remoteMessage.getData().get("title");
+
+      //String clickAction = remoteMessage.getNotification().getClickAction();
+            SendNotification(postid,postimage,posttitle);
+       }
   }
 
-    public void SendNotification(String body, String id, String clickAction)
+    public void SendNotification(String id, String img, String title)
     {
         //int questionId = Integer.parseInt(body.get("questionId").toString());
         int blogId = Integer.parseInt(id);
         Intent intent = new Intent(this, UnfoldableDetailsActivity.class);
         intent.putExtra("BlogId", blogId);
+        intent.putExtra("Title",title);
+        intent.putExtra("Image",img);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
 
@@ -54,33 +55,12 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
                 .setSmallIcon(R.drawable.icon256)
                 .setContentTitle("Test Notification")
-                .setContentText(body)
+                .setContentText(title)
                 .setAutoCancel(true)
-               // .SetSound(defaultSoundUri)
                 .setContentIntent(pendingIntent);
 
         NotificationManager notificationManager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
         notificationManager.notify(0, notificationBuilder.build());
     }
 
-    private void SendNotification(String body,String title)
-    {
-        Intent intent = new Intent(this, UnfoldableDetailsActivity.class);
-        intent.putExtra("Title", title);
-        intent.putExtra("Content",body);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
-
-       // SoundPool defaultSoundUri = RingtoneManager.getDefaultUri(SoundPool.Notification);
-        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
-                .setSmallIcon(R.drawable.icon256)
-                .setContentTitle(title)
-                .setContentText(body)
-                .setAutoCancel(true)
-               // .SetSound(defaultSoundUri)
-                .setContentIntent(pendingIntent);
-
-        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        notificationManager.notify(0, notificationBuilder.build());
-    }
 }

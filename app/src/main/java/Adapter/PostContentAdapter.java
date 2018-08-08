@@ -124,7 +124,7 @@ public class PostContentAdapter extends ItemsAdapter<Post, PostContentAdapter.Vi
         vh.Author.setText(Html.fromHtml(item.getAuthorname()));
         vh.Author.setTypeface(custom_font3);
         vh.Excerpts.setText(Html.fromHtml(item.excerpt.rendered));
-        vh.Excerpts.setTypeface(custom_font2);
+        vh.Excerpts.setTypeface(custom_font3);
         GetDateTime();
 
         if (item.imagePath != null) {
@@ -161,7 +161,6 @@ public class PostContentAdapter extends ItemsAdapter<Post, PostContentAdapter.Vi
             }
         });
     }
-
     private void GetDateTime() {
 
         String input = item.getDate();
@@ -190,10 +189,8 @@ public class PostContentAdapter extends ItemsAdapter<Post, PostContentAdapter.Vi
         try {
             d1 = format.parse(Postdatetime);
             d2 = format.parse(currentDateTime);
-
             //in milliseconds
             long diff = d2.getTime() - d1.getTime();
-
             long diffSeconds = diff / 1000 % 60;
             long diffMinutes = diff / (60 * 1000) % 60;
             long diffHours = diff / (60 * 60 * 1000) % 24;
@@ -224,8 +221,6 @@ public class PostContentAdapter extends ItemsAdapter<Post, PostContentAdapter.Vi
             {
                 vh.date.setVisibility(View.GONE);
             }
-
-
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -91,8 +91,7 @@ public class UnfoldableDetailsFragment extends Fragment {
         titleTextView = view.findViewById(R.id.posttitletext);
 //        Typeface tf = Typeface.createFromAsset(am, "fonts/Lora-Bold.ttf");
         //titleTextView.setTypeface(tf);
-        String title = this.getActivity().getIntent().getStringExtra("Title");
-        titleTextView.setText(title);
+
 
         imageView = view.findViewById(R.id.webviewloading);
         imageView.setVisibility(View.VISIBLE);
@@ -153,6 +152,7 @@ public class UnfoldableDetailsFragment extends Fragment {
 
         final int id1 = this.getActivity().getIntent().getIntExtra("BlogId", 0);
         String title = this.getActivity().getIntent().getStringExtra("Title");
+        titleTextView.setText(title);
         final String Content = this.getActivity().getIntent().getStringExtra("Content");
         String replacedtitle = title.replace(" ", "-");
         posturl = "http://amdavadblogs.apps-1and1.com/en/" + replacedtitle.toLowerCase();
