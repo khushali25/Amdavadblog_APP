@@ -28,6 +28,7 @@ import com.alexvasilkov.android.commons.ui.Views;
 import com.alexvasilkov.foldablelayout.UnfoldableView;
 import com.alexvasilkov.foldablelayout.shading.GlanceFoldShading;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
 import java.util.List;
 
@@ -41,7 +42,6 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-
 
 /**
  * A simple {@link Fragment} subclass.
@@ -95,6 +95,7 @@ public class UnfoldableDetailsFragment extends Fragment {
 
         imageView = view.findViewById(R.id.webviewloading);
         imageView.setVisibility(View.VISIBLE);
+
         // animation = (android.graphics.drawable.AnimationDrawable)imageView.getDrawable();
 //        animation.start();
         //CacheService.ClearAllCache();

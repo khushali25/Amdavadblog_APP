@@ -44,11 +44,16 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
 //import com.google.android.gms.common.internal.safeparcel.SafeParcelable;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
+
+import java.io.IOException;
 
 import Helper.PrefService;
 import Helper.SocialMethod;
@@ -57,6 +62,7 @@ import static android.view.View.VISIBLE;
 
 public class UnfoldableDetailsActivity extends AppCompatActivity {
 
+    private static final String TAG = "UnfoldabelActivity" ;
     private ImageView postfeaturedimage;
     TextView showResult;
 
@@ -103,7 +109,11 @@ public class UnfoldableDetailsActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         //getSupportActionBar().setHomeAsUpIndicator(R.drawable.back);
         postfeaturedimage = (ImageView)findViewById(R.id.imgpost);
-         
+        AppImageLoader =  ImageLoader.getInstance();
+        if (!AppImageLoader.isInited()) {
+            AppImageLoader.init(ImageLoaderConfiguration
+                    .createDefault(UnfoldableDetailsActivity.this));
+        }
         bgFabMenu = (View)findViewById(R.id.bgfabmenu);
         subscribetxt = findViewById(R.id.txtsubscribe);
         feedbacktxt = findViewById(R.id.txtfeedback);
@@ -253,55 +263,62 @@ public class UnfoldableDetailsActivity extends AppCompatActivity {
                 .setListener(new FabAnimatorListener(bgFabMenu, fabcontainer1, fabcontainer2, fabcontainer3, fabcontainer4, subscribetxt,feedbacktxt, rateapptxt, shareblogtxt));
     }
     private void GetBlogDetails() {
-        int id = this.getIntent().getIntExtra("BlogId", 0);
-        AppImageLoader = ImageLoader.getInstance();
-        DisplayImageOptions opts = new DisplayImageOptions.Builder().imageScaleType(ImageScaleType.NONE).build();
-        img1 = this.getIntent().getStringExtra("Image");
-        AppImageLoader.displayImage(img1, postfeaturedimage, opts);
 
-        Target target;
-        target = new Target() {
-            @Override
-            public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                Palette.from(bitmap).generate(new Palette.PaletteAsyncListener() {
-                    @Override
-                    public void onGenerated(@Nullable Palette palette) {
-                        Palette.Swatch lightVibrantSwatch = palette.getLightVibrantSwatch();
-                        if (lightVibrantSwatch == null) {
-                            Palette.Swatch mutedSwatch = palette.getLightMutedSwatch();
-                            getWindow().setStatusBarColor(mutedSwatch.getRgb());
-                            fabcontainer1.setBackgroundTintList(android.content.res.ColorStateList.valueOf(mutedSwatch.getRgb()));
-                            fabcontainer2.setBackgroundTintList(android.content.res.ColorStateList.valueOf(mutedSwatch.getRgb()));
-                            fabcontainer3.setBackgroundTintList(android.content.res.ColorStateList.valueOf(mutedSwatch.getRgb()));
-                            fabcontainer4.setBackgroundTintList(android.content.res.ColorStateList.valueOf(mutedSwatch.getRgb()));
-                            fabcontainer.setBackgroundTintList(android.content.res.ColorStateList.valueOf(mutedSwatch.getRgb()));
+            String refreshedToken = FirebaseInstanceId.getInstance().getToken();
+            Log.d(TAG, "Refreshed token: " + refreshedToken);
+            int id = this.getIntent().getIntExtra("BlogId", 0);
+            //if (!AppImageLoader.isInited()) {
+            AppImageLoader = ImageLoader.getInstance();
+            // }
+            DisplayImageOptions opts = new DisplayImageOptions.Builder().imageScaleType(ImageScaleType.NONE).build();
+            img1 = this.getIntent().getStringExtra("Image");
+            AppImageLoader.displayImage(img1, postfeaturedimage, opts);
+
+            Target target;
+            target = new Target() {
+                @Override
+                public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                    Palette.from(bitmap).generate(new Palette.PaletteAsyncListener() {
+                        @Override
+                        public void onGenerated(@Nullable Palette palette) {
+                            Palette.Swatch lightVibrantSwatch = palette.getLightVibrantSwatch();
+                            if (lightVibrantSwatch == null) {
+                                Palette.Swatch mutedSwatch = palette.getLightMutedSwatch();
+                                getWindow().setStatusBarColor(mutedSwatch.getRgb());
+                                fabcontainer1.setBackgroundTintList(android.content.res.ColorStateList.valueOf(mutedSwatch.getRgb()));
+                                fabcontainer2.setBackgroundTintList(android.content.res.ColorStateList.valueOf(mutedSwatch.getRgb()));
+                                fabcontainer3.setBackgroundTintList(android.content.res.ColorStateList.valueOf(mutedSwatch.getRgb()));
+                                fabcontainer4.setBackgroundTintList(android.content.res.ColorStateList.valueOf(mutedSwatch.getRgb()));
+                                fabcontainer.setBackgroundTintList(android.content.res.ColorStateList.valueOf(mutedSwatch.getRgb()));
+                            }
+                            //int lightVibrant = palette.getLightVibrantSwatch().getRgb();
+                            else {
+                                getWindow().setStatusBarColor(lightVibrantSwatch.getRgb());
+                                fabcontainer1.setBackgroundTintList(android.content.res.ColorStateList.valueOf(lightVibrantSwatch.getRgb()));
+                                fabcontainer2.setBackgroundTintList(android.content.res.ColorStateList.valueOf(lightVibrantSwatch.getRgb()));
+                                fabcontainer3.setBackgroundTintList(android.content.res.ColorStateList.valueOf(lightVibrantSwatch.getRgb()));
+                                fabcontainer4.setBackgroundTintList(android.content.res.ColorStateList.valueOf(lightVibrantSwatch.getRgb()));
+                                fabcontainer.setBackgroundTintList(android.content.res.ColorStateList.valueOf(lightVibrantSwatch.getRgb()));
+                            }
                         }
-                        //int lightVibrant = palette.getLightVibrantSwatch().getRgb();
-                        else {
-                            getWindow().setStatusBarColor(lightVibrantSwatch.getRgb());
-                            fabcontainer1.setBackgroundTintList(android.content.res.ColorStateList.valueOf(lightVibrantSwatch.getRgb()));
-                            fabcontainer2.setBackgroundTintList(android.content.res.ColorStateList.valueOf(lightVibrantSwatch.getRgb()));
-                            fabcontainer3.setBackgroundTintList(android.content.res.ColorStateList.valueOf(lightVibrantSwatch.getRgb()));
-                            fabcontainer4.setBackgroundTintList(android.content.res.ColorStateList.valueOf(lightVibrantSwatch.getRgb()));
-                            fabcontainer.setBackgroundTintList(android.content.res.ColorStateList.valueOf(lightVibrantSwatch.getRgb()));
-                        }
-                    }
-                });
-            }
-            @Override
-            public void onBitmapFailed(Exception e, Drawable errorDrawable) {
+                    });
+                }
 
-            }
-            @Override
-            public void onPrepareLoad(Drawable placeHolderDrawable) {
+                @Override
+                public void onBitmapFailed(Exception e, Drawable errorDrawable) {
 
-            }
-        };
-        Picasso.get()
-                .load(img1).into(target);
-        postfeaturedimage.setTag(target);
+                }
 
-    }
+                @Override
+                public void onPrepareLoad(Drawable placeHolderDrawable) {
+
+                }
+            };
+            Picasso.get()
+                    .load(img1).into(target);
+            postfeaturedimage.setTag(target);
+
+        }
             @Override
             protected void onPause() {
                 super.onPause();

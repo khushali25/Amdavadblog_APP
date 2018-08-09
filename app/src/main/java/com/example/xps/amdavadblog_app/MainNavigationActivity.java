@@ -1,10 +1,14 @@
 package com.example.xps.amdavadblog_app;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.os.SystemClock;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
@@ -55,6 +59,7 @@ import Helper.PrefService;
 import Helper.SocialMethod;
 import de.hdodenhof.circleimageview.CircleImageView;
 
+
 public class MainNavigationActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -87,6 +92,15 @@ public class MainNavigationActivity extends AppCompatActivity
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         mFirebaseAnalytics.setAnalyticsCollectionEnabled(true);
         mFirebaseAnalytics.setMinimumSessionDuration(20000);
+
+//        Intent alarm = new Intent(this, AlarmReceiver.class);
+//        boolean alarmRunning = (PendingIntent.getBroadcast(this, 0, alarm, PendingIntent.FLAG_NO_CREATE) != null);
+//        if(alarmRunning == false) {
+//            PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, alarm, 0);
+//            AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+//            alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime(), 1000, pendingIntent);
+//        }
+
         //Sets the user ID property.
         mFirebaseAnalytics.setUserId(String.valueOf(GetRandomIndex()));
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();

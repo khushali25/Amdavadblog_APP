@@ -28,7 +28,9 @@
         </activity>
         <activity
             android:name=".UnfoldableDetailsActivity"
-            android:parentActivityName=".MainNavigationActivity" />
+            android:parentActivityName=".MainNavigationActivity"
+
+            />
         <activity android:name=".BrowserActivity" />
         <activity android:name=".SearchActivity"
             android:launchMode="singleTop"
@@ -59,7 +61,8 @@
         <service
             android:name="services.MyFirebaseIDService"
             android:exported="true"
-            android:stopWithTask="false">
+
+            >
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
@@ -72,15 +75,7 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-        <receiver
-            android:name="com.google.firebase.iid.FirebaseInstanceIdReceiver"
-            android:exported="true"
-            android:permission="com.google.android.c2dm.permission.SEND">
-            <intent-filter>
-                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
-                <category android:name="package_name" />
-            </intent-filter>
-        </receiver>
+
         <!-- ./Firebase Notifications -->
     </application>
 

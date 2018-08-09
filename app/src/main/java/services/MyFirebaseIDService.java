@@ -4,6 +4,9 @@ import android.util.Log;
 
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.FirebaseInstanceIdService;
+import com.google.firebase.messaging.FirebaseMessaging;
+
+import java.io.IOException;
 
 public class MyFirebaseIDService extends FirebaseInstanceIdService {
 
@@ -11,7 +14,13 @@ public class MyFirebaseIDService extends FirebaseInstanceIdService {
 
     @Override
     public void onTokenRefresh() {
-        String refreshedToken = FirebaseInstanceId.getInstance().getToken();
+        String refreshedToken = null;
+        try {
+            refreshedToken = FirebaseInstanceId.getInstance().getToken("513854329238", FirebaseMessaging.INSTANCE_ID_SCOPE);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        ;
            Log.d(TAG, "Refreshed token: " + refreshedToken);
     }
 }

@@ -18,11 +18,13 @@ import com.alexvasilkov.android.commons.adapters.ItemsAdapter;
 import com.example.xps.amdavadblog_app.R;
 import com.example.xps.amdavadblog_app.UnfoldableDetailsActivity;
 import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
 import java.io.File;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -101,14 +103,15 @@ public class PostContentAdapter extends ItemsAdapter<Post, PostContentAdapter.Vi
         View view = LayoutInflater.from(parent.getContext()).
                 inflate(R.layout.post_listing, null, false);
         PostContentAdapter.ViewHolder vh = new PostContentAdapter.ViewHolder(view);
-        imgloader.init(ImageLoaderConfiguration
-                .createDefault(parent.getContext()));
+        if (!imgloader.isInited()) {
+            imgloader.init(ImageLoaderConfiguration
+                    .createDefault(parent.getContext()));
+        }
         return vh;
     }
     @Override
     protected void onBindHolder(PostContentAdapter.ViewHolder viewHolder, int position) {
-        String refreshedToken = FirebaseInstanceId.getInstance().getToken();
-        Log.d(TAG, "Refreshed token: " + refreshedToken);
+
         vh = viewHolder;
         AssetManager am = context.getApplicationContext().getAssets();
         Typeface custom_font = Typeface.createFromAsset(am, "font/Amaranth-Regular.ttf");
