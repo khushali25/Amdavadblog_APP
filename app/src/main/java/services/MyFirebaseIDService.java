@@ -1,5 +1,6 @@
 package services;
 
+import android.content.Intent;
 import android.util.Log;
 
 import com.google.firebase.iid.FirebaseInstanceId;
@@ -21,7 +22,12 @@ public class MyFirebaseIDService extends FirebaseInstanceIdService {
             e.printStackTrace();
         }
         ;
-           Log.d(TAG, "Refreshed token: " + refreshedToken);
+           Log.d(TAG, "Refreshed token Called: " + refreshedToken);
+        Intent intent = new Intent(MyFirebaseIDService.this, SaveFCMTokenService.class);
+        intent.putExtra("TOKEN",refreshedToken);
+        MyFirebaseIDService.this.startService(intent);
     }
+
+
 }
 

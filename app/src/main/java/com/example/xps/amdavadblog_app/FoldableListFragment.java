@@ -145,7 +145,7 @@ public class FoldableListFragment extends Fragment {
         final WordPressService wordPressService = retrofitallpost.create(WordPressService.class);
         Call<List<Post>> call;
         if (CategoryId == 100) {
-            call = wordPressService.getAllPostPerPage(page);
+            call = wordPressService.getAllPost();
         }
         else
         {
@@ -182,7 +182,8 @@ public class FoldableListFragment extends Fragment {
                     }
                 }
 
-                AllPost.addAll(currentPost); postContentAdapter.notify(AllPost);
+               // AllPost.addAll(currentPost);
+                postContentAdapter.notify(AllPost);
                 postContentAdapter = new PostContentAdapter(AllPost,activity);
                 foldableListLayout.setAdapter(postContentAdapter);
                 if (postContentAdapter != null)

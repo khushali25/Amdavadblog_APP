@@ -111,7 +111,11 @@ public class PostContentAdapter extends ItemsAdapter<Post, PostContentAdapter.Vi
     }
     @Override
     protected void onBindHolder(PostContentAdapter.ViewHolder viewHolder, int position) {
+       // String refreshedToken = null;
 
+            //refreshedToken = FirebaseInstanceId.getInstance().getToken();
+
+       // Log.d(TAG, "Refreshed token: " + refreshedToken);
         vh = viewHolder;
         AssetManager am = context.getApplicationContext().getAssets();
         Typeface custom_font = Typeface.createFromAsset(am, "font/Amaranth-Regular.ttf");

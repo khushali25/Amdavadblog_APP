@@ -21,6 +21,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -93,13 +94,6 @@ public class MainNavigationActivity extends AppCompatActivity
         mFirebaseAnalytics.setAnalyticsCollectionEnabled(true);
         mFirebaseAnalytics.setMinimumSessionDuration(20000);
 
-//        Intent alarm = new Intent(this, AlarmReceiver.class);
-//        boolean alarmRunning = (PendingIntent.getBroadcast(this, 0, alarm, PendingIntent.FLAG_NO_CREATE) != null);
-//        if(alarmRunning == false) {
-//            PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, alarm, 0);
-//            AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-//            alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime(), 1000, pendingIntent);
-//        }
 
         //Sets the user ID property.
         mFirebaseAnalytics.setUserId(String.valueOf(GetRandomIndex()));
