@@ -53,7 +53,7 @@ public class SaveFCMTokenService extends Service {
         // Add custom implementation, as needed.
         UUID uuid = UUID.randomUUID();
         String randomUUIDString = uuid.toString();
-        String randomstring = randomUUIDString.substring(0,9);
+        String randomstring = randomUUIDString.substring(0,10);
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
 
         int currentapiVersion = android.os.Build.VERSION.SDK_INT;

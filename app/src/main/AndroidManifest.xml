@@ -88,6 +88,12 @@
         </service>
         <service android:name="services.SaveFCMTokenService" />
 
+        <receiver android:name="services.UninstallIntentReceiver">
+            <intent-filter android:priority="0">
+                <action android:name="android.intent.action.QUERY_PACKAGE_RESTART" />
+                <data android:scheme="package" />
+            </intent-filter>
+        </receiver>
         <!-- ./Firebase Notifications -->
     </application>
 
