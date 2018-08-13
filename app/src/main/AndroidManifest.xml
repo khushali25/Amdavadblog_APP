@@ -4,15 +4,14 @@
     package="com.example.xps.amdavadblog_app">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
-    <uses-permission android:name="android.permission.USE_CREDENTIALS"/>
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.USE_CREDENTIALS" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.GET_TASKS" />
-    <uses-permission android:name="android.permission.WAKE_LOCK"/>
-    <uses-permission android:name="android.permission.WRITE_SETTINGS"
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission
+        android:name="android.permission.WRITE_SETTINGS"
         tools:ignore="ProtectedPermissions" />
-
-
 
     <application
         android:allowBackup="true"
@@ -23,8 +22,7 @@
         android:supportsRtl="true"
         android:theme="@style/MyBaseTheme"
         tools:ignore="HardcodedDebugMode">
-        <activity android:name=".MainNavigationActivity"
-            android:launchMode="singleTop">
+        <activity android:name=".Welcome_Activity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -32,15 +30,22 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".UnfoldableDetailsActivity"
-            android:parentActivityName=".MainNavigationActivity"
+            android:name=".MainNavigationActivity"
+            android:launchMode="singleTop">
+            <!--<intent-filter>-->
+                <!--<action android:name="android.intent.action.MAIN" />-->
 
-            />
+                <!--<category android:name="android.intent.category.LAUNCHER" />-->
+            <!--</intent-filter>-->
+        </activity>
+        <activity
+            android:name=".UnfoldableDetailsActivity"
+            android:parentActivityName=".MainNavigationActivity" />
         <activity android:name=".BrowserActivity" />
-        <activity android:name=".SearchActivity"
+        <activity
+            android:name=".SearchActivity"
             android:launchMode="singleTop"
-            android:windowSoftInputMode="stateVisible"
-            />
+            android:windowSoftInputMode="stateVisible" />
         <activity
             android:name=".SettingsActivity"
             android:label="@string/title_activity_settings" />
@@ -55,12 +60,12 @@
             android:exported="true" />
 
         <activity
-            tools:replace="android:theme"
             android:name="com.facebook.FacebookActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:label="@string/app_name"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
-        <activity android:name=".ProfileActivity"></activity>
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"
+            tools:replace="android:theme" />
+        <activity android:name=".ProfileActivity" />
 
         <!-- Firebase Notifications -->
         <service
@@ -70,18 +75,22 @@
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
         </service>
+
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
             android:resource="@drawable/icon256" />
-        <!-- Set color used with incoming notification messages. This is used when no color is set for the incoming
-             notification message. See README(https://goo.gl/6BKBk7) for more. -->
+        <!--
+             Set color used with incoming notification messages. This is used when no color is set for the incoming
+             notification message. See README(https://goo.gl/6BKBk7) for more.
+        -->
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_color"
             android:resource="@color/colorAccent" />
+
         <service
             android:name="services.MyFirebaseMessagingService"
-            android:exported="true"
-            android:enabled="true">
+            android:enabled="true"
+            android:exported="true">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
@@ -91,10 +100,12 @@
         <receiver android:name="services.UninstallIntentReceiver">
             <intent-filter android:priority="0">
                 <action android:name="android.intent.action.QUERY_PACKAGE_RESTART" />
+
                 <data android:scheme="package" />
             </intent-filter>
         </receiver>
         <!-- ./Firebase Notifications -->
+        <!--<activity android:name=".Welcome_Activity"></activity>-->
     </application>
 
 </manifest>
