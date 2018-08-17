@@ -7,6 +7,7 @@ import android.annotation.TargetApi;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.AssetManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -22,7 +23,8 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.FloatingActionButton;
+import com.github.clans.fab.FloatingActionButton;
+import com.github.clans.fab.FloatingActionMenu;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.graphics.Palette;
@@ -39,6 +41,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.github.clans.fab.FloatingActionMenu;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
@@ -83,16 +86,8 @@ public class UnfoldableDetailsActivity extends AppCompatActivity {
     }
 
     public ImageLoader AppImageLoader;
-    FloatingActionButton fabcontainer;
-    FloatingActionButton fabcontainer1;
-    FloatingActionButton fabcontainer2;
-    FloatingActionButton fabcontainer3;
-    FloatingActionButton fabcontainer4;
-
-    TextView subscribetxt;
-    TextView feedbacktxt;
-    TextView rateapptxt;
-    TextView shareblogtxt;
+    FloatingActionButton floatingActionButton,floatingActionButton1,floatingActionButton2,floatingActionButton3,floatingActionButton4;
+    FloatingActionMenu materialDesignFAM;
     String img1;
     private Target loadtarget;
     @Override
@@ -104,10 +99,10 @@ public class UnfoldableDetailsActivity extends AppCompatActivity {
 //        param.PutString("name", Title);
 //        EventServices.Instance.GenericEvent(EventType.PostDetailActivityStart, param);
 
-       Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_itemdetail);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_itemdetail);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        //getSupportActionBar().setHomeAsUpIndicator(R.drawable.back);
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_arrow_back_black_24dp);
         postfeaturedimage = (ImageView)findViewById(R.id.imgpost);
         AppImageLoader =  ImageLoader.getInstance();
         if (!AppImageLoader.isInited()) {
@@ -122,31 +117,15 @@ public class UnfoldableDetailsActivity extends AppCompatActivity {
                         + WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
         );
 
-
-        bgFabMenu = (View)findViewById(R.id.bgfabmenu);
-        subscribetxt = findViewById(R.id.txtsubscribe);
-        feedbacktxt = findViewById(R.id.txtfeedback);
-        rateapptxt = findViewById(R.id.txtrateapp);
-        shareblogtxt = findViewById(R.id.txtxshareblog);
-        fabcontainer = findViewById(R.id.floatingbtn);
-        fabcontainer1 = findViewById(R.id.fabbtn1);
-        fabcontainer2 = findViewById(R.id.fabbtn2);
-        fabcontainer3 = findViewById(R.id.fabbtn3);
-        fabcontainer4 = findViewById(R.id.fabbtn4);
-        fabcontainer.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (!isFabOpen)
-                    ShowFabMenu();
-
-                else
-                    CloseFabMenu();
-            }
-        });
-        fabcontainer1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                CloseFabMenu();
+        materialDesignFAM = (FloatingActionMenu) findViewById(R.id.material_design_android_floating_action_menu);
+        floatingActionButton1 = (FloatingActionButton) findViewById(R.id.material_design_floating_action_menu_item1);
+        floatingActionButton2 = (FloatingActionButton) findViewById(R.id.material_design_floating_action_menu_item2);
+        floatingActionButton3 = (FloatingActionButton) findViewById(R.id.material_design_floating_action_menu_item3);
+        floatingActionButton4 = (FloatingActionButton) findViewById(R.id.material_design_floating_action_menu_item4);
+        materialDesignFAM.setClosedOnTouchOutside(true);
+        floatingActionButton1.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                //TODO something when floating action menu first item clicked
                 PrefService ap = new PrefService(getApplication());
                 String subscribed = ap.getAccessKey("subscribe");
                 if (subscribed == "")
@@ -155,31 +134,32 @@ public class UnfoldableDetailsActivity extends AppCompatActivity {
                 }
                 else
                 {
-                   SocialMethod.alreadySubscribed(UnfoldableDetailsActivity.this);
+                    SocialMethod.alreadySubscribed(UnfoldableDetailsActivity.this);
                 }
             }
         });
-        fabcontainer2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                CloseFabMenu();
+        floatingActionButton2.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                //TODO something when floating action menu second item clicked
                 SocialMethod.showFeedback(UnfoldableDetailsActivity.this);
+
             }
         });
-        fabcontainer3.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                CloseFabMenu();
+        floatingActionButton3.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                //TODO something when floating action menu third item clicked
                 SocialMethod.showRateApp(UnfoldableDetailsActivity.this);
+
             }
         });
-        fabcontainer4.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                CloseFabMenu();
+        floatingActionButton4.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                //TODO something when floating action menu third item clicked
+                SocialMethod.showRateApp(UnfoldableDetailsActivity.this);
                 shareBlog();
             }
         });
+
         ctl = findViewById(R.id.collapsetoolbar);
         final String title = this.getIntent().getStringExtra("Title");
         ctl.setTitle(" ");
@@ -216,61 +196,7 @@ public class UnfoldableDetailsActivity extends AppCompatActivity {
             GetFragment();
             //EventServices.Instance.GenericEvent(EventType.PostDetailActivityComplete, param);
     }
-    @SuppressLint("RestrictedApi")
-    private void ShowFabMenu()
-    {
-        isFabOpen = true;
-        fabcontainer1.setVisibility(VISIBLE);
-        fabcontainer2.setVisibility(VISIBLE);
-        fabcontainer3.setVisibility(VISIBLE);
-        fabcontainer4.setVisibility(VISIBLE);
 
-        subscribetxt.setVisibility(VISIBLE);
-        feedbacktxt.setVisibility(VISIBLE);
-        rateapptxt.setVisibility(VISIBLE);
-        shareblogtxt.setVisibility(VISIBLE);
-        bgFabMenu.setVisibility(VISIBLE);
-
-        fabcontainer.animate().rotation(135f);
-        bgFabMenu.animate().alpha(0.5f);
-
-        fabcontainer1.animate()
-                .translationY(-getResources().getDimension(R.dimen.standard_190))
-                .rotation(0f);
-        fabcontainer2.animate()
-                .translationY(-getResources().getDimension(R.dimen.standard_145))
-                .rotation(0f);
-        fabcontainer3.animate()
-                .translationY(-getResources().getDimension(R.dimen.standard_100))
-                .rotation(0f);
-        fabcontainer4.animate()
-                .translationY(-getResources().getDimension(R.dimen.standard_55))
-                .rotation(0f);
-    }
-
-    private void CloseFabMenu()
-    {
-        isFabOpen = false;
-        fabcontainer.animate().rotation(0f);
-        bgFabMenu.animate().alpha(0f);
-        subscribetxt.setVisibility(View.GONE);
-        feedbacktxt.setVisibility(View.GONE);
-        rateapptxt.setVisibility(View.GONE);
-        shareblogtxt.setVisibility(View.GONE);
-
-        fabcontainer1.animate().translationY(0f)
-                .rotation(90f);
-        fabcontainer2.animate()
-                .translationY(0f)
-                .rotation(90f);
-        fabcontainer3.animate()
-                .translationY(0f)
-                .rotation(90f);
-        fabcontainer4.animate()
-                .translationY(0f)
-                .rotation(90f)
-                .setListener(new FabAnimatorListener(bgFabMenu, fabcontainer1, fabcontainer2, fabcontainer3, fabcontainer4, subscribetxt,feedbacktxt, rateapptxt, shareblogtxt));
-    }
     private void GetBlogDetails() {
 
             String refreshedToken = FirebaseInstanceId.getInstance().getToken();
@@ -283,51 +209,51 @@ public class UnfoldableDetailsActivity extends AppCompatActivity {
             img1 = this.getIntent().getStringExtra("Image");
             AppImageLoader.displayImage(img1, postfeaturedimage, opts);
 
-            Target target;
-            target = new Target() {
-                @Override
-                public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                    Palette.from(bitmap).generate(new Palette.PaletteAsyncListener() {
-                        @Override
-                        public void onGenerated(@Nullable Palette palette) {
-                            Palette.Swatch lightVibrantSwatch = palette.getLightVibrantSwatch();
-                            if (lightVibrantSwatch == null) {
-                                Palette.Swatch mutedSwatch = palette.getLightMutedSwatch();
-                                getWindow().setStatusBarColor(mutedSwatch.getRgb());
-                                fabcontainer1.setBackgroundTintList(android.content.res.ColorStateList.valueOf(mutedSwatch.getRgb()));
-                                fabcontainer2.setBackgroundTintList(android.content.res.ColorStateList.valueOf(mutedSwatch.getRgb()));
-                                fabcontainer3.setBackgroundTintList(android.content.res.ColorStateList.valueOf(mutedSwatch.getRgb()));
-                                fabcontainer4.setBackgroundTintList(android.content.res.ColorStateList.valueOf(mutedSwatch.getRgb()));
-                                fabcontainer.setBackgroundTintList(android.content.res.ColorStateList.valueOf(mutedSwatch.getRgb()));
-                            }
-                            //int lightVibrant = palette.getLightVibrantSwatch().getRgb();
-                            else {
-                                getWindow().setStatusBarColor(lightVibrantSwatch.getRgb());
-                                fabcontainer1.setBackgroundTintList(android.content.res.ColorStateList.valueOf(lightVibrantSwatch.getRgb()));
-                                fabcontainer2.setBackgroundTintList(android.content.res.ColorStateList.valueOf(lightVibrantSwatch.getRgb()));
-                                fabcontainer3.setBackgroundTintList(android.content.res.ColorStateList.valueOf(lightVibrantSwatch.getRgb()));
-                                fabcontainer4.setBackgroundTintList(android.content.res.ColorStateList.valueOf(lightVibrantSwatch.getRgb()));
-                                fabcontainer.setBackgroundTintList(android.content.res.ColorStateList.valueOf(lightVibrantSwatch.getRgb()));
-                            }
-                        }
-                    });
-                }
-
-                @Override
-                public void onBitmapFailed(Exception e, Drawable errorDrawable) {
-
-                }
-
-                @Override
-                public void onPrepareLoad(Drawable placeHolderDrawable) {
-
-                }
-            };
-            Picasso.get()
-                    .load(img1).into(target);
-            postfeaturedimage.setTag(target);
-
-        }
+//            Target target;
+//            target = new Target() {
+//                @Override
+//                public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+//                    Palette.from(bitmap).generate(new Palette.PaletteAsyncListener() {
+//                        @Override
+//                        public void onGenerated(@Nullable Palette palette) {
+//                            Palette.Swatch lightVibrantSwatch = palette.getLightVibrantSwatch();
+//                            if (lightVibrantSwatch == null) {
+//                                Palette.Swatch mutedSwatch = palette.getLightMutedSwatch();
+//                                getWindow().setStatusBarColor(mutedSwatch.getRgb());
+//                                floatingActionButton1.setColorNormal(mutedSwatch.getRgb());
+//                                floatingActionButton2.setColorNormal(mutedSwatch.getRgb());
+//                                floatingActionButton3.setColorNormal(mutedSwatch.getRgb());
+//                                floatingActionButton4.setColorNormal(mutedSwatch.getRgb());
+//                                //materialDesignFAM.setBackgroundColor(mutedSwatch.getRgb());
+//                            }
+//                            //int lightVibrant = palette.getLightVibrantSwatch().getRgb();
+//                            else {
+//                                getWindow().setStatusBarColor(lightVibrantSwatch.getRgb());
+//                                floatingActionButton1.setColorNormal(lightVibrantSwatch.getRgb());
+//                                floatingActionButton2.setColorNormal(lightVibrantSwatch.getRgb());
+//                                floatingActionButton3.setColorNormal(lightVibrantSwatch.getRgb());
+//                                floatingActionButton4.setColorNormal(lightVibrantSwatch.getRgb());
+//                                //materialDesignFAM.setBackgroundColor(lightVibrantSwatch.getRgb());
+//                            }
+//                        }
+//                    });
+//                }
+//
+//                @Override
+//                public void onBitmapFailed(Exception e, Drawable errorDrawable) {
+//
+//                }
+//
+//                @Override
+//                public void onPrepareLoad(Drawable placeHolderDrawable) {
+//
+//                }
+//            };
+//            Picasso.get()
+//                    .load(img1).into(target);
+//            postfeaturedimage.setTag(target);
+//
+       }
             @Override
             protected void onPause() {
                 super.onPause();
@@ -358,9 +284,6 @@ public class UnfoldableDetailsActivity extends AppCompatActivity {
                 android.support.v4.app.FragmentManager fm = getSupportFragmentManager();
                 android.support.v4.app.FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
                 switch (item.getItemId()) {
-                    // case R.id.shareApp:
-                    //  SocialMethod.shareIt(this);
-                    //  return true;
 
                     case android.R.id.home:
                           android.support.v4.app.NavUtils.navigateUpFromSameTask(this);
@@ -378,12 +301,13 @@ public class UnfoldableDetailsActivity extends AppCompatActivity {
 
             public void shareBlog() {
                 int id = this.getIntent().getIntExtra("BlogId", 0);
+
                 String title = this.getIntent().getStringExtra("Title");
                 String replacedtitle = title.replace(" ", "-");
                 String finaltitle = replacedtitle.toLowerCase();
                 Intent sendIntent = new Intent();
                 sendIntent.setAction(Intent.ACTION_SEND);
-                sendIntent.putExtra(Intent.EXTRA_COMPONENT_NAME, "http://amdavadblogs.apps-1and1.com/en/" + finaltitle);
+                sendIntent.putExtra(Intent.EXTRA_COMPONENT_NAME, "http://amdavadblog.com" + finaltitle);
                 sendIntent.setType("text/plain");
                 startActivity(Intent.createChooser(sendIntent, "Share Blog via"));
             }

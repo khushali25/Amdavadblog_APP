@@ -10,12 +10,12 @@
         android:layout_height="match_parent"
         android:fitsSystemWindows="true">
         <android.support.design.widget.AppBarLayout
-            android:layout_height="45dp"
+            android:layout_height="56dp"
             android:textAlignment="center"
             android:layout_width="match_parent"
             android:weightSum="3">
             <android.support.v7.widget.Toolbar
-                android:layout_height="55dp"
+                android:layout_height="56dp"
                 android:layout_width="match_parent"
                 android:id="@+id/toolbarbrowser"
                 android:background="@drawable/gradient_colors">
@@ -23,9 +23,9 @@
                     android:layout_height="30dp"
                     android:layout_width="match_parent"
                     android:layout_marginRight="15dp"
-                    android:gravity="center"
-                    android:paddingTop="4dp"
-                    android:layout_margin="10dp"
+                    android:gravity="center_vertical"
+                    android:paddingTop="5dp"
+                    android:paddingLeft="8dp"
                     android:textIsSelectable="true"
                     android:focusable="true"
                     android:longClickable="true"
@@ -50,7 +50,6 @@
                 android:layout_marginRight="10dp" />
             <ImageView
                 android:id="@+id/browserloading"
-
                 android:layout_width="match_parent"
                 android:layout_gravity="center_horizontal"
                 android:layout_height="100dp" />

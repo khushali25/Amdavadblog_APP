@@ -30,9 +30,46 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
+                android:id="@+id/viewline"
                 android:layout_below="@id/posttitletext"
                 android:layout_marginTop="11dp"
                 android:background="#b3b9bf" />
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:id="@+id/linearlayout">
+
+            <TextView
+                android:id="@+id/postauthor"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/viewline"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="15dp"
+                android:drawableLeft="@drawable/ic_access_time_black_24dp"
+                android:text="textview"
+                android:textColor="#b3b9bf"
+                android:textSize="14dp"
+                android:textStyle="normal"
+                app:layout_scrollFlags="scroll|enterAlwaysCollapsed" />
+
+            <TextView
+                android:layout_height="wrap_content"
+                android:textSize="14dp"
+                android:textColor="#b3b9bf"
+                android:layout_width="wrap_content"
+                android:id="@+id/postdate"
+                android:drawableLeft="@drawable/ic_access_time_black_24dp"
+                android:text="textview"
+                android:layout_below="@+id/viewline"
+                android:textStyle="normal"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="15dp"
+                app:layout_scrollFlags="scroll|enterAlwaysCollapsed" />
+        </LinearLayout>
             <ImageView
                 android:id="@+id/webviewloading"
                 android:layout_width="match_parent"
@@ -43,11 +80,11 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/webView1"
-                android:layout_marginTop="30dp"
+                android:layout_marginTop="5dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
                 android:layout_marginBottom="50dp"
-                android:layout_below="@id/posttitletext" />
+                android:layout_below="@id/linearlayout" />
         </LinearLayout>
     </ScrollView>
 </RelativeLayout>

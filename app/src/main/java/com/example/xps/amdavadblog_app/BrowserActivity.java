@@ -36,7 +36,7 @@ public class BrowserActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-       // getSupportActionBar().setHomeAsUpIndicator(R.drawable.close);
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.backbtn);
 
         url = getIntent().getStringExtra("url");
         //SupportActionBar.Title = url;
@@ -104,18 +104,29 @@ public class BrowserActivity extends AppCompatActivity {
         webView.clearCache(true);
         webView.clearHistory();
         webView.getSettings().setJavaScriptEnabled(true);
+        webView.setHorizontalScrollBarEnabled(false);
+        webView.getSettings().setLoadWithOverviewMode(true);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.homeAsUp)
-        {
-            finish();
-        }
+        Bundle param = new Bundle();
+        param.putString("name", String.valueOf(item.getItemId()));
+        //EventServices.Instance.GenericEvent(EventType.MenuItemSelect, param);
 
+        android.support.v4.app.FragmentManager fm = getSupportFragmentManager();
+        android.support.v4.app.FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        switch (item.getItemId()) {
+            // case R.id.shareApp:
+            //  SocialMethod.shareIt(this);
+            //  return true;
+
+            case android.R.id.home:
+                finish();
+                return true;
+        }
         return super.onOptionsItemSelected(item);
     }
-
     @Override
     public void onBackPressed() {
         if (webView.canGoBack())
@@ -146,8 +157,6 @@ public class BrowserActivity extends AppCompatActivity {
             // Nothing to report yet.
             somethingHappened = false;
         }
-
-
         public MyWebChromeClient(BrowserActivity browserActivity) {
             super();
             this.context = browserActivity;

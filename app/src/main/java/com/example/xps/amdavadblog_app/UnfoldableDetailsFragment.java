@@ -49,30 +49,14 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class UnfoldableDetailsFragment extends Fragment {
     public static String posturl;
 
-    public String getDetail() {
-        return detail;
-    }
-
-    public void setDetail(String detail) {
-        this.detail = detail;
-    }
-
     public String detail;
     ImageView imageView;
     private WebView webviewLayout;
-    TextView titleTextView;
+    TextView titleTextView,authortextview,datetextview;
     Retrofit retrofitallpost;
     private int fontSize;
     static Toast toast;
     android.graphics.drawable.AnimationDrawable animation;
-
-    public ImageLoader getAppImageLoader() {
-        return AppImageLoader;
-    }
-
-    public void setAppImageLoader(ImageLoader appImageLoader) {
-        AppImageLoader = appImageLoader;
-    }
 
     public ImageLoader AppImageLoader;
 
@@ -89,10 +73,8 @@ public class UnfoldableDetailsFragment extends Fragment {
         AssetManager am = getActivity().getApplicationContext().getAssets();
         webviewLayout = view.findViewById(R.id.webView1);
         titleTextView = view.findViewById(R.id.posttitletext);
-//        Typeface tf = Typeface.createFromAsset(am, "fonts/Lora-Bold.ttf");
-        //titleTextView.setTypeface(tf);
-
-
+        authortextview = view.findViewById(R.id.postauthor);
+        datetextview = view.findViewById(R.id.postdate);
         imageView = view.findViewById(R.id.webviewloading);
         imageView.setVisibility(View.VISIBLE);
 
@@ -150,10 +132,19 @@ public class UnfoldableDetailsFragment extends Fragment {
     }
 
     private void WebViewInitialize() {
+        AssetManager am = getContext().getAssets();
+        Typeface custom_font = Typeface.createFromAsset(am, "font/Amaranth-Regular.ttf");
 
         final int id1 = this.getActivity().getIntent().getIntExtra("BlogId", 0);
         String title = this.getActivity().getIntent().getStringExtra("Title");
+        String author = this.getActivity().getIntent().getStringExtra("Author");
+        String date = this.getActivity().getIntent().getStringExtra("Date");
+
         titleTextView.setText(title);
+        authortextview.setText(author);
+        datetextview.setText(date);
+
+        titleTextView.setTypeface(custom_font);
         final String Content = this.getActivity().getIntent().getStringExtra("Content");
         String replacedtitle = title.replace(" ", "-");
         posturl = "http://amdavadblogs.apps-1and1.com/en/" + replacedtitle.toLowerCase();

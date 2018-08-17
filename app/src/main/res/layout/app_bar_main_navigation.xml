@@ -6,12 +6,12 @@
     android:layout_height="match_parent"
     xmlns:local="http://schemas.android.com/apk/res-auto">
         <android.support.design.widget.AppBarLayout
-        android:layout_height="50dp"
+        android:layout_height="56dp"
         android:textAlignment="center"
         android:layout_width="match_parent"
         android:weightSum="3">
         <android.support.v7.widget.Toolbar
-        android:layout_height="50dp"
+        android:layout_height="56dp"
         android:layout_width="match_parent"
         android:id="@+id/newtoolbar"
         android:background="#ffffff">

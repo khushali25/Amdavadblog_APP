@@ -153,6 +153,8 @@ public class PostContentAdapter extends ItemsAdapter<Post, PostContentAdapter.Vi
                     .build();
             imgloader.displayImage(imageUri, vh.Art, options);
         }
+
+        final String dateTime = vh.date.getText().toString();
         //vh.Art.setTag(R.id.postimage, item);
         vh.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -161,7 +163,8 @@ public class PostContentAdapter extends ItemsAdapter<Post, PostContentAdapter.Vi
                 intent = new Intent(context, UnfoldableDetailsActivity.class);
                 intent.putExtra("BlogId", item.id);
                 intent.putExtra("Title", item.title.rendered);
-                intent.putExtra("Author", item.author);
+                intent.putExtra("Author", item.authorname);
+                intent.putExtra("Date", dateTime);
                 intent.putExtra("Excepts", item.excerpt.rendered);
                 intent.putExtra("Image", item.imagePath);
                 context.startActivity(intent);

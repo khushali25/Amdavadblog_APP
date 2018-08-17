@@ -35,6 +35,7 @@ import com.facebook.FacebookSdk;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.appevents.AppEventsLogger;
+import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 
@@ -54,11 +55,14 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.Random;
 
 import Helper.PrefService;
 import Helper.SocialMethod;
 import de.hdodenhof.circleimageview.CircleImageView;
+
+import static android.provider.ContactsContract.Intents.Insert.EMAIL;
 
 
 public class MainNavigationActivity extends AppCompatActivity
@@ -113,11 +117,13 @@ public class MainNavigationActivity extends AppCompatActivity
         fbemail = (TextView)headerView.findViewById(R.id.fbemail);
         fbphoto = (CircleImageView) headerView.findViewById(R.id.circleView);
         fbbtn = (Button)headerView.findViewById(R.id.fblogin);
+        fbloginbutton = (LoginButton)headerView.findViewById(R.id.login_button);
 
         InitializeFirstScreenUI();
 
         FacebookSdk.sdkInitialize(getApplicationContext());
         AppEventsLogger.activateApp(this);
+
         PrefService ap = new PrefService(this);
         String name = ap.getAccessKey("Username");
         String emailid = ap.getAccessKey("Password");
@@ -129,6 +135,8 @@ public class MainNavigationActivity extends AppCompatActivity
             fbname.setVisibility(View.GONE);
             fbemail.setVisibility(View.GONE);
             fbphoto.setVisibility(View.GONE);
+            fbloginbutton.setVisibility(View.VISIBLE);
+            fbbtn.setVisibility(View.VISIBLE);
         //Log.d(TAG, ">>>" + "Signed Out");
         } else {
             fbname.setVisibility(View.VISIBLE);
@@ -139,7 +147,7 @@ public class MainNavigationActivity extends AppCompatActivity
             getBitmapFromURL(photo);
             fbphoto.setImageURI(null);
             fbphoto.setImageBitmap(img);
-            fbbtn.setText(tetxtofloginbtn);
+            //fbbtn.setText(tetxtofloginbtn);
         }
         initfacebooklogin();
     }
@@ -160,9 +168,6 @@ public class MainNavigationActivity extends AppCompatActivity
               } catch (IOException e) {
                   e.printStackTrace();
               }
-              //                  Log.d("TAG", "{0} {1}",
-//                          instanceId.getToken(getString(R.string.default_notification_channel_id),
-//                                  FirebaseMessaging.INSTANCE_ID_SCOPE));
           }
       };
 
@@ -179,7 +184,8 @@ public class MainNavigationActivity extends AppCompatActivity
         callbackManager = CallbackManager.Factory.create();
 
         fbloginbutton = (LoginButton)headerView.findViewById(R.id.login_button);
-        fbloginbutton.setReadPermissions("email","user_birthday","user_posts");
+        fbloginbutton.setReadPermissions(Arrays.asList(EMAIL));
+        LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile"));
         fbbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -202,10 +208,10 @@ public class MainNavigationActivity extends AppCompatActivity
                             userId = object.getString("id");
                             profilePicture = new URL("https://graph.facebook.com/" + userId + "/picture?width=500&height=500");
                             String imgfb = profilePicture.toString();
-
-                               fbname.setVisibility(View.VISIBLE);
-                               fbemail.setVisibility(View.VISIBLE);
-                               fbphoto.setVisibility(View.VISIBLE);
+//
+//                               fbname.setVisibility(View.VISIBLE);
+//                               fbemail.setVisibility(View.VISIBLE);
+//                               fbphoto.setVisibility(View.VISIBLE);
 
                             firstName = object.getString("first_name");
                             lastName = object.getString( "last_name");
@@ -235,12 +241,6 @@ public class MainNavigationActivity extends AppCompatActivity
 //                            lp.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
 //                            fbbtn.setLayoutParams(lp);
 
-                            PrefService ap = new PrefService(getApplicationContext());
-                            ap.saveAccessKey("Username",nametostore);
-                            ap.saveAccessKey("Password",emailtostore);
-                            ap.saveAccessKey("loginkey",imgfb);
-                            ap.saveAccessKey("textofbtn","Logout");
-
                             //fblogoutbtn.setVisibility(View.VISIBLE);
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -264,19 +264,19 @@ public class MainNavigationActivity extends AppCompatActivity
                 Log.v("LoginActivity", error.getCause().toString());
             }
         });
-//        AccessTokenTracker tracker1 = new AccessTokenTracker() {
-//            @Override
-//            protected void onCurrentAccessTokenChanged(AccessToken oldAccessToken, AccessToken currentAccessToken) {
-//                if (currentAccessToken == null) {
-//                    Log.d("FB", "User Logged Out.");
-//                    fbname.setVisibility(View.GONE);
-//                    fbemail.setVisibility(View.GONE);
-//                    fbphoto.setVisibility(View.GONE);
-//                    fbbtn.setText("Login with facebook");
-//                }
-//            }
-//        };
-//        tracker1.startTracking();
+        AccessTokenTracker tracker1 = new AccessTokenTracker() {
+            @Override
+            protected void onCurrentAccessTokenChanged(AccessToken oldAccessToken, AccessToken currentAccessToken) {
+                if (currentAccessToken == null) {
+                    Log.d("FB", "User Logged Out.");
+                    fbname.setVisibility(View.GONE);
+                    fbemail.setVisibility(View.GONE);
+                    fbphoto.setVisibility(View.GONE);
+                    fbbtn.setText("Login with facebook");
+                }
+            }
+        };
+        tracker1.startTracking();
     }
 
     public Bitmap getBitmapFromURL(String src)
@@ -308,6 +308,7 @@ public class MainNavigationActivity extends AppCompatActivity
             getSupportActionBar().setTitle("Home");
             txt.setText("Home");
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_menu_black_24dp);
             getStatusBarHeight();
             catInstance = new FoldableListFragment(100);
             ft.replace(R.id.content_frame, new FoldableListFragment(100), "Fragment1");
@@ -378,12 +379,12 @@ public class MainNavigationActivity extends AppCompatActivity
 
             case R.id.subscribepost:
                 PrefService ap = new PrefService(this);
-                String subscribed = ap.getAccessKey("subscribe");
-                if (subscribed == "")
+              //  String subscribed = ap.getAccessKey("subscribe");
+               // if (subscribed == "")
                 {
                     SocialMethod.showSubscription(this);
                 }
-                else
+               // else
                 {
                     SocialMethod.alreadySubscribed(this);
                 }
@@ -456,6 +457,7 @@ public class MainNavigationActivity extends AppCompatActivity
             txt.setText("Things to Do");
         }
         else if (id == R.id.nav_send) {
+
         }
 
         Bundle param = new Bundle();
