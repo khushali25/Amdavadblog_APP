@@ -30,19 +30,15 @@
 
     <item android:title="Communicate">
         <menu>
-            <item
-                android:id="@+id/privacypolicy"
-                android:icon="@drawable/ic_verified_user_black_24dp"
-                android:title="Privacy Policy" />
-            <item
-                android:id="@+id/termsofservice"
-                android:icon="@drawable/ic_new_releases_black_24dp"
-                android:title="Terms of Service" />
 
             <item
                 android:id="@+id/contactus"
                 android:icon="@drawable/ic_perm_contact_calendar_black_24dp"
                 android:title="Contact" />
+            <item
+                android:id="@+id/privacypolicy"
+                android:icon="@drawable/ic_verified_user_black_24dp"
+                android:title="Privacy Policy" />
         </menu>
     </item>
 

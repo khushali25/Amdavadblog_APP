@@ -6,6 +6,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.support.v4.app.FragmentManager;
@@ -20,6 +21,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -67,7 +69,7 @@ public class MainNavigationActivity extends AppCompatActivity
     public static String FACEBOOK_PAGE_ID = "2012829695602790";
     TextView txt,fbname,fbemail;
     ImageView fbicon,twittericon,instaicon,googleplusicon,websiteicon;
-    Button fbbtn,fblogoutbtn;
+    Button fbbtn,fblogout;
     CircleImageView fbphoto;
     String appTitle;
     LoginButton fbloginbutton;
@@ -106,7 +108,13 @@ public class MainNavigationActivity extends AppCompatActivity
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
-
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS,
+                    WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            // Set paddingTop of toolbar to height of status bar.
+            // Fixes statusbar covers toolbar issue
+            //toolbar.setPadding(0, getStatusBarHeight(), 0, 0);
+        }
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
@@ -114,8 +122,9 @@ public class MainNavigationActivity extends AppCompatActivity
         fbname = (TextView)headerView.findViewById(R.id.fbname);
         fbemail = (TextView)headerView.findViewById(R.id.fbemail);
         fbphoto = (CircleImageView) headerView.findViewById(R.id.circleView);
-        fbbtn = (Button)headerView.findViewById(R.id.fblogin);
+        //fbbtn = (Button)headerView.findViewById(R.id.fblogin);
         fbloginbutton = (LoginButton)headerView.findViewById(R.id.login_button);
+        fblogout = (Button)headerView.findViewById(R.id.fblogout);
 
         fbicon = (ImageView)findViewById(R.id.fbicon);
         twittericon = (ImageView)findViewById(R.id.twittericon);
@@ -171,7 +180,14 @@ public class MainNavigationActivity extends AppCompatActivity
                         Uri.parse("https://amdavadblog.com/")));
             }
         });
-
+        fblogout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                LoginManager.getInstance().logOut();
+                Intent intent1 = new Intent(MainNavigationActivity.this,MainNavigationActivity.class);
+                startActivity(intent1);
+            }
+        });
         InitializeFirstScreenUI();
 
         FacebookSdk.sdkInitialize(getApplicationContext());
@@ -189,7 +205,7 @@ public class MainNavigationActivity extends AppCompatActivity
             fbemail.setVisibility(View.GONE);
             fbphoto.setVisibility(View.GONE);
             fbloginbutton.setVisibility(View.VISIBLE);
-            fbbtn.setVisibility(View.VISIBLE);
+            fblogout.setVisibility(View.GONE);
         //Log.d(TAG, ">>>" + "Signed Out");
         } else {
             fbname.setVisibility(View.VISIBLE);
@@ -200,7 +216,7 @@ public class MainNavigationActivity extends AppCompatActivity
             getBitmapFromURL(photo);
             fbphoto.setImageURI(null);
             fbphoto.setImageBitmap(img);
-            //fbbtn.setText(tetxtofloginbtn);
+            fblogout.setVisibility(View.VISIBLE);
         }
         initfacebooklogin();
     }
@@ -266,15 +282,15 @@ public class MainNavigationActivity extends AppCompatActivity
         fbloginbutton = (LoginButton)headerView.findViewById(R.id.login_button);
         fbloginbutton.setReadPermissions(Arrays.asList(EMAIL));
         LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile"));
-        fbbtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (view == fbbtn) {
-                    fbloginbutton.performClick();
-                   // updatefbbtn();
-                }
-            }
-        });
+//        fbbtn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                if (view == fbbtn) {
+//                    fbloginbutton.performClick();
+//                   // updatefbbtn();
+//                }
+//            }
+//        });
 
         fbloginbutton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
@@ -314,14 +330,6 @@ public class MainNavigationActivity extends AppCompatActivity
                                 fbphoto.setImageURI(null);
                                 fbphoto.setImageBitmap(img);
                             }
-//                            fbbtn.setBackgroundResource(R.drawable.home);
-//                            fbbtn.setText(null);
-//                            RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) fbbtn.getLayoutParams();
-//                            lp.addRule(RelativeLayout.ALIGN_PARENT_TOP);
-//                            lp.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-//                            fbbtn.setLayoutParams(lp);
-
-                            //fblogoutbtn.setVisibility(View.VISIBLE);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         } catch (MalformedURLException e) {
@@ -352,7 +360,14 @@ public class MainNavigationActivity extends AppCompatActivity
                     fbname.setVisibility(View.GONE);
                     fbemail.setVisibility(View.GONE);
                     fbphoto.setVisibility(View.GONE);
-                    fbbtn.setText("Login with facebook");
+                    fbloginbutton.setVisibility(View.VISIBLE);
+                    fblogout.setVisibility(View.GONE);
+                } else {
+                    fbname.setVisibility(View.VISIBLE);
+                    fbemail.setVisibility(View.VISIBLE);
+                    fbphoto.setVisibility(View.VISIBLE);
+                    fbloginbutton.setVisibility(View.GONE);
+                    fblogout.setVisibility(View.VISIBLE);
                 }
             }
         };
@@ -436,10 +451,6 @@ public class MainNavigationActivity extends AppCompatActivity
             getSupportActionBar().setTitle("Home");
             txt.setText("Home");
         }
-//         else {
-//            super.onBackPressed();
-//        }
-
     }
 
     @Override
@@ -488,6 +499,12 @@ public class MainNavigationActivity extends AppCompatActivity
             case R.id.settings:
                 Intent i = new Intent(this,SettingsActivity.class);
                 startActivity(i);
+                return true;
+            case R.id.logout:
+                // Handle the Logout Process
+                LoginManager.getInstance().logOut();
+                Intent intent1 = new Intent(MainNavigationActivity.this,MainNavigationActivity.class);
+                startActivity(intent1);
                 return true;
           }
 
@@ -546,20 +563,15 @@ public class MainNavigationActivity extends AppCompatActivity
         else if (id == R.id.privacypolicy) {
 
         }
-        else if (id == R.id.termsofservice) {
-
-        }
         else if (id == R.id.contactus) {
 
         }
-
         Bundle param = new Bundle();
         param.putString("name", String.valueOf(getSupportActionBar().getTitle()));
       //  param.putString("id", v.ToString());
         //EventServices.Instance.GenericEvent(EventType.CategorySelect, param);
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        //drawer.se(v, true);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
