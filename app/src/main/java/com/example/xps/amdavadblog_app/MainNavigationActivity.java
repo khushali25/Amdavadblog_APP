@@ -1,14 +1,13 @@
 package com.example.xps.amdavadblog_app;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
-import android.content.Context;
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.StrictMode;
-import android.os.SystemClock;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
@@ -21,9 +20,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.RelativeLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.facebook.AccessToken;
@@ -39,9 +37,6 @@ import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
-import com.google.android.gms.ads.MobileAds;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.iid.FirebaseInstanceId;
@@ -68,7 +63,10 @@ import static android.provider.ContactsContract.Intents.Insert.EMAIL;
 public class MainNavigationActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    public static String FACEBOOK_URL = "https://www.facebook.com/amdavadblog";
+    public static String FACEBOOK_PAGE_ID = "2012829695602790";
     TextView txt,fbname,fbemail;
+    ImageView fbicon,twittericon,instaicon,googleplusicon,websiteicon;
     Button fbbtn,fblogoutbtn;
     CircleImageView fbphoto;
     String appTitle;
@@ -81,7 +79,7 @@ public class MainNavigationActivity extends AppCompatActivity
     String userId,email1,personname,gen,add,dob;
     private FirebaseAnalytics mFirebaseAnalytics;
     Intent main;
-     View headerView;
+    View headerView;
     Bitmap img;
     NavigationView navigationView;
 
@@ -119,6 +117,61 @@ public class MainNavigationActivity extends AppCompatActivity
         fbbtn = (Button)headerView.findViewById(R.id.fblogin);
         fbloginbutton = (LoginButton)headerView.findViewById(R.id.login_button);
 
+        fbicon = (ImageView)findViewById(R.id.fbicon);
+        twittericon = (ImageView)findViewById(R.id.twittericon);
+        instaicon = (ImageView)findViewById(R.id.instaicon);
+        googleplusicon = (ImageView)findViewById(R.id.googleplusicon);
+        websiteicon = (ImageView)findViewById(R.id.websiteicon);
+        fbicon.setOnClickListener(new View.OnClickListener() {
+                                      @Override
+                                      public void onClick(View view) {
+                                          Intent facebookIntent = new Intent(Intent.ACTION_VIEW);
+                                          String facebookUrl = getFacebookPageURL(this);
+                                          facebookIntent.setData(Uri.parse(facebookUrl));
+                                          startActivity(facebookIntent);
+                                      }
+                                      });
+        twittericon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                try {
+                    Intent intent = new Intent(Intent.ACTION_VIEW,
+                            Uri.parse("twitter://user?screen_name=[amdavadblog]"));
+                    startActivity(intent);
+                } catch (Exception e) {
+                    startActivity(new Intent(Intent.ACTION_VIEW,
+                            Uri.parse("https://twitter.com/amdavadblog")));
+                }
+            }
+        });
+        instaicon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Uri uri = Uri.parse("http://instagram.com/_u/amdavadblog");
+                Intent i= new Intent(Intent.ACTION_VIEW,uri);
+                i.setPackage("com.instagram.android");
+                try {
+                    startActivity(i);
+                } catch (ActivityNotFoundException e) {
+                    startActivity(new Intent(Intent.ACTION_VIEW,
+                            Uri.parse("http://instagram.com/amdavadblog")));
+                }
+            }
+        });
+        googleplusicon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                newGooglePlusIntent("116682005972414924881");
+            }
+        });
+        websiteicon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(Intent.ACTION_VIEW,
+                        Uri.parse("https://amdavadblog.com/")));
+            }
+        });
+
         InitializeFirstScreenUI();
 
         FacebookSdk.sdkInitialize(getApplicationContext());
@@ -150,6 +203,33 @@ public class MainNavigationActivity extends AppCompatActivity
             //fbbtn.setText(tetxtofloginbtn);
         }
         initfacebooklogin();
+    }
+    private String getFacebookPageURL(View.OnClickListener onClickListener) {
+        PackageManager packageManager = this.getPackageManager();
+        try {
+            int versionCode = packageManager.getPackageInfo("com.facebook.katana", 0).versionCode;
+            if (versionCode >= 3002850) { //newer versions of fb app
+//                return "fb://facewebmodal/f?href=" + FACEBOOK_URL;
+                return "fb://page/" + FACEBOOK_PAGE_ID;
+            } else { //older versions of fb app
+                return "fb://page/" + FACEBOOK_PAGE_ID;
+            }
+        } catch (PackageManager.NameNotFoundException e) {
+            return FACEBOOK_URL; //normal web url
+        }
+
+    }
+    private void newGooglePlusIntent(String s) {
+        try {
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setClassName("com.google.android.apps.plus",
+                    "com.google.android.apps.plus.phone.UrlGatewayActivity");
+            intent.putExtra("customAppUri", s);
+            startActivity(intent);
+        } catch(ActivityNotFoundException e) {
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://plus.google.com/"+s+"/posts")));
+        }
+
     }
     private void InitiaalizeGoogleAppConfig()
     {
@@ -226,7 +306,7 @@ public class MainNavigationActivity extends AppCompatActivity
                             if(imgfb == null)
                             {
                                 img = BitmapFactory.decodeResource(getResources(),
-                                        R.drawable.unfold_glance);
+                                        R.drawable.ic_home_black_24dp);
                                 fbphoto.setImageBitmap(img);
                             }
                             else {
@@ -333,7 +413,14 @@ public class MainNavigationActivity extends AppCompatActivity
         super.onActivityResult(requestCode, resultCode, data);
         callbackManager.onActivityResult(requestCode, resultCode, data);
     }
-
+//    private void disableNavigationViewScrolling(NavigationView navigationView) {
+//        if (navigationView != null) {
+//            NavigationMenuView navigationMenuView = (NavigationMenuView) navigationView.getChildAt(0);
+//            if (navigationMenuView != null) {
+//                navigationMenuView.setNestedScrollingEnabled(false);
+//            }
+//        }
+//    }
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout)findViewById(R.id.drawer_layout);
@@ -456,7 +543,13 @@ public class MainNavigationActivity extends AppCompatActivity
             getSupportActionBar().setTitle("Things to Do");
             txt.setText("Things to Do");
         }
-        else if (id == R.id.nav_send) {
+        else if (id == R.id.privacypolicy) {
+
+        }
+        else if (id == R.id.termsofservice) {
+
+        }
+        else if (id == R.id.contactus) {
 
         }
 

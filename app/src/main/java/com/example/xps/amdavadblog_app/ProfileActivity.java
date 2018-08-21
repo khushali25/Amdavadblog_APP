@@ -70,7 +70,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         if(imguri1 == null)
         {
             theImage = BitmapFactory.decodeResource(this.getResources(),
-                    R.drawable.unfold_glance);
+                    R.drawable.ic_home_black_24dp);
             img.setImageBitmap(theImage);
         }
         else {

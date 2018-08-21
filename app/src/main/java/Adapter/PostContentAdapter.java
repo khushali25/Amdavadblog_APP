@@ -147,7 +147,7 @@ public class PostContentAdapter extends ItemsAdapter<Post, PostContentAdapter.Vi
                 vh.Art.setImageURI(android.net.Uri.parse(file.getAbsolutePath()));
             }
         } else {
-            String imageUri = "drawable://" + R.drawable.demo;
+            String imageUri = "drawable://" + R.drawable.ic_home_black_24dp;
             DisplayImageOptions options = new DisplayImageOptions.Builder()
                     .cacheOnDisk(true)
                     .build();

@@ -102,7 +102,7 @@ public class UnfoldableDetailsActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_itemdetail);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_arrow_back_black_24dp);
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_arrow_back_white_24dp);
         postfeaturedimage = (ImageView)findViewById(R.id.imgpost);
         AppImageLoader =  ImageLoader.getInstance();
         if (!AppImageLoader.isInited()) {

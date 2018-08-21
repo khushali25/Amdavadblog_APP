@@ -53,7 +53,7 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
         setSupportActionBar(toolbar);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeAsUpIndicator(R.drawable.back);
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_arrow_back_black_24dp);
        // imageView = findViewById(R.id.searchloading);
         txtnotfound = findViewById(R.id.txtnodatafound);
         //recyclerView = findViewById(R.id.searchpostrecycler);
@@ -147,7 +147,7 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
                             post.authorname = Auth.name;
                             resp2 = wordPressService.getFeaturedImageById(post.featured_media);
                             if (resp2 == null) {
-                                post.imagePath = String.valueOf(R.drawable.demo);
+                                post.imagePath = String.valueOf(R.drawable.ic_home_black_24dp);
                             } else
                                 post.imagePath = resp2.media_details.sizes.medium_large.source_url.toString();
                         }

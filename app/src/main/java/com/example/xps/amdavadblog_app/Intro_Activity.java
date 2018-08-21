@@ -216,7 +216,7 @@ Register a callback function with LoginButton to respond to the login result.
                             if(imgfb == null)
                             {
                                 img = BitmapFactory.decodeResource(getResources(),
-                                        R.drawable.unfold_glance);
+                                        R.drawable.ic_home_black_24dp);
                             }
                             else {
                                 getBitmapFromURL(imgfb);

@@ -115,7 +115,7 @@ public class FoldableListFragment extends Fragment {
                         resp2 = wordPressService.getFeaturedImageById(post.featured_media);
                         if(resp2 == null)
                         {
-                            post.imagePath = String.valueOf(R.drawable.demo);
+                            post.imagePath = String.valueOf(R.drawable.ic_home_black_24dp);
                         }
                         else
                             post.imagePath = resp2.media_details.sizes.medium_large.source_url.toString();
@@ -171,7 +171,7 @@ public class FoldableListFragment extends Fragment {
 
                         if(true)
                         {
-                            post.imagePath = String.valueOf(R.drawable.demo);
+                            post.imagePath = String.valueOf(R.drawable.ic_home_black_24dp);
                         }
                         else
                             post.imagePath = resp2.media_details.sizes.medium_large.source_url.toString();

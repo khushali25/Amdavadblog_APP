@@ -6,22 +6,100 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
+    android:background="#ffffff"
     tools:openDrawer="start">
 
-    <include
-        layout="@layout/app_bar_main_navigation"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+    <include layout="@layout/app_bar_main_navigation"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"/>
 
     <android.support.design.widget.NavigationView
-        android:id="@+id/nav_view"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
-        app:itemBackground="@drawable/draweritemcolor"
-        app:menu="@menu/activity_main_navigation_drawer"
-        app:headerLayout="@layout/nav_header_main_navigation"/>
+        android:id="@+id/nav_view"
+        android:background="#ffffff"
+        app:headerLayout="@layout/nav_header_main_navigation"
+        app:menu="@menu/activity_main_navigation_drawer">
+        <!--<android.support.v4.widget.NestedScrollView-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:fillViewport="true"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:scrollbars="vertical">-->
+
+            <!--<LinearLayout-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:orientation="vertical">-->
+
+                <!--<android.support.design.widget.NavigationView-->
+                    <!--android:id="@+id/nav_view"-->
+                    <!--app:elevation="0dp"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--app:headerLayout="@layout/nav_header_main_navigation"-->
+                    <!--app:menu="@menu/activity_main_navigation_drawer">-->
+                    <!--&gt;</android.support.design.widget.NavigationView>-->
+
+                <!--<LinearLayout-->
+                    <!--android:id="@+id/spacer_to_bottom"-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:orientation="vertical"-->
+                    <!--android:layout_height="0dp"-->
+                    <!--android:layout_weight="1"-->
+                    <!--android:layout_alignParentBottom="true"/>-->
+
+                <!--<include layout="@layout/navdrawer_footer"></include>-->
+            <!--</LinearLayout>-->
+        <!--</android.support.v4.widget.NestedScrollView>-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:clickable="true"
+            android:background="#ffffff"
+            android:paddingBottom="@dimen/activity_vertical_margin"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingRight="@dimen/activity_horizontal_margin"
+            android:paddingTop="@dimen/activity_vertical_margin"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/fbicon"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:paddingTop="@dimen/nav_header_vertical_spacing"
+                android:src="@drawable/ic_facebook"/>
+            <ImageView
+                android:id="@+id/instaicon"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:paddingTop="@dimen/nav_header_vertical_spacing"
+                android:src="@drawable/ic_instagram"/>
+            <ImageView
+                android:id="@+id/twittericon"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:paddingTop="@dimen/nav_header_vertical_spacing"
+                android:src="@drawable/ic_twitter"/>
+
+            <ImageView
+                android:id="@+id/googleplusicon"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:paddingTop="@dimen/nav_header_vertical_spacing"
+                android:src="@drawable/ic_googleplus"/>
+
+            <ImageView
+                android:id="@+id/websiteicon"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:paddingTop="@dimen/nav_header_vertical_spacing"
+                android:src="@drawable/ic_website"/>
+
+        </LinearLayout>
+    </android.support.design.widget.NavigationView>
 
 </android.support.v4.widget.DrawerLayout>
-
