@@ -12,6 +12,7 @@ import android.os.StrictMode;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -21,6 +22,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -52,6 +54,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 
@@ -92,6 +95,7 @@ public class MainNavigationActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.newtoolbar);
         setSupportActionBar(toolbar);
 
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
         InitiaalizeGoogleAppConfig();
         FirebaseApp app = FirebaseApp.initializeApp(this);
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
@@ -393,6 +397,7 @@ public class MainNavigationActivity extends AppCompatActivity
     public void onResume() {
         super.onResume();
     }
+
     private void InitializeFirstScreenUI() {
         try
         {
@@ -402,6 +407,7 @@ public class MainNavigationActivity extends AppCompatActivity
             txt = findViewById(R.id.toolbartxt);
             getSupportActionBar().setTitle("Home");
             txt.setText("Home");
+            getSupportActionBar().setDisplayShowTitleEnabled(false);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_menu_black_24dp);
             getStatusBarHeight();
@@ -499,12 +505,6 @@ public class MainNavigationActivity extends AppCompatActivity
             case R.id.settings:
                 Intent i = new Intent(this,SettingsActivity.class);
                 startActivity(i);
-                return true;
-            case R.id.logout:
-                // Handle the Logout Process
-                LoginManager.getInstance().logOut();
-                Intent intent1 = new Intent(MainNavigationActivity.this,MainNavigationActivity.class);
-                startActivity(intent1);
                 return true;
           }
 

@@ -53,7 +53,7 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
         setSupportActionBar(toolbar);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_arrow_back_black_24dp);
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_arrow_back_white_24dp);
        // imageView = findViewById(R.id.searchloading);
         txtnotfound = findViewById(R.id.txtnodatafound);
         //recyclerView = findViewById(R.id.searchpostrecycler);
@@ -77,6 +77,11 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
         try
         {
             searchView = (SearchView) menu.findItem(R.id.action_search1).getActionView();
+            ImageView searchClose = searchView.findViewById(android.support.v7.appcompat.R.id.search_close_btn);
+            searchClose.setImageResource(R.drawable.ic_close_white_24dp);
+            ImageView searchIcon = searchView.findViewById(android.support.v7.appcompat.R.id.search_mag_icon);
+            searchIcon.setImageResource(R.drawable.ic_search_black_24dp);
+
             foldableListLayout.setVisibility(View.GONE);
         }
         catch (Exception exx)
