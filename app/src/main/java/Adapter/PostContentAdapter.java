@@ -5,11 +5,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetManager;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.ScaleDrawable;
+import android.support.v4.content.ContextCompat;
 import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -101,7 +105,7 @@ public class PostContentAdapter extends ItemsAdapter<Post, PostContentAdapter.Vi
     protected PostContentAdapter.ViewHolder onCreateHolder(ViewGroup parent, int viewType) {
 
         View view = LayoutInflater.from(parent.getContext()).
-                inflate(R.layout.post_listing, null, false);
+                inflate(R.layout.post_listing, null);
         PostContentAdapter.ViewHolder vh = new PostContentAdapter.ViewHolder(view);
         if (!imgloader.isInited()) {
             imgloader.init(ImageLoaderConfiguration
@@ -111,14 +115,9 @@ public class PostContentAdapter extends ItemsAdapter<Post, PostContentAdapter.Vi
     }
     @Override
     protected void onBindHolder(PostContentAdapter.ViewHolder viewHolder, int position) {
-       // String refreshedToken = null;
-
-            //refreshedToken = FirebaseInstanceId.getInstance().getToken();
-
-       // Log.d(TAG, "Refreshed token: " + refreshedToken);
         vh = viewHolder;
         AssetManager am = context.getApplicationContext().getAssets();
-        Typeface custom_font = Typeface.createFromAsset(am, "font/Amaranth-Regular.ttf");
+        Typeface custom_font = Typeface.createFromAsset(am, "font/Lora-Bold.ttf");
         Typeface custom_font1 = Typeface.createFromAsset(am, "font/WorkSans-Regular.ttf");
         Typeface custom_font2 = Typeface.createFromAsset(am, "font/Martel-Regular.ttf");
         Typeface custom_font3 = Typeface.createFromAsset(am, "font/Martel-Bold.ttf");

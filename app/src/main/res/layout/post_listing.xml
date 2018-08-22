@@ -7,35 +7,51 @@
     android:weightSum="100"
     android:background="#ffffff">
 
-    <ImageView
-        android:id="@+id/postimage"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="50"
-        android:adjustViewBounds="true"
-        android:scaleType="centerCrop" />
+        android:layout_weight="45"
+        android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/category"
-        android:layout_width="wrap_content"
-        android:layout_height="50dp"
-        android:layout_marginLeft="12dp"
-        android:background="@drawable/gradient_colors"
-        android:padding="8dp"
-        android:textColor="#ffffff"
-        android:textSize="16sp"
-        android:textStyle="bold" />
+        <ImageView
+            android:id="@+id/postimage"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="45"
+            android:adjustViewBounds="true"
+            android:scaleType="centerCrop" />
 
+        <TextView
+            android:id="@+id/category"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginBottom="15dp"
+            android:layout_marginLeft="10dp"
+            android:background="#ffffff"
+            android:gravity="center"
+            android:padding="8dp"
+            android:textColor="#000000"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+    </RelativeLayout>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="35"
+        android:layout_weight="40"
         android:orientation="vertical">
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="10sp"
+            android:layout_gravity="bottom"
+            />
         <TextView
             android:id="@+id/posttitletext"
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
-            android:textSize="25dp"
+            android:textSize="20dp"
             android:text="title"
             android:textColor="#201D1C"
             android:paddingLeft="10dp"
@@ -54,8 +70,11 @@
             android:id="@+id/author"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
-            android:textSize="15dp"
+            android:textSize="13dp"
             android:text="author"
+            android:gravity="center"
+            android:drawablePadding="5dp"
+            android:drawableLeft="@drawable/author_icon"
             android:textColor="#767676"
             android:paddingLeft="10dp" />
         <TextView
@@ -63,6 +82,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/author"
+            android:gravity="center"
+            android:drawableLeft="@drawable/datetime_icon"
+            android:textSize="13dp"
+            android:drawablePadding="5dp"
+            android:textColor="#767676"
             android:paddingLeft="10dp"
             android:text="Date"
             />
@@ -78,9 +102,8 @@
             android:layout_width="match_parent"
             android:textSize="14dp"
             android:text="excerpt"
-            android:textColor="#000000"
+            android:textColor="#767676"
             android:paddingLeft="10dp" />
 
     </LinearLayout>
-
 </LinearLayout>

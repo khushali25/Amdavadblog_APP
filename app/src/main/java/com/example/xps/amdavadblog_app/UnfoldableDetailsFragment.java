@@ -133,7 +133,8 @@ public class UnfoldableDetailsFragment extends Fragment {
 
     private void WebViewInitialize() {
         AssetManager am = getContext().getAssets();
-        Typeface custom_font = Typeface.createFromAsset(am, "font/Amaranth-Regular.ttf");
+        Typeface custom_font = Typeface.createFromAsset(am, "font/Lora-Bold.ttf");
+        Typeface custom_font1 = Typeface.createFromAsset(am, "font/Martel-Bold.ttf");
 
         final int id1 = this.getActivity().getIntent().getIntExtra("BlogId", 0);
         String title = this.getActivity().getIntent().getStringExtra("Title");
@@ -145,6 +146,9 @@ public class UnfoldableDetailsFragment extends Fragment {
         datetextview.setText(date);
 
         titleTextView.setTypeface(custom_font);
+        authortextview.setTypeface(custom_font1);
+        datetextview.setTypeface(custom_font1);
+
         final String Content = this.getActivity().getIntent().getStringExtra("Content");
         String replacedtitle = title.replace(" ", "-");
         posturl = "http://amdavadblogs.apps-1and1.com/en/" + replacedtitle.toLowerCase();
