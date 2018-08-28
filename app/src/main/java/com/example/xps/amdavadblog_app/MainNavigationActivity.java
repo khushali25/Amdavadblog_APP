@@ -94,7 +94,9 @@ public class MainNavigationActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        FacebookSdk.sdkInitialize(getApplicationContext());
         setContentView(R.layout.activity_main_navigation);
+        callbackManager = CallbackManager.Factory.create();
         Toolbar toolbar = (Toolbar) findViewById(R.id.newtoolbar);
         setSupportActionBar(toolbar);
 
@@ -129,9 +131,12 @@ public class MainNavigationActivity extends AppCompatActivity
         fbname = (TextView)headerView.findViewById(R.id.fbname);
         fbemail = (TextView)headerView.findViewById(R.id.fbemail);
         fbphoto = (CircleImageView) headerView.findViewById(R.id.circleView);
-        //fbbtn = (Button)headerView.findViewById(R.id.fblogin);
+        //fbbtn = (Button)headerView.findViewById(R.id.fblogincustombtn);
         fbloginbutton = (LoginButton)headerView.findViewById(R.id.login_button);
         fblogout = (Button)headerView.findViewById(R.id.fblogout);
+        getloginstatus();
+
+        InitializeFirstScreenUI();
 
         fbicon = (ImageView)findViewById(R.id.fbicon);
         twittericon = (ImageView)findViewById(R.id.twittericon);
@@ -193,13 +198,18 @@ public class MainNavigationActivity extends AppCompatActivity
                 LoginManager.getInstance().logOut();
                 Intent intent1 = new Intent(MainNavigationActivity.this,MainNavigationActivity.class);
                 startActivity(intent1);
+                fbname.setVisibility(View.GONE);
+                fbemail.setVisibility(View.GONE);
+                fbphoto.setVisibility(View.GONE);
+                fbloginbutton.setVisibility(View.VISIBLE);
+                fblogout.setVisibility(View.GONE);
             }
         });
-        InitializeFirstScreenUI();
-
-        FacebookSdk.sdkInitialize(getApplicationContext());
         AppEventsLogger.activateApp(this);
 
+    }
+
+    private void getloginstatus() {
         PrefService ap = new PrefService(this);
         String name = ap.getAccessKey("Username");
         String emailid = ap.getAccessKey("Password");
@@ -213,7 +223,8 @@ public class MainNavigationActivity extends AppCompatActivity
             fbphoto.setVisibility(View.GONE);
             fbloginbutton.setVisibility(View.VISIBLE);
             fblogout.setVisibility(View.GONE);
-        //Log.d(TAG, ">>>" + "Signed Out");
+
+            //Log.d(TAG, ">>>" + "Signed Out");
         } else {
             fbname.setVisibility(View.VISIBLE);
             fbemail.setVisibility(View.VISIBLE);
@@ -223,10 +234,12 @@ public class MainNavigationActivity extends AppCompatActivity
             getBitmapFromURL(photo);
             fbphoto.setImageURI(null);
             fbphoto.setImageBitmap(img);
+            fbloginbutton.setVisibility(View.GONE);
             fblogout.setVisibility(View.VISIBLE);
         }
-        initfacebooklogin();
+
     }
+
     private String getFacebookPageURL(View.OnClickListener onClickListener) {
         PackageManager packageManager = this.getPackageManager();
         try {
@@ -284,9 +297,9 @@ public class MainNavigationActivity extends AppCompatActivity
     }
 
     private void initfacebooklogin() {
-        callbackManager = CallbackManager.Factory.create();
+        //callbackManager = CallbackManager.Factory.create();
 
-        fbloginbutton = (LoginButton)headerView.findViewById(R.id.login_button);
+        fbloginbutton = (LoginButton) headerView.findViewById(R.id.login_button);
         fbloginbutton.setReadPermissions(Arrays.asList(EMAIL));
         LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile"));
 //        fbbtn.setOnClickListener(new View.OnClickListener() {
@@ -303,7 +316,7 @@ public class MainNavigationActivity extends AppCompatActivity
             @Override
             public void onSuccess(LoginResult loginResult) {
                 String accessToken = loginResult.getAccessToken().getToken();
-               // fbloginbutton.setVisibility(View.GONE);
+                // fbloginbutton.setVisibility(View.GONE);
                 GraphRequest request = GraphRequest.newMeRequest(loginResult.getAccessToken(), new GraphRequest.GraphJSONObjectCallback() {
                     @Override
                     public void onCompleted(final JSONObject object, GraphResponse response) {
@@ -317,26 +330,29 @@ public class MainNavigationActivity extends AppCompatActivity
 //                               fbphoto.setVisibility(View.VISIBLE);
 
                             firstName = object.getString("first_name");
-                            lastName = object.getString( "last_name");
+                            lastName = object.getString("last_name");
                             nametostore = firstName + lastName;
                             fbname.setText(firstName + " " + lastName);
                             if (object.has("email")) {
                                 emailtostore = object.getString("email");
                                 fbemail.setText(object.getString("email"));
-                            }
-                            else
+                            } else
                                 fbemail.setVisibility(View.GONE);
-                            if(imgfb == null)
-                            {
+                            if (imgfb == null) {
                                 img = BitmapFactory.decodeResource(getResources(),
                                         R.drawable.ic_home_black_24dp);
                                 fbphoto.setImageBitmap(img);
-                            }
-                            else {
+                            } else {
                                 getBitmapFromURL(imgfb);
                                 fbphoto.setImageURI(null);
                                 fbphoto.setImageBitmap(img);
                             }
+                            PrefService ap = new PrefService(getApplicationContext());
+                            ap.saveAccessKey("Username", nametostore);
+                            ap.saveAccessKey("Password", emailtostore);
+                            ap.saveAccessKey("loginkey", imgfb);
+                            ap.saveAccessKey("textofbtn", "Logout");
+
                         } catch (JSONException e) {
                             e.printStackTrace();
                         } catch (MalformedURLException e) {
@@ -345,20 +361,26 @@ public class MainNavigationActivity extends AppCompatActivity
                     }
                 });
                 Bundle bundle = new Bundle();
-                bundle.putString("fields","id,picture,first_name,last_name,email,birthday,gender");
+                bundle.putString("fields", "id,picture,first_name,last_name,email,birthday,gender");
                 request.setParameters(bundle);
                 request.executeAsync();
+                fbloginbutton.setVisibility(View.GONE);
+                fblogout.setVisibility(View.VISIBLE);
             }
+
             @Override
             public void onCancel() {
                 System.out.println("onCancel");
             }
+
             @Override
             public void onError(FacebookException error) {
                 System.out.println("onError");
                 Log.v("LoginActivity", error.getCause().toString());
             }
+
         });
+
         AccessTokenTracker tracker1 = new AccessTokenTracker() {
             @Override
             protected void onCurrentAccessTokenChanged(AccessToken oldAccessToken, AccessToken currentAccessToken) {
@@ -374,13 +396,15 @@ public class MainNavigationActivity extends AppCompatActivity
                     fbemail.setVisibility(View.VISIBLE);
                     fbphoto.setVisibility(View.VISIBLE);
                     fbloginbutton.setVisibility(View.GONE);
-                    fblogout.setVisibility(View.VISIBLE);
+                    //fblogout.setVisibility(View.VISIBLE);
                 }
             }
         };
         tracker1.startTracking();
     }
-
+    public void onClick(View v) {
+       initfacebooklogin();
+    }
     public Bitmap getBitmapFromURL(String src)
     {
         try {

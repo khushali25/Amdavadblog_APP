@@ -2,18 +2,25 @@ package com.example.xps.amdavadblog_app;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.net.ConnectivityManager;
+import android.os.Build;
 import android.os.StrictMode;
 import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Html;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -27,6 +34,7 @@ import com.facebook.FacebookSdk;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.appevents.AppEventsLogger;
+import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 
@@ -39,71 +47,66 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Arrays;
+import java.util.List;
 
 import Adapter.IntroScreenAdapter;
 import Helper.IntroPageTransformer;
 import Helper.PrefService;
 
-public class Intro_Activity extends AppCompatActivity  {
+import static android.provider.ContactsContract.Intents.Insert.EMAIL;
+import static com.facebook.FacebookSdk.getApplicationContext;
+
+public class Intro_Activity extends AppCompatActivity {
     private ViewPager mViewPager;
-    private LinearLayout dotsLayout;
-    private TextView[] dots;
     private int[] layouts;
-    private Button btnSkip, btnNext;
-    String gender,add,firstName,lastName,userId;
+    private Button btnSkip, btnNext, fblogincustombtn;
+    String gender, add, userId;
     Bundle bundle = new Bundle();
     TextView info;
+    LoginButton loginButton;
     CallbackManager callbackManager;
     RelativeLayout relativeLayout;
     Snackbar snackbar;
     URL profilePicture;
     Bitmap img;
-    PrefService prefManager;
+    private LinearLayout dotsLayout;
+    private TextView[] dots;
+    final String PREFS_NAME = "MyPrefsFile";
+    final String PREFS_FIRST_RUN = "first_run";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        PreferenceManager.setDefaultValues(this, R.xml.pref_general, false);
-        Boolean isFirstRun = getSharedPreferences("PREFERENCE", MODE_PRIVATE)
-                .getBoolean("isFirstRun", true);
 
-        if (isFirstRun) {
-            //show sign up activity
-            startActivity(new Intent(Intro_Activity.this, MainNavigationActivity.class));
-            Toast.makeText(Intro_Activity.this, "Run only once", Toast.LENGTH_LONG)
-                    .show();
-        }
-
-        getSharedPreferences("PREFERENCE", MODE_PRIVATE).edit()
-                .putBoolean("isFirstRun", false).commit();
-
-//        prefManager = new PrefService(this);
-//        if (!prefManager.isFirstTimeLaunch()) {
-//            launchHomeScreen();
-//            finish();
-//        }
         facebookSDKInitialize();
         setContentView(R.layout.activity_intro);
+        checkFirstRun();
+        callbackManager = CallbackManager.Factory.create();
+
         relativeLayout = (RelativeLayout) findViewById(R.id
                 .relativelayout);
         mViewPager = (ViewPager) findViewById(R.id.view_pager);
         dotsLayout = (LinearLayout) findViewById(R.id.layoutDots);
         btnSkip = (Button) findViewById(R.id.btn_skip);
         btnNext = (Button) findViewById(R.id.btn_next);
+        loginButton = (LoginButton) findViewById(R.id.login_button);
+        fblogincustombtn = (Button) findViewById(R.id.fblogincustombtn);
+
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
-        // Set an Adapter on the ViewPager
-        mViewPager.setAdapter(new IntroScreenAdapter(getSupportFragmentManager()));
 
-        // Set a PageTransformer
-        mViewPager.setPageTransformer(false, new IntroPageTransformer());
-      //  initfacebooklogin();
         layouts = new int[]{
                 R.layout.introscreenfragmentlayout_1,
                 R.layout.introscreenfragmentlayout_2,
                 R.layout.introscreenfragmentlayout_3,
+                R.layout.introscreenfragmentlayout_4,
                 };
+        //addBottomDots(0);
+        changeStatusBarColor();
+        mViewPager.setAdapter(new IntroScreenAdapter(getSupportFragmentManager()));
 
+        mViewPager.setPageTransformer(false, new IntroPageTransformer());
         btnSkip.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -138,17 +141,132 @@ public class Intro_Activity extends AppCompatActivity  {
         });
 
         if (isNetworkConnected()) {
-
-            LoginButton loginButton = (LoginButton) findViewById(R.id.login_button);
-            loginButton.setTextSize(16);
-            loginButton.setReadPermissions("email");
-            getLoginDetails(loginButton);
-
+            getLoginDetails(fblogincustombtn);
         } else {
             snackbarerror();
         }
+   }
+
+    private void addBottomDots(int i) {
+        dots = new TextView[layouts.length];
+
+        int[] colorsActive = getResources().getIntArray(R.array.array_pager_active);
+
+        int[] colorsInactive = getResources().getIntArray(R.array.array_pager_inactive);
+
+        dotsLayout.removeAllViews();
+
+        for (int j = 0; j < dots.length; i++) {
+
+            dots[j] = new TextView(this);
+
+            dots[j].setText(Html.fromHtml("•"));
+
+            dots[j].setTextSize(35);
+
+           // dots[j].setTextColor(colorsInactive[i]);
+
+            dotsLayout.addView(dots[j]);
+
+        }
+
+       // if (dots.length > 0)
+
+            //dots[i].setTextColor(colorsActive[i]);
+    }
+    //  viewpager change listener
+
+    ViewPager.OnPageChangeListener viewPagerPageChangeListener = new ViewPager.OnPageChangeListener() {
+        @Override
+        public void onPageScrolled(int position, float v, int i1) {
+            addBottomDots(position);
+            // changing the next button text 'NEXT' / 'GOT IT'
+
+            if (position == layouts.length - 1) {
+
+                // last page. make button text to GOT IT
+                btnNext.setText("Start");
+                btnSkip.setVisibility(View.GONE);
+            } else {
+                // still pages are left
+                btnNext.setText("NEXT");
+                btnSkip.setVisibility(View.VISIBLE);
+            }
+        }
+        @Override
+        public void onPageSelected(int i) {
+
+        }
+        @Override
+        public void onPageScrollStateChanged(int i) {
+
+        }
+    };
+    private void changeStatusBarColor() {
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+
+            Window window = getWindow();
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.setStatusBarColor(Color.TRANSPARENT);
+        }
+    }
+    private void checkFirstRun() {
+        SharedPreferences sharedPreferences = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+
+        // If the app is launched for first time, view splash screen and setup 'Next >>' link.
+        if (sharedPreferences.getBoolean(PREFS_FIRST_RUN, true)) {
+
+            // Record that user have done first run.
+            sharedPreferences.edit().putBoolean(PREFS_FIRST_RUN, false).apply();
+        }
+        // Else, directly go to Registration page.
+        else {
+
+            goToMainActivity();
+        }
     }
 
+    private void goToMainActivity() {
+
+        Intent intent = new Intent(this, MainNavigationActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
+    private void getLoginDetails(Button fblogincustombtn) {
+        List< String > permissionNeeds = Arrays.asList("user_photos", "email",
+                "user_birthday", "public_profile", "AccessToken");
+
+        loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult login_result) {
+                System.out.println("onSuccess");
+                String accessToken = login_result.getAccessToken()
+                        .getToken();
+                Log.i("accessToken", accessToken);
+                getUserInfo(login_result);
+                loginButton.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onCancel() {
+                System.out.println("onCancel");
+            }
+
+            @Override
+            public void onError(FacebookException exception) {
+                System.out.println("onError");
+                Log.v("LoginActivity", exception.getCause().toString());
+            }
+        });
+    }
+
+    public void onClick(View v) {
+        if (v == fblogincustombtn) {
+            loginButton.performClick();
+        }
+    }
     private boolean isNetworkConnected() {
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         return cm.getActiveNetworkInfo() != null;
@@ -165,34 +283,8 @@ public class Intro_Activity extends AppCompatActivity  {
 
     protected void facebookSDKInitialize() {
         FacebookSdk.sdkInitialize(getApplicationContext());
-        callbackManager = CallbackManager.Factory.create();
     }
-/*
-Register a callback function with LoginButton to respond to the login result.
-*/
-    protected void getLoginDetails(final LoginButton login_button){
 
-        // Callback registration
-        login_button.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
-            @Override
-            public void onSuccess(LoginResult login_result) {
-
-                getUserInfo(login_result);
-                login_button.setVisibility(View.GONE);
-            }
-
-            @Override
-            public void onCancel() {
-                System.out.println("onCancel");
-            }
-
-            @Override
-            public void onError(FacebookException exception) {
-                System.out.println("onError");
-                Log.v("LoginActivity", exception.getCause().toString());
-            }
-        });
-    }
     protected void getUserInfo(LoginResult login_result){
 
         GraphRequest data_request = GraphRequest.newMeRequest(
@@ -206,13 +298,8 @@ Register a callback function with LoginButton to respond to the login result.
                             userId = json_object.getString("id");
                             profilePicture = new URL("https://graph.facebook.com/" + userId + "/picture?width=500&height=500");
                             String imgfb = profilePicture.toString();
-
-                           String name = json_object.getString("name");
-                           // lastName = json_object.getString("last_name");
-                           // String name = firstName + lastName;
-
+                            String name = json_object.getString("name");
                             final String email =json_object.getString("email");
-
                             if(imgfb == null)
                             {
                                 img = BitmapFactory.decodeResource(getResources(),
@@ -221,11 +308,6 @@ Register a callback function with LoginButton to respond to the login result.
                             else {
                                 getBitmapFromURL(imgfb);
                             }
-
-//                            bundle.putString("userName",name);
-//                            bundle.putString("userEmail",email);
-//                            bundle.putString("userimg",imgfb);
-
                             PrefService ap = new PrefService(getApplicationContext());
                             ap.saveAccessKey("Username", name);
                             ap.saveAccessKey("Password", email);
@@ -281,7 +363,6 @@ Register a callback function with LoginButton to respond to the login result.
                 });
         snackbar.setActionTextColor(Color.RED);
 
-        // Changing action button text color
         View sbView = snackbar.getView();
         TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
         textView.setTextColor(Color.YELLOW);
@@ -291,7 +372,12 @@ Register a callback function with LoginButton to respond to the login result.
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         callbackManager.onActivityResult(requestCode, resultCode, data);
-
+        if (requestCode == 1) {
+            SharedPreferences settings = getSharedPreferences("prefs", 0);
+            SharedPreferences.Editor editor = settings.edit();
+            editor.putBoolean("firstRun", false);
+            editor.commit();
+        }
         Log.e("data", data.toString());
     }
 

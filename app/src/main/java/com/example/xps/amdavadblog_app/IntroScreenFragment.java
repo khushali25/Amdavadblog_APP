@@ -1,11 +1,14 @@
 package com.example.xps.amdavadblog_app;
 
 
+import android.content.res.AssetManager;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 
 /**
@@ -52,13 +55,19 @@ public class IntroScreenFragment extends Fragment {
             case 1:
                 layoutResId = R.layout.introscreenfragmentlayout_2;
                 break;
-            default:
+            case 2:
                 layoutResId = R.layout.introscreenfragmentlayout_3;
+                break;
+            default:
+                layoutResId = R.layout.introscreenfragmentlayout_4;
         }
 
         // Inflate the layout resource file
         View view = getActivity().getLayoutInflater().inflate(layoutResId, container, false);
-
+        AssetManager am = getActivity().getApplicationContext().getAssets();
+        Typeface custom_font = Typeface.createFromAsset(am, "font/DenkOne-Regular.ttf");
+        TextView description = view.findViewById(R.id.description);
+        description.setTypeface(custom_font);
         // Set the current page index as the View's tag (useful in the PageTransformer)
         view.setTag(mPage);
 

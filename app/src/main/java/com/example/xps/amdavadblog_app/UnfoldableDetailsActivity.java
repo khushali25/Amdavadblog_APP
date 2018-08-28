@@ -19,6 +19,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Vibrator;
+import android.support.annotation.ColorRes;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -123,6 +124,14 @@ public class UnfoldableDetailsActivity extends AppCompatActivity {
         floatingActionButton3 = (FloatingActionButton) findViewById(R.id.material_design_floating_action_menu_item3);
         floatingActionButton4 = (FloatingActionButton) findViewById(R.id.material_design_floating_action_menu_item4);
         materialDesignFAM.setClosedOnTouchOutside(true);
+        floatingActionButton1.setColorNormal(Color.WHITE);
+        floatingActionButton1.setColorPressed(Color.DKGRAY);
+        floatingActionButton2.setColorNormal(Color.WHITE);
+        floatingActionButton2.setColorPressed(Color.DKGRAY);
+        floatingActionButton3.setColorNormal(Color.WHITE);
+        floatingActionButton3.setColorPressed(Color.DKGRAY);
+        floatingActionButton4.setColorNormal(Color.WHITE);
+        floatingActionButton4.setColorPressed(Color.DKGRAY);
         floatingActionButton1.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 //TODO something when floating action menu first item clicked
@@ -209,50 +218,40 @@ public class UnfoldableDetailsActivity extends AppCompatActivity {
             img1 = this.getIntent().getStringExtra("Image");
             AppImageLoader.displayImage(img1, postfeaturedimage, opts);
 
-//            Target target;
-//            target = new Target() {
-//                @Override
-//                public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-//                    Palette.from(bitmap).generate(new Palette.PaletteAsyncListener() {
-//                        @Override
-//                        public void onGenerated(@Nullable Palette palette) {
-//                            Palette.Swatch lightVibrantSwatch = palette.getLightVibrantSwatch();
-//                            if (lightVibrantSwatch == null) {
-//                                Palette.Swatch mutedSwatch = palette.getLightMutedSwatch();
-//                                getWindow().setStatusBarColor(mutedSwatch.getRgb());
-//                                floatingActionButton1.setColorNormal(mutedSwatch.getRgb());
-//                                floatingActionButton2.setColorNormal(mutedSwatch.getRgb());
-//                                floatingActionButton3.setColorNormal(mutedSwatch.getRgb());
-//                                floatingActionButton4.setColorNormal(mutedSwatch.getRgb());
-//                                //materialDesignFAM.setBackgroundColor(mutedSwatch.getRgb());
-//                            }
-//                            //int lightVibrant = palette.getLightVibrantSwatch().getRgb();
-//                            else {
-//                                getWindow().setStatusBarColor(lightVibrantSwatch.getRgb());
-//                                floatingActionButton1.setColorNormal(lightVibrantSwatch.getRgb());
-//                                floatingActionButton2.setColorNormal(lightVibrantSwatch.getRgb());
-//                                floatingActionButton3.setColorNormal(lightVibrantSwatch.getRgb());
-//                                floatingActionButton4.setColorNormal(lightVibrantSwatch.getRgb());
-//                                //materialDesignFAM.setBackgroundColor(lightVibrantSwatch.getRgb());
-//                            }
-//                        }
-//                    });
-//                }
+            Target target;
+            target = new Target() {
+                @Override
+                public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                    Palette.from(bitmap).generate(new Palette.PaletteAsyncListener() {
+                        @Override
+                        public void onGenerated(@Nullable Palette palette) {
+                            Palette.Swatch darkMutedSwatch = palette.getDarkMutedSwatch();
+                            if (darkMutedSwatch == null) {
+                                Palette.Swatch mutedSwatch = palette.getLightMutedSwatch();
+                                materialDesignFAM.setMenuButtonColorNormal(mutedSwatch.getRgb());
 //
-//                @Override
-//                public void onBitmapFailed(Exception e, Drawable errorDrawable) {
-//
-//                }
-//
-//                @Override
-//                public void onPrepareLoad(Drawable placeHolderDrawable) {
-//
-//                }
-//            };
-//            Picasso.get()
-//                    .load(img1).into(target);
-//            postfeaturedimage.setTag(target);
-//
+                            }
+                            else {
+                                materialDesignFAM.setMenuButtonColorNormal(darkMutedSwatch.getRgb());
+                            }
+                        }
+                    });
+                }
+
+                @Override
+                public void onBitmapFailed(Exception e, Drawable errorDrawable) {
+
+                }
+
+                @Override
+                public void onPrepareLoad(Drawable placeHolderDrawable) {
+
+                }
+            };
+            Picasso.get()
+                    .load(img1).into(target);
+            postfeaturedimage.setTag(target);
+
        }
             @Override
             protected void onPause() {

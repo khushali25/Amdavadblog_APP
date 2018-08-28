@@ -22,6 +22,9 @@ public class IntroScreenAdapter extends FragmentPagerAdapter {
             case 1:
                 return IntroScreenFragment.newInstance(Color.parseColor("#c873f4"), position); // blue
 
+            case 2:
+                return IntroScreenFragment.newInstance(Color.parseColor("#FBB154"), position); // blue
+
             default:
                 return IntroScreenFragment.newInstance(Color.parseColor("#4CAF50"), position); // green
         }
@@ -29,7 +32,7 @@ public class IntroScreenAdapter extends FragmentPagerAdapter {
 
     @Override
     public int getCount() {
-        return 3;
+        return 4;
     }
 
 }

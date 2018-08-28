@@ -238,10 +238,6 @@ public class UnfoldableDetailsFragment extends Fragment {
             con.startActivity(intent);
         }
     }
-//            }
-//            else {
-//                displayToast("Please check your internet connection");
-//            }
 }
 
 //

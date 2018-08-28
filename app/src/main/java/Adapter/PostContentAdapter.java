@@ -51,6 +51,7 @@ public class PostContentAdapter extends ItemsAdapter<Post, PostContentAdapter.Vi
     List<Post> post;
     Post item;
     PostContentAdapter.ViewHolder vh;
+    Typeface custom_font3;
 
     public PostContentAdapter(List<Post> posts,Activity context) {
         this.post = posts;
@@ -120,7 +121,7 @@ public class PostContentAdapter extends ItemsAdapter<Post, PostContentAdapter.Vi
         Typeface custom_font = Typeface.createFromAsset(am, "font/Lora-Bold.ttf");
         Typeface custom_font1 = Typeface.createFromAsset(am, "font/WorkSans-Regular.ttf");
         Typeface custom_font2 = Typeface.createFromAsset(am, "font/Martel-Regular.ttf");
-        Typeface custom_font3 = Typeface.createFromAsset(am, "font/Martel-Bold.ttf");
+        custom_font3 = Typeface.createFromAsset(am, "font/Martel-Bold.ttf");
 
         item = getItem(position);
         vh.Title.setText(Html.fromHtml(item.title.rendered));
@@ -182,7 +183,7 @@ public class PostContentAdapter extends ItemsAdapter<Post, PostContentAdapter.Vi
             System.out.println(outputFormat.format(inputFormat.parse(input)));
             Postdatetime = outputFormat.format(inputFormat.parse(input));
             vh.date.setText(outputFormat.format(inputFormat.parse(input)));
-
+            vh.date.setTypeface(custom_font3);
             SimpleDateFormat sdf1 = new SimpleDateFormat("dd-MM-yyyy KK:mm a");
             currentDateTime = sdf1.format(new Date());
             System.out.print("Time.........." + currentDateTime + "....End");
@@ -213,10 +214,6 @@ public class PostContentAdapter extends ItemsAdapter<Post, PostContentAdapter.Vi
             if(diffDays > 0)
             {
                 vh.date.setText(Html.fromHtml(String.valueOf(diffDays + "d")));
-            }
-            else if(diffDays == 0)
-            {
-                vh.date.setText(Html.fromHtml(String.valueOf(diffHours + "h")));
             }
             else if(diffDays == 0 && diffHours == 0)
             {

@@ -83,21 +83,23 @@
             android:layout_alignParentRight="true"
             android:paddingBottom="@dimen/activity_horizontal_margin"
             android:paddingRight="@dimen/activity_horizontal_margin"
-            fab:menu_backgroundColor="#ccffffff"
-            fab:fab_colorPressed="#66000000"
-            fab:fab_colorNormal="#99FFFFFF"
-            fab:fab_colorRipple="#99FFFFFF"
-            fab:fab_showShadow="true"
+            fab:menu_colorPressed="#ffffff"
             fab:menu_labels_colorNormal="#ffffff"
             fab:menu_labels_colorPressed="#66000000"
-            fab:menu_labels_colorRipple="#66FFFFFF"
+            fab:menu_labels_colorRipple="@color/com_facebook_button_login_silver_background_color_pressed"
+            app:menu_labels_textColor="#000000"
+            fab:fab_colorPressed="#66000000"
+            fab:fab_colorNormal="#000000"
+            fab:fab_colorRipple="@color/com_facebook_button_login_silver_background_color_pressed"
+            fab:fab_showShadow="true"
             fab:menu_labels_showShadow="true"
             fab:menu_labels_maxLines="-1"
             fab:menu_labels_position="left"
             fab:menu_openDirection="up"
             fab:fab_shadowColor="#66000000"
             fab:menu_labels_ellipsize="end"
-            fab:menu_labels_singleLine="true">
+            fab:menu_labels_singleLine="true"
+            app:menu_backgroundColor="#ccffffff">
 
             <com.github.clans.fab.FloatingActionButton
                 android:id="@+id/material_design_floating_action_menu_item1"
@@ -113,6 +115,7 @@
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_rate_review_black_24dp"
                 fab:fab_label="Feedback"
+
                 fab:fab_size="mini" />
 
             <com.github.clans.fab.FloatingActionButton
