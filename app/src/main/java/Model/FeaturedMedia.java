@@ -3,17 +3,14 @@ package Model;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class Category {
+public class FeaturedMedia {
 
     @SerializedName("_id")
     @Expose
     private String id;
-    @SerializedName("name")
+    @SerializedName("URL")
     @Expose
-    private String name;
+    private String uRL;
 
     public String getId() {
         return id;
@@ -23,12 +20,12 @@ public class Category {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getURL() {
+        return uRL;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setURL(String uRL) {
+        this.uRL = uRL;
     }
 
 }

@@ -36,6 +36,7 @@ import Core.WordPressService;
 //import Helper.IFrameParser;
 import Helper.IFrameParser;
 import Model.Post;
+import Model.StartJsonDataClass;
 import Model.SynchronousCallAdapterFactory;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -82,7 +83,7 @@ public class UnfoldableDetailsFragment extends Fragment {
 //        animation.start();
         //CacheService.ClearAllCache();
         retrofitallpost = new Retrofit.Builder()
-                .baseUrl("https://amdavadblogs.apps-1and1.com/")
+                .baseUrl("http://10.0.2.2:3000/amdblog/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(SynchronousCallAdapterFactory.create())
                 .build();
@@ -136,7 +137,7 @@ public class UnfoldableDetailsFragment extends Fragment {
         Typeface custom_font = Typeface.createFromAsset(am, "font/Lora-Bold.ttf");
         Typeface custom_font1 = Typeface.createFromAsset(am, "font/Martel-Bold.ttf");
 
-        final int id1 = this.getActivity().getIntent().getIntExtra("BlogId", 0);
+        final String id1 = this.getActivity().getIntent().getStringExtra("BlogId");
         String title = this.getActivity().getIntent().getStringExtra("Title");
         String author = this.getActivity().getIntent().getStringExtra("Author");
         String date = this.getActivity().getIntent().getStringExtra("Date");
@@ -149,53 +150,36 @@ public class UnfoldableDetailsFragment extends Fragment {
         authortextview.setTypeface(custom_font1);
         datetextview.setTypeface(custom_font1);
 
-        final String Content = this.getActivity().getIntent().getStringExtra("Content");
-        String replacedtitle = title.replace(" ", "-");
-        posturl = "http://amdavadblogs.apps-1and1.com/en/" + replacedtitle.toLowerCase();
+        final String Content = this.getActivity().getIntent().getStringExtra("content");
+        final String replacedtitle = title.replace(" ", "-");
+        posturl = "http://amdavadblog.com/" + replacedtitle.toLowerCase();
         if (!android.text.TextUtils.isEmpty(getActivity().getIntent().getStringExtra("posturl"))) {
             posturl = getActivity().getIntent().getStringExtra("posturl");
         }
         final String stylestr = "<html><head><style type=\"text/css\" link rel=\"stylesheet\" href=\"style.css\" />img{display: inline; height: auto; max-width: 100%;}@font-face {font-family: MyFont;src: url(\"file:///android_asset/fonts/PT_Serif-Web-Regular.ttf\")}body {font-family: MyFont;color: #6d6c6c;line-height: 30px;font-size: 18px;text-align: justify;} iframe {display: block;max-width:100%;margin-top:10px;margin-bottom:10px;}</style></head><body>";
         final String pas = "</body></html>";
-        final WordPressService wordPressService = retrofitallpost.create(WordPressService.class);
-        Call<Post.PostDetail> call = null;
-        call = wordPressService.getPostDetailById(id1);
-        call.enqueue(new Callback<Post.PostDetail>() {
-            @Override
-            public void onResponse(Call<Post.PostDetail> call, Response<Post.PostDetail> response) {
-                if(id1 == 0)
-                {
-                    detail = stylestr + Content + pas;
-                }
-                else {
-                    String tobeParsed = response.body().content.rendered;
-                    String afterparsed = IFrameParser.urlUpdate(tobeParsed);
-                    //String afterParsed = IFrameParser.urlUpdate(tobeParsed);
-                    //return afterParsed;
-                    // String BlogContent = Html.fromHtml(call.getClass().);
-                    detail = stylestr + afterparsed + pas;
-                }
-                Bundle param = new Bundle();
-                param.putInt("id", id1);
-                WebSettings webSetting = webviewLayout.getSettings();
-                webSetting.setTextSize(WebSettings.TextSize.SMALLER);
-                webSetting.setJavaScriptEnabled(true);
-                webSetting.setMediaPlaybackRequiresUserGesture(false);
-                webSetting.setLoadWithOverviewMode(true);
-                webSetting.setLoadsImagesAutomatically(true);
-                webSetting.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);
-                webviewLayout.setWebViewClient(new MyWebChromeClient(getActivity()));
-                webviewLayout.setInitialScale(335);
-                webviewLayout.loadDataWithBaseURL(null, detail, "text/html", "UTF-8", null);
-            }
 
-            @Override
-            public void onFailure(Call<Post.PostDetail> call, Throwable t) {
+        String afterparsed = IFrameParser.urlUpdate(Content);
+                                 //String afterParsed = IFrameParser.urlUpdate(tobeParsed);
+                                 //return afterParsed;
+                                 // String BlogContent = Html.fromHtml(call.getClass().);
+        detail = stylestr + afterparsed + pas;
 
-            }
-        });
+        Bundle param = new Bundle();
+        param.putString("id", id1);
+        WebSettings webSetting = webviewLayout.getSettings();
+        webSetting.setTextSize(WebSettings.TextSize.SMALLER);
+        webSetting.setJavaScriptEnabled(true);
+        webSetting.setMediaPlaybackRequiresUserGesture(false);
+        webSetting.setLoadWithOverviewMode(true);
+        webSetting.setLoadsImagesAutomatically(true);
+        webSetting.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);
+        webviewLayout.setWebViewClient(new MyWebChromeClient(getActivity()));
+        webviewLayout.setInitialScale(335);
+        webviewLayout.loadDataWithBaseURL(null, detail, "text/html", "UTF-8", null);
+
+
         imageView.setVisibility(View.GONE);
-
     }
 
     private class MyWebChromeClient extends WebViewClient {
@@ -212,19 +196,19 @@ public class UnfoldableDetailsFragment extends Fragment {
             toast.show();
         }
 
-        //   public boolean isOnline()
-        //  {
-//            ConnectivityManager cm = (ConnectivityManager)con.getSystemService(Context.CONNECTIVITY_SERVICE);
-//            //NetworkInfo netInfo = cm.getActiveNetworkInfo();
-//            if (netInfo != null && netInfo.isConnectedOrConnecting())
-//            {
-//                return true;
-//            }
-//            else
-//            {
-//                return false;
-//            }
-        //}
+           public boolean isOnline()
+          {
+            ConnectivityManager cm = (ConnectivityManager)con.getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo netInfo = cm.getActiveNetworkInfo();
+            if (netInfo != null && netInfo.isConnectedOrConnecting())
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
             openInAppBrowser(url);
             return true;
@@ -239,7 +223,3 @@ public class UnfoldableDetailsFragment extends Fragment {
         }
     }
 }
-
-//
-//
-

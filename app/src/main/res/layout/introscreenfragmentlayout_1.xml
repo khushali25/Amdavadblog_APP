@@ -2,7 +2,9 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/intro_background"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen">
 
     <ImageView
         android:layout_width="match_parent"
@@ -27,14 +29,7 @@
         <!--android:text="title"-->
         <!--android:textColor="@android:color/white"-->
         <!--android:textSize="28sp" />-->
-        <!--<ImageView-->
-            <!--android:layout_width="70dp"-->
-            <!--android:id="@+id/introimage"-->
-            <!--android:layout_height="70dp"-->
-            <!--android:layout_gravity="top|center"-->
-            <!--android:layout_marginTop="50dp"-->
-            <!--android:scaleType="centerCrop"-->
-            <!--android:src="@drawable/icon256" />-->
+
 
         <!--<ImageView-->
         <!--android:id="@+id/computer"-->

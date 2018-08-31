@@ -49,39 +49,29 @@ public class PostContentAdapter extends ItemsAdapter<Post, PostContentAdapter.Vi
     Context context;
     private int index;
     List<Post> post;
+    String postid,input;
     Post item;
-    PostContentAdapter.ViewHolder vh;
     Typeface custom_font3;
+    ViewHolder vh1;
 
     public PostContentAdapter(List<Post> posts,Activity context) {
         this.post = posts;
         this.context = context;
+        setItemsList(this.post);
         //setItemsList(getItems());
         //  setItemsList(getItems1());
         imgloader = ImageLoader.getInstance();
     }
-           @Override
+          @Override
            public int getCount() {
-               int itemCount = 0;
-               if (post != null) {
-                   itemCount = post.size();
-
-               }
-               return itemCount;
+              return post == null ? 0 : post.size();
            }
-           @Override
-               public Post getItem(int position) {
-                   return post.get(position);
-               }
-
            public void setData(List<Post> questionList) {
                this.post=questionList;
+               setItemsList(this.post);
            }
 
-           public void notify(List<Post> postList) {
-               this.post = postList;
-               notifyDataSetChanged();
-           }
+
     class ViewHolder extends ItemsAdapter.ViewHolder {
         public TextView Title;
         public ImageView Art;
@@ -115,65 +105,72 @@ public class PostContentAdapter extends ItemsAdapter<Post, PostContentAdapter.Vi
         return vh;
     }
     @Override
-    protected void onBindHolder(PostContentAdapter.ViewHolder viewHolder, int position) {
-        vh = viewHolder;
+    protected void onBindHolder(PostContentAdapter.ViewHolder vh, final int position) {
+        vh1 = vh;
         AssetManager am = context.getApplicationContext().getAssets();
         Typeface custom_font = Typeface.createFromAsset(am, "font/Lora-Bold.ttf");
         Typeface custom_font1 = Typeface.createFromAsset(am, "font/WorkSans-Regular.ttf");
-        Typeface custom_font2 = Typeface.createFromAsset(am, "font/Martel-Regular.ttf");
         custom_font3 = Typeface.createFromAsset(am, "font/Martel-Bold.ttf");
 
         item = getItem(position);
-        vh.Title.setText(Html.fromHtml(item.title.rendered));
-        vh.Title.setTypeface(custom_font);
-        vh.Category.setText(Html.fromHtml("#" + item.getCategoryname()));
-        vh.Category.setTypeface(custom_font1);
-        vh.Author.setText(Html.fromHtml(item.getAuthorname()));
-        vh.Author.setTypeface(custom_font3);
-        vh.Excerpts.setText(Html.fromHtml(item.excerpt.rendered));
-        vh.Excerpts.setTypeface(custom_font3);
+        postid = item.getPostId();
+        String title = item.getTitle();
+        vh1.Title.setText(title);
+        vh1.Title.setTypeface(custom_font);
+        vh1.Category.setText(Html.fromHtml("#" + item.getCategory().getName()));
+        vh1.Category.setTypeface(custom_font1);
+        vh1.Author.setText(Html.fromHtml(item.getAuthor().getName()));
+        vh1.Author.setTypeface(custom_font3);
+        vh1.Excerpts.setText(Html.fromHtml(item.getExcerpt()));
+        vh1.Excerpts.setTypeface(custom_font3);
+         input = item.getDate();
         GetDateTime();
 
-        if (item.imagePath != null) {
+        if (item.getFeaturedMedia().getURL() != null) {
 
-            File file = ImageLoader.getInstance().getDiskCache().get(item.getImagePath());
+            File file = ImageLoader.getInstance().getDiskCache().get(item.getFeaturedMedia().getURL());
             if (!file.exists()) {
                 DisplayImageOptions options = new DisplayImageOptions.Builder()
                         .cacheOnDisk(true)
                         .build();
-                imgloader.displayImage(item.imagePath, vh.Art, options);
+                imgloader.displayImage(item.getFeaturedMedia().getURL(), vh1.Art, options);
             } else {
                 //imgLoader.DisplayImage(post.imagePath, vh.Art, options);
-                vh.Art.setImageURI(android.net.Uri.parse(file.getAbsolutePath()));
+                vh1.Art.setImageURI(android.net.Uri.parse(file.getAbsolutePath()));
             }
         } else {
             String imageUri = "drawable://" + R.drawable.ic_home_black_24dp;
             DisplayImageOptions options = new DisplayImageOptions.Builder()
                     .cacheOnDisk(true)
                     .build();
-            imgloader.displayImage(imageUri, vh.Art, options);
+            imgloader.displayImage(imageUri, vh1.Art, options);
         }
 
-        final String dateTime = vh.date.getText().toString();
+        final String dateTime = vh1.date.getText().toString();
         //vh.Art.setTag(R.id.postimage, item);
-        vh.itemView.setOnClickListener(new View.OnClickListener() {
+        vh1.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent;
                 intent = new Intent(context, UnfoldableDetailsActivity.class);
-                intent.putExtra("BlogId", item.id);
-                intent.putExtra("Title", item.title.rendered);
-                intent.putExtra("Author", item.authorname);
+                Post tempitem = getItem(position);
+                String posttempid = tempitem.getPostId();
+                intent.putExtra("Position",position);
+                intent.putExtra("BlogId", posttempid);
+                intent.putExtra("Title", tempitem.getTitle());
+                intent.putExtra("Author", tempitem.getAuthor().getName());
                 intent.putExtra("Date", dateTime);
-                intent.putExtra("Excepts", item.excerpt.rendered);
-                intent.putExtra("Image", item.imagePath);
+                intent.putExtra("Excepts", tempitem.getExcerpt());
+                intent.putExtra("content",tempitem.getContent());
+                intent.putExtra("Image", tempitem.getFeaturedMedia().getURL());
                 context.startActivity(intent);
             }
         });
     }
+
+
     private void GetDateTime() {
 
-        String input = item.getDate();
         String Postdatetime = null;
         String currentDateTime = null;
 
@@ -182,8 +179,8 @@ public class PostContentAdapter extends ItemsAdapter<Post, PostContentAdapter.Vi
         try {
             System.out.println(outputFormat.format(inputFormat.parse(input)));
             Postdatetime = outputFormat.format(inputFormat.parse(input));
-            vh.date.setText(outputFormat.format(inputFormat.parse(input)));
-            vh.date.setTypeface(custom_font3);
+            vh1.date.setText(outputFormat.format(inputFormat.parse(input)));
+            vh1.date.setTypeface(custom_font3);
             SimpleDateFormat sdf1 = new SimpleDateFormat("dd-MM-yyyy KK:mm a");
             currentDateTime = sdf1.format(new Date());
             System.out.print("Time.........." + currentDateTime + "....End");
@@ -213,19 +210,19 @@ public class PostContentAdapter extends ItemsAdapter<Post, PostContentAdapter.Vi
 
             if(diffDays > 0)
             {
-                vh.date.setText(Html.fromHtml(String.valueOf(diffDays + "d")));
+                vh1.date.setText(Html.fromHtml(String.valueOf(diffDays + "d")));
             }
             else if(diffDays == 0 && diffHours == 0)
             {
-                vh.date.setText(Html.fromHtml(String.valueOf(diffMinutes + "m")));
+                vh1.date.setText(Html.fromHtml(String.valueOf(diffMinutes + "m")));
             }
             else if(diffDays == 0 && diffHours == 0 && diffMinutes == 0)
             {
-                vh.date.setText(Html.fromHtml(String.valueOf(diffMinutes + "s")));
+                vh1.date.setText(Html.fromHtml(String.valueOf(diffMinutes + "s")));
             }
             else
             {
-                vh.date.setVisibility(View.GONE);
+                vh1.date.setVisibility(View.GONE);
             }
         } catch (Exception e) {
             e.printStackTrace();

@@ -25,8 +25,6 @@ import android.util.Log;
 import android.view.WindowManager;
 import android.widget.RemoteViews;
 import android.widget.Toast;
-
-import com.example.xps.amdavadblog_app.R;
 import com.example.xps.amdavadblog_app.UnfoldableDetailsActivity;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
@@ -76,7 +74,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 //        }
         if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.O) {
             NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
-                    .setSmallIcon(R.drawable.icon256)
+                    //.setSmallIcon(android.R.drawable)
                     .setContentTitle("Test Notification")
                     .setContentText(title)
                     .setAutoCancel(true)
@@ -128,7 +126,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 
             NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this, channelId)
-                    .setSmallIcon(R.drawable.icon256)
+                   // .setSmallIcon(R.drawable.icon)
                     .setContentTitle("New Blog")
                     .setContentText("Post Published")
                     .setAutoCancel(true)

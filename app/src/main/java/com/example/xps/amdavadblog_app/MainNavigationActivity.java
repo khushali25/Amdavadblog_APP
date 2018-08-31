@@ -302,15 +302,6 @@ public class MainNavigationActivity extends AppCompatActivity
         fbloginbutton = (LoginButton) headerView.findViewById(R.id.login_button);
         fbloginbutton.setReadPermissions(Arrays.asList(EMAIL));
         LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile"));
-//        fbbtn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                if (view == fbbtn) {
-//                    fbloginbutton.performClick();
-//                   // updatefbbtn();
-//                }
-//            }
-//        });
 
         fbloginbutton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override

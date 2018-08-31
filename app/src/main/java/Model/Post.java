@@ -1,121 +1,65 @@
 package Model;
 
-import com.example.xps.amdavadblog_app.R;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import Adapter.PostContentAdapter;
-
 public class Post {
-    @SerializedName("id")
+    @SerializedName("_id")
     @Expose
-    public int id;
-
+    private String id;
+    @SerializedName("PostId")
+    @Expose
+    private String postId;
     @SerializedName("title")
     @Expose
-    public title title;
-
-//    @SerializedName("categories")
-//    @Expose
-//    public int categories;
-
-    @SerializedName("author")
-    @Expose
-    public int author;
-
-    @SerializedName("excerpt")
-    @Expose
-    public Excerpt excerpt;
-
+    private String title;
     @SerializedName("date")
     @Expose
-    public String date;
-
+    private String date;
     @SerializedName("link")
     @Expose
-    public String link;
-
-    @SerializedName("imagePath")
+    private String link;
+    @SerializedName("excerpt")
     @Expose
-    public String imagePath;
-
+    private String excerpt;
+    @SerializedName("content")
+    @Expose
+    private String content;
     @SerializedName("featured_media")
     @Expose
-    public int featured_media;
-
-    @SerializedName("categoryname")
+    private FeaturedMedia featuredMedia;
+    @SerializedName("category")
     @Expose
-    public String categoryname;
-
-    @SerializedName("authorname")
+    private Category category;
+    @SerializedName("author")
     @Expose
-    public String authorname;
+    private Author author;
 
-    public String getAuthorname() {
-        return authorname;
+
+    public String getId() {
+        return id;
     }
 
-    public void setAuthorname(String authorname) {
-        this.authorname = authorname;
-    }
-//
-
-
-    public List<Integer> getCategories() {
-        return categories;
+    public void setId(String id) {
+        this.id = id;
     }
 
-    public void setCategories(List<Integer> categories) {
-        this.categories = categories;
+    public String getPostId() {
+        return postId;
     }
 
-    public List<Integer> categories;
-
-    public String getCategoryname() {
-        return categoryname;
+    public void setPostId(String postId) {
+        this.postId = postId;
     }
 
-    public void setCategoryname(String categoryname) {
-        this.categoryname = categoryname;
+    public String getTitle() {
+        return title;
     }
 
-    public int getFeatured_media() {
-        return featured_media;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
-    public void setFeatured_media(int featured_media) {
-        this.featured_media = featured_media;
-    }
-
-    public class title
-    {
-        public String rendered;
-        public String getRendered() {
-            return rendered;
-        }
-
-        public void setRendered(String rendered) {
-            this.rendered = rendered;
-        }
-
-    }
-    public class Excerpt
-    {
-        public String getRendered() {
-            return rendered;
-        }
-
-        public void setRendered(String rendered) {
-            this.rendered = rendered;
-        }
-
-        public String rendered;
-
-    }
     public String getDate() {
         return date;
     }
@@ -124,84 +68,51 @@ public class Post {
         this.date = date;
     }
 
-    public int getAuthor() {
-        return author;
-    }
-
-    public void setAuthor(int author) {
-        this.author = author;
-    }
-
-//    public String getExcerpt() {
-//        return excerpt;
-//    }
-//
-//    public void setExcerpt(String excerpt) {
-//        this.excerpt = excerpt;
-//    }
-//
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-//    public String getTitle() {
-//        return title;
-//    }
-//    public void setTitle(String title) {
-//        this.title = title;
-//    }
-
     public String getLink() {
         return link;
     }
+
     public void setLink(String link) {
         this.link = link;
     }
 
-    public String getImagePath() {
-        return imagePath;
+    public String getContent() {
+        return content;
     }
 
-    public void setImagePath(String imagePath) {
-        this.imagePath = imagePath;
+    public void setContent(String content) {
+        this.content = content;
+    }
+    public String getExcerpt() {
+        return excerpt;
     }
 
-    public static class PostDetail
-    {
-        public int id;
-        public Content content;
-        public int getId() {
-            return id;
-        }
-
-        public void setId(int id) {
-            this.id = id;
-        }
-
-        public Content getContent() {
-            return content;
-        }
-
-        public void setContent(Content content) {
-            this.content = content;
-        }
-
+    public void setExcerpt(String excerpt) {
+        this.excerpt = excerpt;
     }
-    public class Content
-    {
-        public String rendered;
-        public String getRendered() {
-            return rendered;
-        }
 
-        public void setRendered(String rendered) {
-            this.rendered = rendered;
-        }
-
-
+    public FeaturedMedia getFeaturedMedia() {
+        return featuredMedia;
     }
+
+    public void setFeaturedMedia(FeaturedMedia featuredMedia) {
+        this.featuredMedia = featuredMedia;
+    }
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
+    }
+
+    public Author getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(Author author) {
+        this.author = author;
+    }
+
 }

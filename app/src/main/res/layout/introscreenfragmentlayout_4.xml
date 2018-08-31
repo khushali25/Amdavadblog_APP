@@ -6,9 +6,9 @@
 
     <ImageView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="570dp"
         android:scaleType="centerCrop"
-        android:src="@drawable/news" />
+        android:src="@drawable/news5" />
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -16,25 +16,18 @@
         android:background="@drawable/introscreen_overlayimage">
 
         <!--<TextView-->
-            <!--android:id="@+id/title"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_gravity="top|center"-->
-            <!--android:layout_marginLeft="32dp"-->
-            <!--android:layout_marginRight="32dp"-->
-            <!--android:layout_marginTop="32dp"-->
-            <!--android:gravity="center"-->
-            <!--android:text="title"-->
-            <!--android:textColor="@android:color/white"-->
-            <!--android:textSize="28sp" />-->
-        <!--<ImageView-->
-            <!--android:id="@+id/introimage"-->
-            <!--android:layout_width="70dp"-->
-            <!--android:layout_height="70dp"-->
-            <!--android:layout_gravity="top|center"-->
-            <!--android:layout_marginTop="50dp"-->
-            <!--android:scaleType="centerCrop"-->
-            <!--android:src="@drawable/icon256" />-->
+        <!--android:id="@+id/title"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_gravity="top|center"-->
+        <!--android:layout_marginLeft="32dp"-->
+        <!--android:layout_marginRight="32dp"-->
+        <!--android:layout_marginTop="32dp"-->
+        <!--android:gravity="center"-->
+        <!--android:text="title"-->
+        <!--android:textColor="@android:color/white"-->
+        <!--android:textSize="28sp" />-->
+
 
         <!--<ImageView-->
         <!--android:id="@+id/computer"-->

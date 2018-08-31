@@ -6,20 +6,26 @@ import Model.Author;
 import Model.Category;
 import Model.Media;
 import Model.Post;
+import Model.StartJsonDataClass;
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface WordPressService {
-    @GET("/wp-json/wp/v2/posts")
-    Call<List<Post>> getAllPost();
 
-    @GET("/wp-json/wp/v2/posts")
-    Call<List<Post>> getAllPostPerPage(@Query("page") int id);
+    @GET("GetAllPosts")
+    Call<StartJsonDataClass> getAllPostPerPage(@Query("page") int PostId);
 
-    @GET("/wp-json/wp/v2/media/{id}")
-    Media getFeaturedImageById(@Path("id") int id);
+    @GET("GetAllPostsByCategoryId")
+    Call<StartJsonDataClass> getAllPostByCategoryId(@Query("page") int PostId, @Query("CategoryId") int catId);
+
+    @GET("GetPostDetailById")
+    Call<StartJsonDataClass> getPostDetailById(@Query("page") String PostId);
+
+
+//   @GET("/wp-json/wp/v2/media/{id}")
+//    Media getFeaturedImageById(@Path("id") int id);
 
     @GET("/wp-json/wp/v2/posts")
     Call<List<Post>> getAllPostByCategoryId(@Query("categories") int id);
@@ -33,6 +39,6 @@ public interface WordPressService {
     @GET("/wp-json/wp/v2/categories/{id}")
    Category getPostCategoryById(@Path("id") int id);
 
-    @GET("/wp-json/wp/v2/posts/{id}")
-    Call<Post.PostDetail> getPostDetailById(@Path("id") int id);
+//    @GET("/wp-json/wp/v2/posts/{id}")
+//    Call<Post.PostDetail> getPostDetailById(@Path("id") int id);
 }
