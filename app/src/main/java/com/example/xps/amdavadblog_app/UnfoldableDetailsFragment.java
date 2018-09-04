@@ -1,18 +1,14 @@
 package com.example.xps.amdavadblog_app;
 
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,24 +19,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.alexvasilkov.android.commons.texts.SpannableBuilder;
-import com.alexvasilkov.android.commons.ui.Views;
-import com.alexvasilkov.foldablelayout.UnfoldableView;
-import com.alexvasilkov.foldablelayout.shading.GlanceFoldShading;
 import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
-import java.util.List;
-
-import Core.WordPressService;
 //import Helper.IFrameParser;
-import Helper.IFrameParser;
-import Model.Post;
-import Model.StartJsonDataClass;
 import Model.SynchronousCallAdapterFactory;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 

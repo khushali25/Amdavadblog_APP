@@ -40,9 +40,6 @@ import Model.Post;
 
 import static com.facebook.AccessTokenManager.TAG;
 
-//import static Model.Post.getItems;
-
-
 public class PostContentAdapter extends ItemsAdapter<Post, PostContentAdapter.ViewHolder>
 {
     public ImageLoader imgloader;
@@ -58,8 +55,6 @@ public class PostContentAdapter extends ItemsAdapter<Post, PostContentAdapter.Vi
         this.post = posts;
         this.context = context;
         setItemsList(this.post);
-        //setItemsList(getItems());
-        //  setItemsList(getItems1());
         imgloader = ImageLoader.getInstance();
     }
           @Override
@@ -70,8 +65,6 @@ public class PostContentAdapter extends ItemsAdapter<Post, PostContentAdapter.Vi
                this.post=questionList;
                setItemsList(this.post);
            }
-
-
     class ViewHolder extends ItemsAdapter.ViewHolder {
         public TextView Title;
         public ImageView Art;
@@ -167,8 +160,6 @@ public class PostContentAdapter extends ItemsAdapter<Post, PostContentAdapter.Vi
             }
         });
     }
-
-
     private void GetDateTime() {
 
         String Postdatetime = null;

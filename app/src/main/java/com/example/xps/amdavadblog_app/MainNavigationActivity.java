@@ -500,12 +500,12 @@ public class MainNavigationActivity extends AppCompatActivity
 
             case R.id.subscribepost:
                 PrefService ap = new PrefService(this);
-              //  String subscribed = ap.getAccessKey("subscribe");
-               // if (subscribed == "")
+                String subscribed = ap.getAccessKey("subscribe");
+                if (subscribed == "")
                 {
                     SocialMethod.showSubscription(this);
                 }
-               // else
+                else
                 {
                     SocialMethod.alreadySubscribed(this);
                 }
