@@ -107,7 +107,6 @@ public class MainNavigationActivity extends AppCompatActivity
         mFirebaseAnalytics.setAnalyticsCollectionEnabled(true);
         mFirebaseAnalytics.setMinimumSessionDuration(20000);
 
-
         //Sets the user ID property.
         mFirebaseAnalytics.setUserId(String.valueOf(GetRandomIndex()));
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();

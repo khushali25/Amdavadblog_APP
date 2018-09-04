@@ -5,6 +5,7 @@ import java.util.List;
 import Model.Author;
 import Model.Category;
 import Model.Media;
+import Model.PoseSearch;
 import Model.Post;
 import Model.StartJsonDataClass;
 import retrofit2.Call;
@@ -24,14 +25,14 @@ public interface WordPressService {
     Call<StartJsonDataClass> getPostDetailById(@Query("page") String PostId);
 
 
-//   @GET("/wp-json/wp/v2/media/{id}")
-//    Media getFeaturedImageById(@Path("id") int id);
+   @GET("/wp-json/wp/v2/media/{id}")
+    Media getFeaturedImageById(@Path("id") int id);
 
     @GET("/wp-json/wp/v2/posts")
     Call<List<Post>> getAllPostByCategoryId(@Query("categories") int id);
 
     @GET("/wp-json/wp/v2/posts")
-    Call<List<Post>> getPostsByQuerySearch(@Query("search") String searchterm);
+    Call<List<PoseSearch>> getPostsByQuerySearch(@Query("search") String searchterm);
 
     @GET("/wp-json/wp/v2/users/{id}")
     Author getPostAuthorById(@Path("id") int id);

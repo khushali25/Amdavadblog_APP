@@ -114,5 +114,4 @@ public class Post {
     public void setAuthor(Author author) {
         this.author = author;
     }
-
 }

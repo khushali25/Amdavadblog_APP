@@ -79,7 +79,7 @@ public class FoldableListFragment extends Fragment {
         });
 //        LetCall(1);
         Retrofit retrofitallpost=new Retrofit.Builder()
-                .baseUrl("http://10.0.2.2:3000/amdblog/")
+                .baseUrl("http://192.168.1.5:3000/amdblog/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(SynchronousCallAdapterFactory.create())
                 .build();
