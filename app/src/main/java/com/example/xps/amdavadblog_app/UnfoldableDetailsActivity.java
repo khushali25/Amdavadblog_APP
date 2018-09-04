@@ -31,6 +31,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -205,6 +206,7 @@ public class UnfoldableDetailsActivity extends AppCompatActivity {
             GetFragment();
             //EventServices.Instance.GenericEvent(EventType.PostDetailActivityComplete, param);
     }
+
 
     private void GetBlogDetails() {
 

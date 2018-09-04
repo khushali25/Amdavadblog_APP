@@ -4,27 +4,38 @@ package com.example.xps.amdavadblog_app;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetManager;
+import android.content.res.Resources;
 import android.graphics.Typeface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.Html;
+import android.util.TypedValue;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.webkit.JavascriptInterface;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 //import Helper.IFrameParser;
+import org.apache.commons.lang3.StringEscapeUtils;
+
 import Model.SynchronousCallAdapterFactory;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+
+import static com.google.android.gms.internal.zzahn.runOnUiThread;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -37,7 +48,7 @@ public class UnfoldableDetailsFragment extends Fragment {
     private WebView webviewLayout;
     TextView titleTextView,authortextview,datetextview;
     Retrofit retrofitallpost;
-    private int fontSize;
+    private float fontSize;
     static Toast toast;
     android.graphics.drawable.AnimationDrawable animation;
 
@@ -117,10 +128,11 @@ public class UnfoldableDetailsFragment extends Fragment {
 
         final String id1 = this.getActivity().getIntent().getStringExtra("BlogId");
         String title = this.getActivity().getIntent().getStringExtra("Title");
+        String decodedtitle= StringEscapeUtils.unescapeHtml3(title);
         String author = this.getActivity().getIntent().getStringExtra("Author");
         String date = this.getActivity().getIntent().getStringExtra("Date");
 
-        titleTextView.setText(title);
+        titleTextView.setText(decodedtitle);
         authortextview.setText(author);
         datetextview.setText(date);
 
@@ -128,7 +140,7 @@ public class UnfoldableDetailsFragment extends Fragment {
         authortextview.setTypeface(custom_font1);
         datetextview.setTypeface(custom_font1);
 
-        final String Content = this.getActivity().getIntent().getStringExtra("content");
+        final String Content = (this.getActivity().getIntent().getStringExtra("content")); ;
         final String replacedtitle = title.replace(" ", "-");
         posturl = "http://amdavadblog.com/" + replacedtitle.toLowerCase();
         if (!android.text.TextUtils.isEmpty(getActivity().getIntent().getStringExtra("posturl"))) {
@@ -146,19 +158,26 @@ public class UnfoldableDetailsFragment extends Fragment {
         Bundle param = new Bundle();
         param.putString("id", id1);
         WebSettings webSetting = webviewLayout.getSettings();
-        webSetting.setTextSize(WebSettings.TextSize.SMALLER);
+        webSetting.setTextSize(WebSettings.TextSize.NORMAL);
         webSetting.setJavaScriptEnabled(true);
         webSetting.setMediaPlaybackRequiresUserGesture(false);
-        webSetting.setLoadWithOverviewMode(true);
         webSetting.setLoadsImagesAutomatically(true);
         webSetting.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);
         webviewLayout.setWebViewClient(new MyWebChromeClient(getActivity()));
-        webviewLayout.setInitialScale(335);
+       // webviewLayout.setInitialScale();
         webviewLayout.loadDataWithBaseURL(null, detail, "text/html", "UTF-8", null);
-
+        webviewLayout.addJavascriptInterface(this, "MyApp");
         imageView.setVisibility(View.GONE);
     }
-
+    @JavascriptInterface
+    public void resize(final float height) {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                webviewLayout.setLayoutParams(new LinearLayout.LayoutParams(getResources().getDisplayMetrics().widthPixels, (int) (height * getResources().getDisplayMetrics().density)));
+            }
+        });
+    }
     private class MyWebChromeClient extends WebViewClient {
         public Context con;
 

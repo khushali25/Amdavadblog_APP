@@ -39,6 +39,14 @@
                 android:id="@+id/privacypolicy"
                 android:icon="@drawable/ic_verified_user_black_24dp"
                 android:title="Privacy Policy" />
+            <item
+                android:title=""
+                android:enabled="false" >
+            </item>
+            <item
+                android:title=""
+                android:enabled="false" >
+            </item>
         </menu>
     </item>
 

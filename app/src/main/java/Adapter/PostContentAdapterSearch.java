@@ -20,6 +20,8 @@ import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
+import org.apache.commons.lang3.StringEscapeUtils;
+
 import java.io.File;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -104,7 +106,9 @@ public class PostContentAdapterSearch extends ItemsAdapter<Post, PostContentAdap
         custom_font3 = Typeface.createFromAsset(am, "font/Martel-Bold.ttf");
 
         item = getItem1(position);
-        vh.Title.setText(Html.fromHtml(item.title.rendered));
+        String title = item.title.rendered;
+        String decodedtitle= StringEscapeUtils.unescapeHtml3(title);
+        vh1.Title.setText(decodedtitle);
         vh.Title.setTypeface(custom_font);
         vh.Category.setText(Html.fromHtml("#" + item.getCategoryname()));
         vh.Category.setTypeface(custom_font1);

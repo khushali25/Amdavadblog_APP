@@ -27,6 +27,8 @@ import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
+import org.apache.commons.lang3.StringEscapeUtils;
+
 import java.io.File;
 import java.io.IOException;
 import java.text.DateFormat;
@@ -108,7 +110,8 @@ public class PostContentAdapter extends ItemsAdapter<Post, PostContentAdapter.Vi
         item = getItem(position);
         postid = item.getPostId();
         String title = item.getTitle();
-        vh1.Title.setText(title);
+        String decodedtitle= StringEscapeUtils.unescapeHtml3(title);
+        vh1.Title.setText(decodedtitle);
         vh1.Title.setTypeface(custom_font);
         vh1.Category.setText(Html.fromHtml("#" + item.getCategory().getName()));
         vh1.Category.setTypeface(custom_font1);
