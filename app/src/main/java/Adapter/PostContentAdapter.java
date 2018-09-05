@@ -4,17 +4,22 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetManager;
+import android.graphics.Point;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.ScaleDrawable;
 import android.support.v4.content.ContextCompat;
 import android.text.Html;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.JavascriptInterface;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -41,6 +46,7 @@ import java.util.List;
 import Model.Post;
 
 import static com.facebook.AccessTokenManager.TAG;
+import static com.google.android.gms.internal.zzahn.runOnUiThread;
 
 public class PostContentAdapter extends ItemsAdapter<Post, PostContentAdapter.ViewHolder>
 {
@@ -52,6 +58,8 @@ public class PostContentAdapter extends ItemsAdapter<Post, PostContentAdapter.Vi
     Post item;
     Typeface custom_font3;
     ViewHolder vh1;
+
+    float txtsize;
 
     public PostContentAdapter(List<Post> posts,Activity context) {
         this.post = posts;
@@ -92,7 +100,9 @@ public class PostContentAdapter extends ItemsAdapter<Post, PostContentAdapter.Vi
 
         View view = LayoutInflater.from(parent.getContext()).
                 inflate(R.layout.post_listing, null);
+
         PostContentAdapter.ViewHolder vh = new PostContentAdapter.ViewHolder(view);
+
         if (!imgloader.isInited()) {
             imgloader.init(ImageLoaderConfiguration
                     .createDefault(parent.getContext()));
@@ -107,6 +117,13 @@ public class PostContentAdapter extends ItemsAdapter<Post, PostContentAdapter.Vi
         Typeface custom_font1 = Typeface.createFromAsset(am, "font/WorkSans-Regular.ttf");
         custom_font3 = Typeface.createFromAsset(am, "font/Martel-Bold.ttf");
 
+        DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
+        int pxWidth = displayMetrics.widthPixels;
+        float dpWidth = pxWidth / displayMetrics.density;
+        int pxHeight = displayMetrics.heightPixels;
+        float dpHeight = pxHeight / displayMetrics.density;
+        txtsize=dpHeight*0.026f;
+
         item = getItem(position);
         postid = item.getPostId();
         String title = item.getTitle();
@@ -117,8 +134,10 @@ public class PostContentAdapter extends ItemsAdapter<Post, PostContentAdapter.Vi
         vh1.Category.setTypeface(custom_font1);
         vh1.Author.setText(Html.fromHtml(item.getAuthor().getName()));
         vh1.Author.setTypeface(custom_font3);
+        vh.Author.setTextSize(txtsize);
         vh1.Excerpts.setText(Html.fromHtml(item.getExcerpt()));
         vh1.Excerpts.setTypeface(custom_font3);
+        vh.Excerpts.setTextSize(txtsize);
          input = item.getDate();
         GetDateTime();
 
@@ -175,6 +194,7 @@ public class PostContentAdapter extends ItemsAdapter<Post, PostContentAdapter.Vi
             Postdatetime = outputFormat.format(inputFormat.parse(input));
             vh1.date.setText(outputFormat.format(inputFormat.parse(input)));
             vh1.date.setTypeface(custom_font3);
+            vh1.date.setTextSize(txtsize);
             SimpleDateFormat sdf1 = new SimpleDateFormat("dd-MM-yyyy KK:mm a");
             currentDateTime = sdf1.format(new Date());
             System.out.print("Time.........." + currentDateTime + "....End");

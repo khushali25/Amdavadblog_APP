@@ -1,9 +1,11 @@
 package com.example.xps.amdavadblog_app;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -48,9 +50,7 @@ public class FoldableListFragment extends Fragment {
 
     public FoldableListFragment() {
 
-        // Required empty public constructor
     }
-
     @SuppressLint("ValidFragment")
     public FoldableListFragment(int id)
     {
@@ -63,6 +63,7 @@ public class FoldableListFragment extends Fragment {
         view = inflater.inflate(R.layout.fragment_foldable_list, container, false);
         activity = (Activity) view.getContext();
         InitializeAds(view);
+
         postContentAdapter = new PostContentAdapter(postList,activity);
         foldableListLayout = view.findViewById(R.id.foldable_list);
         foldableListLayout.setAdapter(postContentAdapter);
@@ -79,7 +80,7 @@ public class FoldableListFragment extends Fragment {
         });
 //        LetCall(1);
         Retrofit retrofitallpost=new Retrofit.Builder()
-                .baseUrl("http://192.168.1.5:3000/amdblog/")
+                .baseUrl("http://10.0.2.2:3000/amdblog/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(SynchronousCallAdapterFactory.create())
                 .build();

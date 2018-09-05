@@ -3,21 +3,22 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:local="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:weightSum="100"
+    android:weightSum="2"
     android:background="#ffffff">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="45"
+        android:layout_weight="1.0"
         android:orientation="vertical">
 
         <ImageView
             android:id="@+id/postimage"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="45"
+            android:layout_weight="1.0"
             android:adjustViewBounds="true"
             android:scaleType="centerCrop" />
 
@@ -40,7 +41,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="40"
+        android:layout_weight="1.0"
         android:orientation="vertical">
         <View
             android:layout_width="match_parent"
@@ -51,8 +52,8 @@
             android:id="@+id/posttitletext"
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
-            android:textSize="20dp"
             android:text="title"
+            android:textSize="20sp"
             android:textColor="#201D1C"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"/>
@@ -66,30 +67,29 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             >
-        <TextView
-            android:id="@+id/author"
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:textSize="13dp"
-            android:text="author"
-            android:gravity="center"
-            android:drawablePadding="5dp"
-            android:drawableLeft="@drawable/author_icon"
-            android:textColor="#767676"
-            android:paddingLeft="10dp" />
-        <TextView
-            android:id="@+id/date1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/author"
-            android:gravity="center"
-            android:drawableLeft="@drawable/datetime_icon"
-            android:textSize="13dp"
-            android:drawablePadding="5dp"
-            android:textColor="#767676"
-            android:paddingLeft="10dp"
-            android:text="Date"
-            />
+            <TextView
+                android:id="@+id/author"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+
+                android:text="author"
+                android:gravity="center"
+                android:drawablePadding="5dp"
+                android:drawableLeft="@drawable/author_icon"
+                android:textColor="#767676"
+                android:paddingLeft="10dp" />
+            <TextView
+                android:id="@+id/date1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/author"
+                android:gravity="center"
+                android:drawableLeft="@drawable/datetime_icon"
+                android:drawablePadding="5dp"
+                android:textColor="#767676"
+                android:paddingLeft="10dp"
+                android:text="Date"
+                />
         </LinearLayout>
         <View
             android:layout_width="match_parent"
@@ -100,7 +100,6 @@
             android:id="@+id/excerpt"
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
-            android:textSize="14dp"
             android:text="excerpt"
             android:textColor="#767676"
             android:paddingLeft="10dp" />

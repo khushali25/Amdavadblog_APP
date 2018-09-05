@@ -43,10 +43,7 @@
                 android:title=""
                 android:enabled="false" >
             </item>
-            <item
-                android:title=""
-                android:enabled="false" >
-            </item>
+
         </menu>
     </item>
 

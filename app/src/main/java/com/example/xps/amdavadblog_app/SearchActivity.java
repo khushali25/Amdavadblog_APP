@@ -79,6 +79,7 @@ public class SearchActivity extends AppCompatActivity {
         this.getMenuInflater().inflate(R.menu.searchitem, menu);
         try {
             searchView = (SearchView) menu.findItem(R.id.action_search1).getActionView();
+            searchView.setQueryHint("Type something...");
             ImageView searchClose = searchView.findViewById(android.support.v7.appcompat.R.id.search_close_btn);
             searchClose.setImageResource(R.drawable.ic_close_white_24dp);
             ImageView searchIcon = searchView.findViewById(android.support.v7.appcompat.R.id.search_mag_icon);
@@ -88,7 +89,7 @@ public class SearchActivity extends AppCompatActivity {
         } catch (Exception exx) {
             // Log.ERROR("Initialize UI failed", exx.getMessage());
         }
-        searchView.setQueryHint("Type something...");
+
         View searchPlate = searchView.findViewById(R.id.search_plate);
         if (searchPlate != null) {
             TextView searchText = searchPlate.findViewById(R.id.search_src_text);
@@ -173,10 +174,10 @@ public class SearchActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void onBackPressed() {
-        //android.support.v4.app.NavUtils.navigateUpFromSameTask(this);
-    }
+//    @Override
+//    public void onBackPressed() {
+//      android.support.v4.app.NavUtils.navigateUpFromSameTask(this);
+//    }
 
 //    @Override
 //    public boolean onQueryTextSubmit(String s) {
