@@ -83,6 +83,7 @@ public class MainNavigationActivity extends AppCompatActivity
     CallbackManager callbackManager;
     String firstName,lastName,email,birthday,gender,emailtostore,nametostore,textofloginbtn;
     private FoldableListFragment catInstance;
+    private CommunicationFragment comInstance;
     URL profilePicture;
     String userId,email1,personname,gen,add,dob;
     private FirebaseAnalytics mFirebaseAnalytics;
@@ -578,10 +579,19 @@ public class MainNavigationActivity extends AppCompatActivity
             txt.setText("Things to Do");
         }
         else if (id == R.id.privacypolicy) {
+//            comInstance = new FoldableListFragment(37);
+//            ft.replace(R.id.content_frame, new FoldableListFragment(37), "Fragment1");
+//            ft.commit();
+//            getSupportActionBar().setTitle("Things to Do");
+//            txt.setText("Privacy Policy");
 
         }
         else if (id == R.id.contactus) {
-
+            comInstance = new CommunicationFragment();
+            ft.replace(R.id.content_frame, new CommunicationFragment(), "Fragment2");
+            ft.commit();
+            getSupportActionBar().setTitle("Contact");
+            txt.setText("Contact");
         }
         Bundle param = new Bundle();
         param.putString("name", String.valueOf(getSupportActionBar().getTitle()));
