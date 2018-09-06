@@ -1,4 +1,4 @@
-package Model;
+package Core.Helper;
 
 import android.support.annotation.Nullable;
 

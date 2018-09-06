@@ -1,11 +1,9 @@
 package com.example.xps.amdavadblog_app;
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.graphics.Point;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
-import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,10 +16,10 @@ import com.google.android.gms.ads.MobileAds;
 
 import java.util.List;
 import Adapter.PostContentAdapter;
-import Core.WordPressService;
+import Core.Helper.WordPressService;
 import Model.Post;
 import Model.StartJsonDataClass;
-import Model.SynchronousCallAdapterFactory;
+import Core.Helper.SynchronousCallAdapterFactory;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;

@@ -1,18 +1,15 @@
-package Core;
-
-import android.provider.ContactsContract;
+package Core.Helper;
 
 import java.util.List;
 
 import Model.Author;
 import Model.Category;
+import Model.Contact;
 import Model.Media;
-import Model.PoseSearch;
-import Model.Post;
+import Model.PostSearch;
 import Model.StartJsonDataClass;
 import Model.Subscribe;
 import retrofit2.Call;
-import retrofit2.http.Body;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
@@ -38,7 +35,7 @@ public interface WordPressService {
 //    Call<List<Post>> getAllPostByCategoryId(@Query("categories") int id);
 
     @GET("/wp-json/wp/v2/posts")
-    Call<List<PoseSearch>> getPostsByQuerySearch(@Query("search") String searchterm);
+    Call<List<PostSearch>> getPostsByQuerySearch(@Query("search") String searchterm);
 
     @GET("/wp-json/wp/v2/users/{id}")
     Author getPostAuthorById(@Path("id") int id);
@@ -49,6 +46,10 @@ public interface WordPressService {
     @POST("saveSubscriber")
     @FormUrlEncoded
     Call<Subscribe> saveSubscriberEmail(@Field("email") String email);
+
+    @POST("saveContactUs")
+    @FormUrlEncoded
+    Call<Contact> saveContactDetail(@Field("name") String name,@Field("email") String email,@Field("phone") String phone,@Field("message") String message);
 
 //    @GET("/wp-json/wp/v2/posts/{id}")
 //    Call<Post.PostDetail> getPostDetailById(@Path("id") int id);

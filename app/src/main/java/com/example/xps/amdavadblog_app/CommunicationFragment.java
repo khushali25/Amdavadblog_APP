@@ -7,9 +7,7 @@ import android.support.annotation.RequiresApi;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
-import android.text.Editable;
-import android.text.TextUtils;
-import android.text.TextWatcher;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +15,19 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import Core.Helper.SynchronousCallAdapterFactory;
+import Core.Helper.WordPressService;
+import Model.Contact;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+
+import static android.support.constraint.Constraints.TAG;
+import static com.facebook.FacebookSdk.getApplicationContext;
+import static com.facebook.FacebookSdk.isLegacyTokenUpgradeSupported;
 
 
 /**
@@ -26,6 +37,7 @@ public class CommunicationFragment extends Fragment {
 
     TextInputEditText edtemail,edtphone,edtname,edtmessage;
     TextInputLayout txtemail,txtphone,txtname,txtmessage;
+    String phone;
     public CommunicationFragment() {
         // Required empty public constructor
     }
@@ -47,25 +59,9 @@ public class CommunicationFragment extends Fragment {
 
         edtmessage = view.findViewById(R.id.message_edit_text);
         txtmessage = view.findViewById(R.id.message_text_input);
-//        edtphone.addTextChangedListener(new TextWatcher() {
-//            @Override
-//            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 //
-//            }
-//
-//            @Override
-//            public void onTextChanged(CharSequence s, int start, int before, int count) {
-//
-//            }
-//
-//            @Override
-//            public void afterTextChanged(Editable s) {
-//
-//            }
-//
-//    });
 
-    final TextInputEditText[] textInputLayouts = new TextInputEditText[]{edtname,edtemail,edtphone,edtmessage};
+    final TextInputEditText[] textInputLayouts = new TextInputEditText[]{edtname,edtemail,edtmessage};
 
         Button button = view.findViewById(R.id.submitbtn);
         button.setOnClickListener(new View.OnClickListener() {
@@ -73,26 +69,25 @@ public class CommunicationFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 boolean noErrors = true;
+
+                final String name = edtname.getText().toString();
                 final String email = edtemail.getText().toString();
-                final String phone = edtphone.getText().toString();
+                 phone = edtphone.getText().toString();
+                final String message = edtmessage.getText().toString();
 
                 for (TextInputEditText textInputLayout : textInputLayouts) {
                     String editTextString = textInputLayout.getText().toString();
                     if (editTextString.isEmpty()) {
                         textInputLayout.setError("Field must not be empty");
                         noErrors = false;
-                    }
-                    else if(!isvalidemail(email))
-                    {
+                    } else if (!isvalidemail(email)) {
                         txtemail.setError("Email is not valid");
                         noErrors = false;
-                    }
-                    else if(!isvalidphone(phone))
-                    {
-                        txtphone.setError("Phone number is not valid");
-                        noErrors = false;
-                    }
-                    else {
+                   }
+                    else if (!isvalidphone(phone) && edtphone.length() != 0) {
+                        txtphone.setError("Phone is not valid");
+                        noErrors = false;}
+                        else {
                         textInputLayout.setError(null);
 
                     }
@@ -108,8 +103,7 @@ public class CommunicationFragment extends Fragment {
                     private void validateemailEditText(String text) {
                         if (isvalidemail(text)) {
                             txtemail.setError(null);
-                        }
-                        else{
+                        } else {
                             txtemail.setError("Email is not valid");
                         }
                     }
@@ -117,39 +111,69 @@ public class CommunicationFragment extends Fragment {
                 edtphone.setOnFocusChangeListener(new View.OnFocusChangeListener() {
                     @Override
                     public void onFocusChange(View v, boolean hasFocus) {
-                        if (!hasFocus) {
+                        if(!hasFocus)
                             validatephoneEditText(String.valueOf(((EditText) v).getText()));
-                        }
                     }
 
                     private void validatephoneEditText(String text) {
-                        if (isvalidphone(text)) {
+                        if(edtphone.length() == 0)
+                        {
                             txtphone.setError(null);
+                            //edtphone.setText("null");
                         }
-                        else{
+                        else if (isvalidphone(text)) {
+                            txtphone.setError(null);
+                        } else {
                             txtphone.setError("Phone number is not valid");
                         }
                     }
                 });
                 if (noErrors) {
                     // All fields are valid!
-                    edtemail.setText(null);
-                    edtmessage.setText(null);
-                    edtname.setText(null);
-                    edtphone.setText(null);
-                    txtname.setFocusable(true);
-                    Toast.makeText(getContext(),"Thank you for contact",Toast.LENGTH_LONG).show();
+                    Retrofit retrofitallpost = new Retrofit.Builder()
+                            .baseUrl("http://10.0.2.2:3000/amdblog/")
+                            .addConverterFactory(GsonConverterFactory.create())
+                            .addCallAdapterFactory(SynchronousCallAdapterFactory.create())
+                            .build();
+                    final WordPressService wordPressService = retrofitallpost.create(WordPressService.class);
+                    if(phone.equals(""))
+                    {
+                        edtphone.setText("null");
+                        phone = edtphone.getText().toString();
+                    }
+                    Call<Contact> call = wordPressService.saveContactDetail(name, email, phone, message);
+                    call.enqueue(new Callback<Contact>() {
+                        @Override
+                        public void onResponse(Call<Contact> call, Response<Contact> response) {
+                            Toast.makeText(getApplicationContext(), "Thank you for contact us", Toast.LENGTH_LONG).show();
+
+                            Log.e(TAG, "Success");
+                        }
+
+                        @Override
+                        public void onFailure(Call<Contact> call, Throwable t) {
+                            Log.e(TAG, "Fail" + t);
+                        }
+                    });
+//                    edtemail.setText(null);
+//                    edtmessage.setText(null);
+//                    edtname.setText(null);
+//                    edtphone.setText(null);
+//                    txtname.setFocusable(true);
 
                 }
+                edtemail.setText(null);
+                edtmessage.setText(null);
+                edtname.setText(null);
+                edtphone.setText(null);
             }
-
         });
-
         return view;
     }
 
     private boolean isvalidphone(String edtphone) {
-        return edtphone.length() == 10;
+      
+          return edtphone.length() == 10;
     }
 
     private boolean isvalidemail(String email) {

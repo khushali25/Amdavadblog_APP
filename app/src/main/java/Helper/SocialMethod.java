@@ -1,13 +1,10 @@
 package Helper;
 
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
-import android.text.method.DialerKeyListener;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.LayoutInflater;
@@ -19,12 +16,9 @@ import android.widget.Toast;
 
 import com.example.xps.amdavadblog_app.R;
 
-import java.io.Console;
-
-import Core.WordPressService;
-import Model.StartJsonDataClass;
+import Core.Helper.WordPressService;
 import Model.Subscribe;
-import Model.SynchronousCallAdapterFactory;
+import Core.Helper.SynchronousCallAdapterFactory;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;

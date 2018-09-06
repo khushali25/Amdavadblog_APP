@@ -4,19 +4,14 @@ package com.example.xps.amdavadblog_app;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetManager;
-import android.content.res.Resources;
 import android.graphics.Typeface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.text.Html;
-import android.util.TypedValue;
-import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -31,11 +26,9 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 //import Helper.IFrameParser;
 import org.apache.commons.lang3.StringEscapeUtils;
 
-import Model.SynchronousCallAdapterFactory;
+import Core.Helper.SynchronousCallAdapterFactory;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-
-import static com.google.android.gms.internal.zzahn.runOnUiThread;
 
 /**
  * A simple {@link Fragment} subclass.

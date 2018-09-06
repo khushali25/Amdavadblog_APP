@@ -29,7 +29,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-import Model.PoseSearch;
+import Model.PostSearch;
 import Model.Post;
 
 public class PostContentAdapterSearch extends ItemsAdapter<Post, PostContentAdapterSearch.ViewHolder>
@@ -37,13 +37,13 @@ public class PostContentAdapterSearch extends ItemsAdapter<Post, PostContentAdap
     public ImageLoader imgloader;
     Context context;
     private int index;
-    List<PoseSearch> posts;
+    List<PostSearch> posts;
     String postid,input;
-    PoseSearch item;
+    PostSearch item;
     Typeface custom_font3;
     PostContentAdapterSearch.ViewHolder vh1;
 
-    public PostContentAdapterSearch(List<PoseSearch> posts,Activity context) {
+    public PostContentAdapterSearch(List<PostSearch> posts, Activity context) {
         this.posts = posts;
         this.context = context;
         setItemsList1(this.posts);
@@ -52,7 +52,7 @@ public class PostContentAdapterSearch extends ItemsAdapter<Post, PostContentAdap
         imgloader = ImageLoader.getInstance();
     }
 
-    public void setItemsList1(List<PoseSearch> post) {
+    public void setItemsList1(List<PostSearch> post) {
         posts = post;
         notifyDataSetChanged();
     }
@@ -61,7 +61,7 @@ public class PostContentAdapterSearch extends ItemsAdapter<Post, PostContentAdap
     public int getCount() {
         return posts == null ? 0 : posts.size();
     }
-    public void setData1(List<PoseSearch> questionList) {
+    public void setData1(List<PostSearch> questionList) {
         this.posts=questionList;
         setItemsList1(this.posts);
     }
@@ -145,7 +145,7 @@ public class PostContentAdapterSearch extends ItemsAdapter<Post, PostContentAdap
             public void onClick(View view) {
                 Intent intent;
                 intent = new Intent(context, UnfoldableDetailsActivity.class);
-                PoseSearch tempitem = getItem1(position);
+                PostSearch tempitem = getItem1(position);
                 int posttempid = tempitem.getId();
                 intent.putExtra("Position",position);
                 intent.putExtra("BlogId", posttempid);
@@ -159,7 +159,7 @@ public class PostContentAdapterSearch extends ItemsAdapter<Post, PostContentAdap
             }
         });
     }
-    private PoseSearch getItem1(int position) {
+    private PostSearch getItem1(int position) {
         if (posts == null || position < 0 || position >= posts.size()) {
             return null;
         }

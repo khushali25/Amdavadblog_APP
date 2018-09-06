@@ -1,7 +1,5 @@
 package com.example.xps.amdavadblog_app;
 
-import android.app.Activity;
-import android.content.ClipData;
 import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -9,7 +7,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,15 +17,13 @@ import com.alexvasilkov.foldablelayout.FoldableListLayout;
 
 import java.util.List;
 
-import Adapter.PostContentAdapter;
 import Adapter.PostContentAdapterSearch;
-import Core.WordPressService;
+import Core.Helper.WordPressService;
 import Model.Author;
 import Model.Category;
 import Model.Media;
-import Model.PoseSearch;
-import Model.Post;
-import Model.SynchronousCallAdapterFactory;
+import Model.PostSearch;
+import Core.Helper.SynchronousCallAdapterFactory;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -45,7 +40,7 @@ public class SearchActivity extends AppCompatActivity {
     String searchText;
     android.graphics.drawable.AnimationDrawable animation;
     private RecyclerView.LayoutManager layoutManager;
-    private List<PoseSearch> posts;
+    private List<PostSearch> posts;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,18 +109,18 @@ public class SearchActivity extends AppCompatActivity {
                 .build();
 
            final WordPressService wordPressService = retrofitallpost.create(WordPressService.class);
-           Call<List<PoseSearch>> call = null;
+           Call<List<PostSearch>> call = null;
            call = wordPressService.getPostsByQuerySearch(searchText);
-           call.enqueue(new Callback<List<PoseSearch>>() {
+           call.enqueue(new Callback<List<PostSearch>>() {
                @Override
-               public void onResponse(Call<List<PoseSearch>> call, Response<List<PoseSearch>> response) {
+               public void onResponse(Call<List<PostSearch>> call, Response<List<PostSearch>> response) {
                    Media resp2 = null;
                    Author Auth = null;
                    Category category = null;
                    if (response.isSuccessful()) {
                        int postsize = response.body().size();
                        if (postsize != 0) {
-                   for (final PoseSearch post1 : response.body()) {
+                   for (final PostSearch post1 : response.body()) {
                            Integer catId = post1.categories.get(0);
                            category = wordPressService.getPostCategoryById(catId);
                            post1.categoryname = category.getName();
@@ -147,7 +142,7 @@ public class SearchActivity extends AppCompatActivity {
                 postContentAdapter.notifyDataSetChanged();
            }
                @Override
-               public void onFailure(Call<List<PoseSearch>> call, Throwable t) {
+               public void onFailure(Call<List<PostSearch>> call, Throwable t) {
                }
            });
         return true;
