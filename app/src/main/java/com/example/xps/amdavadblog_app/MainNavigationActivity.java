@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
@@ -83,6 +84,7 @@ public class MainNavigationActivity extends AppCompatActivity
     CallbackManager callbackManager;
     String firstName,lastName,email,birthday,gender,emailtostore,nametostore,textofloginbtn;
     private FoldableListFragment catInstance;
+    private PrivacyPolicyFragment privacyInstance;
     private CommunicationFragment comInstance;
     URL profilePicture;
     String userId,email1,personname,gen,add,dob;
@@ -91,6 +93,7 @@ public class MainNavigationActivity extends AppCompatActivity
     View headerView;
     Bitmap img;
     NavigationView navigationView;
+    Fragment fragmentCurrent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -452,30 +455,41 @@ public class MainNavigationActivity extends AppCompatActivity
         super.onActivityResult(requestCode, resultCode, data);
         callbackManager.onActivityResult(requestCode, resultCode, data);
     }
-//    private void disableNavigationViewScrolling(NavigationView navigationView) {
-//        if (navigationView != null) {
-//            NavigationMenuView navigationMenuView = (NavigationMenuView) navigationView.getChildAt(0);
-//            if (navigationMenuView != null) {
-//                navigationMenuView.setNestedScrollingEnabled(false);
-//            }
-//        }
-//    }
+
+    private void replaceFragment(Fragment fragment){
+        fragmentCurrent = fragment;
+        getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, fragment)
+                .addToBackStack(null).commit();
+
+    }
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout)findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         }
-        else if(catInstance.CategoryId == 100)
-        {
-            finish();
+         else if(fragmentCurrent.equals(catInstance))
+         {
+            if (catInstance.CategoryId == 100)
+            {
+                getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                super.onBackPressed();
+            }
+            else
+            {
+                    getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                    replaceFragment(catInstance);
+                    catInstance.CategoryId = 100;
+                    getSupportActionBar().setTitle("Home");
+                    txt.setText("Home");
+             }
+            }
+            else{
+                    onNavigationItemSelected(navigationView.getMenu().getItem(0));
+                    getSupportActionBar().setTitle("Home");
+                    txt.setText("Home");
+            }
         }
-        else {
-            onNavigationItemSelected(navigationView.getMenu().getItem(0));
-            getSupportActionBar().setTitle("Home");
-            txt.setText("Home");
-        }
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -540,8 +554,7 @@ public class MainNavigationActivity extends AppCompatActivity
         if (id == R.id.home)
         {
             catInstance = new FoldableListFragment(100);
-            ft.replace(R.id.content_frame, new FoldableListFragment(100), "Fragment1");
-            ft.commit();
+            replaceFragment(catInstance);
             getSupportActionBar().setTitle("Home");
             txt.setText("Home");
 
@@ -549,47 +562,41 @@ public class MainNavigationActivity extends AppCompatActivity
         else if (id == R.id.explore)
         {
             catInstance = new FoldableListFragment(35);
-            ft.replace(R.id.content_frame, new FoldableListFragment(35), "Fragment1");
-            ft.commit();
+            replaceFragment(catInstance);
             getSupportActionBar().setTitle("Explore Amdavad");
             txt.setText("Explore Amdavad");
         }
         else if (id == R.id.flavor)
         {
             catInstance = new FoldableListFragment(36);
-            ft.replace(R.id.content_frame, new FoldableListFragment(36), "Fragment1");
-            ft.commit();
+            replaceFragment(catInstance);
             getSupportActionBar().setTitle("Flavors of Amdavad");
             txt.setText("Flavors of Amdavad");
         }
         else if (id == R.id.news)
         {
             catInstance = new FoldableListFragment(5);
-            ft.replace(R.id.content_frame, new FoldableListFragment(5), "Fragment1");
-            ft.commit();
+            replaceFragment(catInstance);
             getSupportActionBar().setTitle("News");
             txt.setText("News");
         }
         else if (id == R.id.thingstodo)
         {
             catInstance = new FoldableListFragment(37);
-            ft.replace(R.id.content_frame, new FoldableListFragment(37), "Fragment1");
-            ft.commit();
+            replaceFragment(catInstance);
             getSupportActionBar().setTitle("Things to Do");
             txt.setText("Things to Do");
         }
-        else if (id == R.id.privacypolicy) {
-//            comInstance = new FoldableListFragment(37);
-//            ft.replace(R.id.content_frame, new FoldableListFragment(37), "Fragment1");
-//            ft.commit();
-//            getSupportActionBar().setTitle("Things to Do");
-//            txt.setText("Privacy Policy");
+         if (id == R.id.privacypolicy) {
+            privacyInstance = new PrivacyPolicyFragment();
+            replaceFragment(privacyInstance);
+            getSupportActionBar().setTitle("Privacy Policy");
+            txt.setText("Privacy Policy");
 
         }
         else if (id == R.id.contactus) {
             comInstance = new CommunicationFragment();
-            ft.replace(R.id.content_frame, new CommunicationFragment(), "Fragment2");
-            ft.commit();
+            replaceFragment(comInstance);
             getSupportActionBar().setTitle("Contact");
             txt.setText("Contact");
         }

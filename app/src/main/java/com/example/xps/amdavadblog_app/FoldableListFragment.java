@@ -109,7 +109,6 @@ public class FoldableListFragment extends Fragment {
                  postContentAdapter.setData(AllPost);
                  postContentAdapter.notifyDataSetChanged();
             }
-
             @Override
             public void onFailure(Call<StartJsonDataClass> call, Throwable t) {
                 Log.d("myResponse:", "MSG" + t.toString());
