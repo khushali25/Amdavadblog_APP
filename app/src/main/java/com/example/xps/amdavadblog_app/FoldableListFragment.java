@@ -60,7 +60,7 @@ public class FoldableListFragment extends Fragment {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_foldable_list, container, false);
         activity = (Activity) view.getContext();
-        InitializeAds(view);
+
 
         postContentAdapter = new PostContentAdapter(postList,activity);
         foldableListLayout = view.findViewById(R.id.foldable_list);
@@ -78,7 +78,7 @@ public class FoldableListFragment extends Fragment {
         });
 //        LetCall(1);
         Retrofit retrofitallpost=new Retrofit.Builder()
-                .baseUrl("http://10.0.2.2:3000/amdblog/")
+                .baseUrl("http://api.amdavadblog.xyz/amdblog/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(SynchronousCallAdapterFactory.create())
                 .build();
@@ -112,6 +112,7 @@ public class FoldableListFragment extends Fragment {
                 Log.d("myResponse:", "MSG" + t.toString());
             }
         });
+        InitializeAds(view);
         return view;
     }
 

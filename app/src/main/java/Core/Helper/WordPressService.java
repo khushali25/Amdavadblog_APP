@@ -1,5 +1,7 @@
 package Core.Helper;
 
+import com.google.gson.JsonObject;
+
 import java.util.List;
 
 import Model.Author;
@@ -10,6 +12,7 @@ import Model.PostSearch;
 import Model.StartJsonDataClass;
 import Model.Subscribe;
 import retrofit2.Call;
+import retrofit2.http.Body;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
@@ -51,6 +54,8 @@ public interface WordPressService {
     @FormUrlEncoded
     Call<Contact> saveContactDetail(@Field("name") String name,@Field("email") String email,@Field("phone") String phone,@Field("message") String message);
 
+    @POST("saveFacebookData")
+    Call<JsonObject> saveFbUserData(@Query("userdata") String userdata);
 //    @GET("/wp-json/wp/v2/posts/{id}")
 //    Call<Post.PostDetail> getPostDetailById(@Path("id") int id);
 }

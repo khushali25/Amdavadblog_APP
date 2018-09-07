@@ -155,12 +155,6 @@ public class CommunicationFragment extends Fragment {
                             Log.e(TAG, "Fail" + t);
                         }
                     });
-//                    edtemail.setText(null);
-//                    edtmessage.setText(null);
-//                    edtname.setText(null);
-//                    edtphone.setText(null);
-//                    txtname.setFocusable(true);
-
                 }
                 edtemail.setText(null);
                 edtmessage.setText(null);

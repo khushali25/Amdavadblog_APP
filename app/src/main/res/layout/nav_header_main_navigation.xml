@@ -37,7 +37,7 @@
             android:id="@+id/circleView"
             android:layout_width="75dp"
             android:layout_height="75dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="11dp"
             app:srcCompat="@drawable/ic_website"
             tools:ignore="VectorDrawableCompat" />
 
@@ -47,7 +47,7 @@
             android:layout_height="wrap_content"
             android:paddingTop="10dp"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-            android:text="name"
+            android:text=""
             android:textColor="#ffffff"
             android:textSize="14sp"
             android:textStyle="bold"
@@ -57,7 +57,7 @@
             android:id="@+id/fbemail"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="emailid"
+            android:text=""
             android:textColor="#ffffff"
             android:textSize="14sp"
             android:textStyle="normal"

@@ -1,5 +1,6 @@
 package com.example.xps.amdavadblog_app;
 
+import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -31,6 +32,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.facebook.AccessToken;
 import com.facebook.AccessTokenTracker;
@@ -48,6 +50,7 @@ import com.facebook.login.widget.LoginButton;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.gson.JsonObject;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -60,13 +63,24 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 
+import Core.Helper.SynchronousCallAdapterFactory;
+import Core.Helper.WordPressService;
 import Helper.PrefService;
 import Helper.SocialMethod;
+import Model.Subscribe;
 import de.hdodenhof.circleimageview.CircleImageView;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 import static android.provider.ContactsContract.Intents.Insert.EMAIL;
+import static android.support.constraint.Constraints.TAG;
+import static com.facebook.FacebookSdk.getApplicationContext;
 
 
 public class MainNavigationActivity extends AppCompatActivity
@@ -82,7 +96,7 @@ public class MainNavigationActivity extends AppCompatActivity
     LoginButton fbloginbutton;
     TextView info;
     CallbackManager callbackManager;
-    String firstName,lastName,email,birthday,gender,emailtostore,nametostore,textofloginbtn;
+    String firstName,lastName,birthdate,gender,emailtostore,nametostore,link;
     private FoldableListFragment catInstance;
     private PrivacyPolicyFragment privacyInstance;
     private CommunicationFragment comInstance;
@@ -300,11 +314,11 @@ public class MainNavigationActivity extends AppCompatActivity
     }
 
     private void initfacebooklogin() {
-        //callbackManager = CallbackManager.Factory.create();
-
         fbloginbutton = (LoginButton) headerView.findViewById(R.id.login_button);
-        fbloginbutton.setReadPermissions(Arrays.asList(EMAIL));
-        LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile"));
+//        fbloginbutton.setReadPermissions(Arrays.asList(EMAIL));
+        List<String> permissionNeeds = Arrays.asList("user_photos","user_birthday","user_gender","user_link","user_location","user_posts","public_profile",EMAIL);
+        fbloginbutton.setReadPermissions(permissionNeeds);
+       // LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile"));
 
         fbloginbutton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
@@ -314,24 +328,24 @@ public class MainNavigationActivity extends AppCompatActivity
                 GraphRequest request = GraphRequest.newMeRequest(loginResult.getAccessToken(), new GraphRequest.GraphJSONObjectCallback() {
                     @Override
                     public void onCompleted(final JSONObject object, GraphResponse response) {
+                        String fbuserdata = object.toString();
                         try {
                             userId = object.getString("id");
-                            profilePicture = new URL("https://graph.facebook.com/" + userId + "/picture?width=500&height=500");
-                            String imgfb = profilePicture.toString();
-//
-//                               fbname.setVisibility(View.VISIBLE);
-//                               fbemail.setVisibility(View.VISIBLE);
-//                               fbphoto.setVisibility(View.VISIBLE);
 
                             firstName = object.getString("first_name");
                             lastName = object.getString("last_name");
+                            profilePicture = new URL("https://graph.facebook.com/" + userId + "/picture?width=500&height=500");
+                            String imgfb = profilePicture.toString();
+
                             nametostore = firstName + lastName;
                             fbname.setText(firstName + " " + lastName);
+
                             if (object.has("email")) {
                                 emailtostore = object.getString("email");
-                                fbemail.setText(object.getString("email"));
+                                fbemail.setText(emailtostore);
                             } else
                                 fbemail.setVisibility(View.GONE);
+
                             if (imgfb == null) {
                                 img = BitmapFactory.decodeResource(getResources(),
                                         R.drawable.ic_home_black_24dp);
@@ -352,14 +366,33 @@ public class MainNavigationActivity extends AppCompatActivity
                         } catch (MalformedURLException e) {
                             e.printStackTrace();
                         }
+                        Retrofit retrofitallpost=new Retrofit.Builder()
+                                .baseUrl("http://10.0.2.2:3000/amdblog/")
+                                .addConverterFactory(GsonConverterFactory.create())
+                                .addCallAdapterFactory(SynchronousCallAdapterFactory.create())
+                                .build();
+                        final WordPressService wordPressService = retrofitallpost.create(WordPressService.class);
+                        Call<JsonObject> call = wordPressService.saveFbUserData(fbuserdata);
+                        call.enqueue(new Callback<JsonObject>() {
+                            @Override
+                            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                                JsonObject object = response.body();
+                            }
+
+                            @Override
+                            public void onFailure(Call<JsonObject> call, Throwable t) {
+
+                            }
+                        });
                     }
                 });
                 Bundle bundle = new Bundle();
-                bundle.putString("fields", "id,picture,first_name,last_name,email,birthday,gender");
+                bundle.putString("fields", "id,picture,first_name,last_name,birthday,gender,email,about,work,website,location,link,education,photos.limit(1){album},address,age_range,languages,name");
                 request.setParameters(bundle);
                 request.executeAsync();
                 fbloginbutton.setVisibility(View.GONE);
                 fblogout.setVisibility(View.VISIBLE);
+
             }
 
             @Override
@@ -372,7 +405,6 @@ public class MainNavigationActivity extends AppCompatActivity
                 System.out.println("onError");
                 Log.v("LoginActivity", error.getCause().toString());
             }
-
         });
 
         AccessTokenTracker tracker1 = new AccessTokenTracker() {
