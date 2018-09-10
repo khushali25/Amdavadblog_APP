@@ -56,7 +56,7 @@ public class PostContentAdapter extends ItemsAdapter<Post, PostContentAdapter.Vi
     List<Post> post;
     String postid,input;
     Post item;
-    Typeface custom_font3;
+    Typeface custom_font3,custom_font1;
     ViewHolder vh1;
 
     float txtsize;
@@ -114,7 +114,7 @@ public class PostContentAdapter extends ItemsAdapter<Post, PostContentAdapter.Vi
         vh1 = vh;
         AssetManager am = context.getApplicationContext().getAssets();
         Typeface custom_font = Typeface.createFromAsset(am, "font/Lora-Bold.ttf");
-        Typeface custom_font1 = Typeface.createFromAsset(am, "font/WorkSans-Regular.ttf");
+        custom_font1 = Typeface.createFromAsset(am, "font/WorkSans-Regular.ttf");
         custom_font3 = Typeface.createFromAsset(am, "font/Martel-Bold.ttf");
 
         DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
@@ -133,7 +133,7 @@ public class PostContentAdapter extends ItemsAdapter<Post, PostContentAdapter.Vi
         vh1.Category.setText(Html.fromHtml("#" + item.getCategory().getName()));
         vh1.Category.setTypeface(custom_font1);
         vh1.Author.setText(Html.fromHtml(item.getAuthor().getName()));
-        vh1.Author.setTypeface(custom_font3);
+        vh1.Author.setTypeface(custom_font1);
         vh.Author.setTextSize(txtsize);
         vh1.Excerpts.setText(Html.fromHtml(item.getExcerpt()));
         vh1.Excerpts.setTypeface(custom_font3);
@@ -193,7 +193,7 @@ public class PostContentAdapter extends ItemsAdapter<Post, PostContentAdapter.Vi
             System.out.println(outputFormat.format(inputFormat.parse(input)));
             Postdatetime = outputFormat.format(inputFormat.parse(input));
             vh1.date.setText(outputFormat.format(inputFormat.parse(input)));
-            vh1.date.setTypeface(custom_font3);
+            vh1.date.setTypeface(custom_font1);
             vh1.date.setTextSize(txtsize);
             SimpleDateFormat sdf1 = new SimpleDateFormat("dd-MM-yyyy KK:mm a");
             currentDateTime = sdf1.format(new Date());
@@ -222,21 +222,21 @@ public class PostContentAdapter extends ItemsAdapter<Post, PostContentAdapter.Vi
             System.out.print(diffMinutes + " minutes, ");
             System.out.print(diffSeconds + " seconds.");
 
-            if(diffDays > 0)
+            if(diffSeconds > 0 && diffMinutes == 0 && diffHours == 0 && diffDays == 0)
             {
-                vh1.date.setText(Html.fromHtml(String.valueOf(diffDays + "d")));
+                vh1.date.setText(Html.fromHtml(String.valueOf(diffSeconds + "sec" + " " + "ago")));
             }
-            else if(diffDays == 0 && diffHours == 0)
+            else if(diffMinutes > 0 && diffHours == 0 && diffDays == 0)
             {
-                vh1.date.setText(Html.fromHtml(String.valueOf(diffMinutes + "m")));
+                vh1.date.setText(Html.fromHtml(String.valueOf(diffMinutes + "min" + " " + "ago")));
             }
-            else if(diffDays == 0 && diffHours == 0 && diffMinutes == 0)
+            else if(diffHours > 0 &&diffDays == 0)
             {
-                vh1.date.setText(Html.fromHtml(String.valueOf(diffMinutes + "s")));
+                vh1.date.setText(Html.fromHtml(String.valueOf(diffHours + "hr" + " " + "ago")));
             }
             else
             {
-                vh1.date.setVisibility(View.GONE);
+                vh1.date.setText(Html.fromHtml(String.valueOf(diffDays + "days" + " " + "ago")));
             }
         } catch (Exception e) {
             e.printStackTrace();

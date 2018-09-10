@@ -19,7 +19,7 @@
         android:allowBackup="true"
         android:debuggable="true"
         android:icon="@drawable/ic_launcher"
-        android:label=""
+        android:label="Amdavad Blog"
         android:supportsRtl="true"
         android:theme="@style/MyBaseTheme"
         tools:ignore="HardcodedDebugMode"
