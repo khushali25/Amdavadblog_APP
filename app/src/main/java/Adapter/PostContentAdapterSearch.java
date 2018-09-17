@@ -38,7 +38,7 @@ public class PostContentAdapterSearch extends ItemsAdapter<Post, PostContentAdap
     Context context;
     private int index;
     List<PostSearch> posts;
-    String postid,input;
+    String input;
     PostSearch item;
     Typeface custom_font3;
     PostContentAdapterSearch.ViewHolder vh1;
@@ -47,8 +47,6 @@ public class PostContentAdapterSearch extends ItemsAdapter<Post, PostContentAdap
         this.posts = posts;
         this.context = context;
         setItemsList1(this.posts);
-        //setItemsList(getItems());
-        //  setItemsList(getItems1());
         imgloader = ImageLoader.getInstance();
     }
 
@@ -72,7 +70,6 @@ public class PostContentAdapterSearch extends ItemsAdapter<Post, PostContentAdap
         public TextView Author;
         public TextView Excerpts;
         public TextView date;
-        public ProgressBar progressBar;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -127,7 +124,6 @@ public class PostContentAdapterSearch extends ItemsAdapter<Post, PostContentAdap
                         .build();
                 imgloader.displayImage(item.imagePath, vh1.Art, options);
             } else {
-                //imgLoader.DisplayImage(post.imagePath, vh.Art, options);
                 vh1.Art.setImageURI(android.net.Uri.parse(file.getAbsolutePath()));
             }
         } else {
@@ -139,7 +135,6 @@ public class PostContentAdapterSearch extends ItemsAdapter<Post, PostContentAdap
         }
 
         final String dateTime = vh1.date.getText().toString();
-        //vh.Art.setTag(R.id.postimage, item);
         vh1.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

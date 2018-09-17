@@ -4,49 +4,29 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetManager;
-import android.graphics.Point;
 import android.graphics.Typeface;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.ScaleDrawable;
-import android.support.v4.content.ContextCompat;
 import android.text.Html;
 import android.util.DisplayMetrics;
-import android.util.Log;
-import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.JavascriptInterface;
-import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-
 import com.alexvasilkov.android.commons.adapters.ItemsAdapter;
 import com.example.xps.amdavadblog_app.R;
 import com.example.xps.amdavadblog_app.UnfoldableDetailsActivity;
-import com.google.firebase.iid.FirebaseInstanceId;
-import com.google.firebase.messaging.FirebaseMessaging;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
-
 import org.apache.commons.lang3.StringEscapeUtils;
-
 import java.io.File;
-import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-
 import Model.Post;
-
-import static com.facebook.AccessTokenManager.TAG;
-import static com.google.android.gms.internal.zzahn.runOnUiThread;
 
 public class PostContentAdapter extends ItemsAdapter<Post, PostContentAdapter.ViewHolder>
 {
@@ -58,7 +38,6 @@ public class PostContentAdapter extends ItemsAdapter<Post, PostContentAdapter.Vi
     Post item;
     Typeface custom_font3,custom_font1;
     ViewHolder vh1;
-
     float txtsize;
 
     public PostContentAdapter(List<Post> posts,Activity context) {
@@ -82,7 +61,6 @@ public class PostContentAdapter extends ItemsAdapter<Post, PostContentAdapter.Vi
         public TextView Author;
         public TextView Excerpts;
         public TextView date;
-        public ProgressBar progressBar;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -150,7 +128,7 @@ public class PostContentAdapter extends ItemsAdapter<Post, PostContentAdapter.Vi
                         .build();
                 imgloader.displayImage(item.getFeaturedMedia().getURL(), vh1.Art, options);
             } else {
-                //imgLoader.DisplayImage(post.imagePath, vh.Art, options);
+
                 vh1.Art.setImageURI(android.net.Uri.parse(file.getAbsolutePath()));
             }
         } else {
@@ -162,7 +140,6 @@ public class PostContentAdapter extends ItemsAdapter<Post, PostContentAdapter.Vi
         }
 
         final String dateTime = vh1.date.getText().toString();
-        //vh.Art.setTag(R.id.postimage, item);
         vh1.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

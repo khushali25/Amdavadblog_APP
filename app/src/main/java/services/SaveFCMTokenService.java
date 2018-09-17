@@ -4,11 +4,8 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.IBinder;
-
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.zxing.common.StringUtils;
-
 import java.util.HashMap;
 import java.util.UUID;
 
@@ -19,43 +16,34 @@ public class SaveFCMTokenService extends Service {
         // TODO Auto-generated method stub
         super.onCreate();
     }
-
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         // TODO Auto-generated method stub
-
         if(intent != null){
-
             Bundle b = intent.getExtras();
-
             if(b != null) {
                 String token = b.getString("TOKEN");
-
                 sendRegistrationToServer(token);
             }
         }
         return super.onStartCommand(intent, flags, startId);
     }
-
     @Override
     public void onDestroy() {
         // TODO Auto-generated method stub
         super.onDestroy();
     }
-
     @Override
     public IBinder onBind(Intent arg0) {
         // TODO Auto-generated method stub
         return null;
     }
-
     private boolean sendRegistrationToServer(final String token) {
         // Add custom implementation, as needed.
         UUID uuid = UUID.randomUUID();
         String randomUUIDString = uuid.toString();
         String randomstring = randomUUIDString.substring(0,10);
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
-
         int currentapiVersion = android.os.Build.VERSION.SDK_INT;
         switch (currentapiVersion) {
 

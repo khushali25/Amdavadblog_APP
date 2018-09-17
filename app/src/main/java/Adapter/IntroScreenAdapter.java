@@ -4,7 +4,6 @@ import android.graphics.Color;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-
 import com.example.xps.amdavadblog_app.IntroScreenFragment;
 
 public class IntroScreenAdapter extends FragmentPagerAdapter {

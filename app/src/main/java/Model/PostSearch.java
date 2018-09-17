@@ -14,10 +14,6 @@ public class PostSearch {
     @Expose
     public title title;
 
-//    @SerializedName("categories")
-//    @Expose
-//    public int categories;
-
     @SerializedName("author")
     @Expose
     public int author;
@@ -94,7 +90,6 @@ public class PostSearch {
         public String getRendered() {
             return rendered;
         }
-
         public void setRendered(String rendered) {
             this.rendered = rendered;
         }
@@ -106,7 +101,6 @@ public class PostSearch {
         public String getRendered() {
             return rendered;
         }
-
         public void setRendered(String rendered) {
             this.rendered = rendered;
         }
@@ -117,11 +111,9 @@ public class PostSearch {
         public String getRendered() {
             return rendered;
         }
-
         public void setRendered(String rendered) {
             this.rendered = rendered;
         }
-
         public String rendered;
 
     }
@@ -141,14 +133,6 @@ public class PostSearch {
         this.author = author;
     }
 
-    //    public String getExcerpt() {
-//        return excerpt;
-//    }
-//
-//    public void setExcerpt(String excerpt) {
-//        this.excerpt = excerpt;
-//    }
-//
     public int getId() {
         return id;
     }
@@ -156,13 +140,6 @@ public class PostSearch {
     public void setId(int id) {
         this.id = id;
     }
-
-//    public String getTitle() {
-//        return title;
-//    }
-//    public void setTitle(String title) {
-//        this.title = title;
-//    }
 
     public String getLink() {
         return link;
@@ -179,38 +156,15 @@ public class PostSearch {
         this.imagePath = imagePath;
     }
 
-//    public static class PostDetail
-//    {
-//        public int id;
-//        public Content content;
-//        public int getId() {
-//            return id;
-//        }
-//
-//        public void setId(int id) {
-//            this.id = id;
-//        }
-//
-//        public Content getContent() {
-//            return content;
-//        }
-//
-//        public void setContent(Content content) {
-//            this.content = content;
-//        }
-//
-//    }
     public class Content
     {
         public String rendered;
         public String getRendered() {
             return rendered;
         }
-
         public void setRendered(String rendered) {
             this.rendered = rendered;
         }
-
 
     }
 }

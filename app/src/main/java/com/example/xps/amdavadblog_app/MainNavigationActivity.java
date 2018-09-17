@@ -1,13 +1,10 @@
 package com.example.xps.amdavadblog_app;
 
-import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.ScaleDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -15,9 +12,7 @@ import android.os.StrictMode;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -27,13 +22,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import com.facebook.AccessToken;
 import com.facebook.AccessTokenTracker;
 import com.facebook.CallbackManager;
@@ -46,42 +38,32 @@ import com.facebook.appevents.AppEventsLogger;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
-
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.gson.JsonObject;
-
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
-
 import Core.Helper.SynchronousCallAdapterFactory;
 import Core.Helper.WordPressService;
 import Helper.PrefService;
 import Helper.SocialMethod;
-import Model.Subscribe;
 import de.hdodenhof.circleimageview.CircleImageView;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-
 import static android.provider.ContactsContract.Intents.Insert.EMAIL;
-import static android.support.constraint.Constraints.TAG;
-import static com.facebook.FacebookSdk.getApplicationContext;
-
 
 public class MainNavigationActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -124,8 +106,6 @@ public class MainNavigationActivity extends AppCompatActivity
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         mFirebaseAnalytics.setAnalyticsCollectionEnabled(true);
         mFirebaseAnalytics.setMinimumSessionDuration(20000);
-
-        //Sets the user ID property.
         mFirebaseAnalytics.setUserId(String.valueOf(GetRandomIndex()));
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
@@ -137,9 +117,6 @@ public class MainNavigationActivity extends AppCompatActivity
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS,
                     WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-            // Set paddingTop of toolbar to height of status bar.
-            // Fixes statusbar covers toolbar issue
-            //toolbar.setPadding(0, getStatusBarHeight(), 0, 0);
         }
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
@@ -151,8 +128,8 @@ public class MainNavigationActivity extends AppCompatActivity
         //fbbtn = (Button)headerView.findViewById(R.id.fblogincustombtn);
         fbloginbutton = (LoginButton)headerView.findViewById(R.id.login_button);
         fblogout = (Button)headerView.findViewById(R.id.fblogout);
-        getloginstatus();
 
+        getloginstatus();
         InitializeFirstScreenUI();
 
         fbicon = (ImageView)findViewById(R.id.fbicon);
@@ -160,7 +137,8 @@ public class MainNavigationActivity extends AppCompatActivity
         instaicon = (ImageView)findViewById(R.id.instaicon);
         googleplusicon = (ImageView)findViewById(R.id.googleplusicon);
         websiteicon = (ImageView)findViewById(R.id.websiteicon);
-        fbicon.setOnClickListener(new View.OnClickListener() {
+        fbicon.setOnClickListener(
+                new View.OnClickListener() {
                                       @Override
                                       public void onClick(View view) {
                                           Intent facebookIntent = new Intent(Intent.ACTION_VIEW);
@@ -223,7 +201,6 @@ public class MainNavigationActivity extends AppCompatActivity
             }
         });
         AppEventsLogger.activateApp(this);
-
     }
 
     private void getloginstatus() {
@@ -241,7 +218,6 @@ public class MainNavigationActivity extends AppCompatActivity
             fbloginbutton.setVisibility(View.VISIBLE);
             fblogout.setVisibility(View.GONE);
 
-            //Log.d(TAG, ">>>" + "Signed Out");
         } else {
             fbname.setVisibility(View.VISIBLE);
             fbemail.setVisibility(View.VISIBLE);
@@ -254,7 +230,6 @@ public class MainNavigationActivity extends AppCompatActivity
             fbloginbutton.setVisibility(View.GONE);
             fblogout.setVisibility(View.VISIBLE);
         }
-
     }
 
     private String getFacebookPageURL(View.OnClickListener onClickListener) {
@@ -270,7 +245,6 @@ public class MainNavigationActivity extends AppCompatActivity
         } catch (PackageManager.NameNotFoundException e) {
             return FACEBOOK_URL; //normal web url
         }
-
     }
     private void newGooglePlusIntent(String s) {
         try {
@@ -282,16 +256,9 @@ public class MainNavigationActivity extends AppCompatActivity
         } catch(ActivityNotFoundException e) {
             startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://plus.google.com/"+s+"/posts")));
         }
-
     }
     private void InitiaalizeGoogleAppConfig()
     {
-        ////0.Initialize Firebase token.
-        //if (!GetString(Resource.String.google_app_id).Equals(AppConstants.GOOGLE_APP_ID))
-        //{
-        //    FirebaseCrash.Report(new System.Exception("Invalid Json file"));
-        //}
-
       Runnable Task = new Runnable() {
           @Override
           public void run() {
@@ -303,28 +270,21 @@ public class MainNavigationActivity extends AppCompatActivity
               }
           }
       };
-
     }
-
     private int GetRandomIndex() {
         int min = 0;
         int max = 15000;
         Random rand = new Random();
         return min + rand.nextInt((max - min) + 1);
     }
-
     private void initfacebooklogin() {
         fbloginbutton = (LoginButton) headerView.findViewById(R.id.login_button);
-//        fbloginbutton.setReadPermissions(Arrays.asList(EMAIL));
         List<String> permissionNeeds = Arrays.asList("user_photos","user_birthday","user_gender","user_link","user_location","user_posts","public_profile",EMAIL);
         fbloginbutton.setReadPermissions(permissionNeeds);
-       // LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile"));
-
         fbloginbutton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
                 String accessToken = loginResult.getAccessToken().getToken();
-                // fbloginbutton.setVisibility(View.GONE);
                 GraphRequest request = GraphRequest.newMeRequest(loginResult.getAccessToken(), new GraphRequest.GraphJSONObjectCallback() {
                     @Override
                     public void onCompleted(final JSONObject object, GraphResponse response) {
@@ -378,7 +338,6 @@ public class MainNavigationActivity extends AppCompatActivity
                             public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
                                 JsonObject object = response.body();
                             }
-
                             @Override
                             public void onFailure(Call<JsonObject> call, Throwable t) {
 
@@ -387,26 +346,22 @@ public class MainNavigationActivity extends AppCompatActivity
                     }
                 });
                 Bundle bundle = new Bundle();
-                bundle.putString("fields", "id,picture,first_name,last_name,birthday,gender,email,about,work,website,location,link,education,photos.limit(1){album},address,age_range,languages,name");
+                bundle.putString("fields", "id,first_name,last_name,birthday,gender,email,about,work,website,location,link,education,age_range,languages,name,hometown,picture{url},installed,interested_in");
                 request.setParameters(bundle);
                 request.executeAsync();
                 fbloginbutton.setVisibility(View.GONE);
                 fblogout.setVisibility(View.VISIBLE);
-
             }
-
             @Override
             public void onCancel() {
                 System.out.println("onCancel");
             }
-
             @Override
             public void onError(FacebookException error) {
                 System.out.println("onError");
                 Log.v("LoginActivity", error.getCause().toString());
             }
         });
-
         AccessTokenTracker tracker1 = new AccessTokenTracker() {
             @Override
             protected void onCurrentAccessTokenChanged(AccessToken oldAccessToken, AccessToken currentAccessToken) {
@@ -422,7 +377,6 @@ public class MainNavigationActivity extends AppCompatActivity
                     fbemail.setVisibility(View.VISIBLE);
                     fbphoto.setVisibility(View.VISIBLE);
                     fbloginbutton.setVisibility(View.GONE);
-                    //fblogout.setVisibility(View.VISIBLE);
                 }
             }
         };
@@ -455,8 +409,6 @@ public class MainNavigationActivity extends AppCompatActivity
         try
         {
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-//             SupportActionBar.Title = appTitle = Categories[v].name;
-//             txt.Text = SupportActionBar.Title;
             txt = findViewById(R.id.toolbartxt);
             getSupportActionBar().setTitle("Home");
             txt.setText("Home");
@@ -535,8 +487,6 @@ public class MainNavigationActivity extends AppCompatActivity
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-//        if (this.drawerToggle.OnOptionsItemSelected(item))
-//            return true;
         int id = item.getItemId();
 
         switch (id) {
@@ -566,12 +516,7 @@ public class MainNavigationActivity extends AppCompatActivity
             case R.id.shareApp:
                 SocialMethod.shareIt(this);
                 return true;
-            case R.id.settings:
-                Intent i = new Intent(this,SettingsActivity.class);
-                startActivity(i);
-                return true;
           }
-
             return super.onOptionsItemSelected(item);
         }
 
@@ -634,12 +579,8 @@ public class MainNavigationActivity extends AppCompatActivity
         }
         Bundle param = new Bundle();
         param.putString("name", String.valueOf(getSupportActionBar().getTitle()));
-      //  param.putString("id", v.ToString());
-        //EventServices.Instance.GenericEvent(EventType.CategorySelect, param);
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
-
 }

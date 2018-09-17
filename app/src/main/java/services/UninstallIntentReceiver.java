@@ -10,7 +10,6 @@ public class UninstallIntentReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         // fetching package names from extras
         String[] packageNames = intent.getStringArrayExtra("android.intent.extra.PACKAGES");
-
         if(packageNames!=null){
             for(String packageName: packageNames){
                 if(packageName!=null && packageName.equals("YOUR_APPLICATION_PACKAGE_NAME")){

@@ -12,16 +12,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.alexvasilkov.foldablelayout.FoldableListLayout;
-
 import java.util.List;
-
 import Adapter.PostContentAdapterSearch;
 import Core.Helper.WordPressService;
 import Model.Author;
 import Model.Category;
 import Model.Media;
+import Model.Post;
 import Model.PostSearch;
 import Core.Helper.SynchronousCallAdapterFactory;
 import retrofit2.Call;
@@ -34,13 +32,11 @@ public class SearchActivity extends AppCompatActivity {
 
     android.support.v7.widget.SearchView searchView;
     private PostContentAdapterSearch postContentAdapter;
-    ImageView imageView;
     private TextView txtnotfound;
     FoldableListLayout foldableListLayout;
     String searchText;
-    android.graphics.drawable.AnimationDrawable animation;
-    private RecyclerView.LayoutManager layoutManager;
-    private List<PostSearch> posts;
+    LinearLayoutManager layoutManager;
+    List<PostSearch> posts;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,15 +44,10 @@ public class SearchActivity extends AppCompatActivity {
         setContentView(R.layout.activity_search);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbarSearch);
         setSupportActionBar(toolbar);
-
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_arrow_back_white_24dp);
-        // imageView = findViewById(R.id.searchloading);
         txtnotfound = findViewById(R.id.txtnodatafound);
-        //recyclerView = findViewById(R.id.searchpostrecycler);
-        // recyclerView.hasFixedSize();
         layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-
         foldableListLayout = findViewById(R.id.foldable_list_search);
         postContentAdapter = new PostContentAdapterSearch(posts, this);
         foldableListLayout.setAdapter(postContentAdapter);
@@ -68,7 +59,6 @@ public class SearchActivity extends AppCompatActivity {
             postContentAdapter.notifyDataSetChanged();
         }
     }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         this.getMenuInflater().inflate(R.menu.searchitem, menu);
@@ -84,7 +74,6 @@ public class SearchActivity extends AppCompatActivity {
         } catch (Exception exx) {
             // Log.ERROR("Initialize UI failed", exx.getMessage());
         }
-
         View searchPlate = searchView.findViewById(R.id.search_plate);
         if (searchPlate != null) {
             TextView searchText = searchPlate.findViewById(R.id.search_src_text);
@@ -92,73 +81,69 @@ public class SearchActivity extends AppCompatActivity {
             searchText.setHintTextColor(Color.WHITE);
         }
         searchView.setIconifiedByDefault(false);
-        //searchView.setSubmitButtonEnabled(true);
         onSearchRequested();
         searchView.requestFocus();
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-       @Override
-       public boolean onQueryTextSubmit(String s) {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
                 searchText = s;
-        //imageView.Visibility = ViewStates.Visible;
-        //  animation = (android.graphics.Drawables.AnimationDrawable)imageView.Drawable;
-        //  animation.Start();
-        Retrofit retrofitallpost = new Retrofit.Builder()
-                .baseUrl("https://amdavadblog.com/")
-                .addConverterFactory(GsonConverterFactory.create())
-                .addCallAdapterFactory(SynchronousCallAdapterFactory.create())
-                .build();
+                Retrofit retrofitallpost = new Retrofit.Builder()
+                        .baseUrl("https://amdavadblog.com/")
+                        .addConverterFactory(GsonConverterFactory.create())
+                        .addCallAdapterFactory(SynchronousCallAdapterFactory.create())
+                        .build();
 
-           final WordPressService wordPressService = retrofitallpost.create(WordPressService.class);
-           Call<List<PostSearch>> call = null;
-           call = wordPressService.getPostsByQuerySearch(searchText);
-           call.enqueue(new Callback<List<PostSearch>>() {
-               @Override
-               public void onResponse(Call<List<PostSearch>> call, Response<List<PostSearch>> response) {
-                   Media resp2 = null;
-                   Author Auth = null;
-                   Category category = null;
-                   if (response.isSuccessful()) {
-                       int postsize = response.body().size();
-                       if (postsize != 0) {
-                   for (final PostSearch post1 : response.body()) {
-                           Integer catId = post1.categories.get(0);
-                           category = wordPressService.getPostCategoryById(catId);
-                           post1.categoryname = category.getName();
-                           foldableListLayout.setVisibility(View.VISIBLE);
-                           Auth = wordPressService.getPostAuthorById(post1.author);
-                           post1.authorname = Auth.getName();
-                           resp2 = wordPressService.getFeaturedImageById(post1.featured_media);
-                           if (resp2 == null) {
-                               post1.imagePath = String.valueOf(R.drawable.ic_home_black_24dp);
-                           } else
-                               post1.imagePath = resp2.media_details.sizes.medium_large.source_url.toString();
-                       }
-                   } else {
-                       foldableListLayout.setVisibility(View.GONE);
-                       txtnotfound.setVisibility(View.VISIBLE);
-                   }
-               }
-                postContentAdapter.setData1(response.body());
-                postContentAdapter.notifyDataSetChanged();
-           }
-               @Override
-               public void onFailure(Call<List<PostSearch>> call, Throwable t) {
-               }
-           });
-        return true;
-        }
+                final WordPressService wordPressService = retrofitallpost.create(WordPressService.class);
+                Call<List<PostSearch>> call = null;
+                call = wordPressService.getPostsByQuerySearch(searchText);
+                call.enqueue(new Callback<List<PostSearch>>() {
+                    @Override
+                    public void onResponse(Call<List<PostSearch>> call, Response<List<PostSearch>> response) {
+                        Media resp2 = null;
+                        Author Auth = null;
+                        Category category = null;
+                        if (response.isSuccessful()) {
+                            int postsize = response.body().size();
+                            if (postsize != 0) {
+                                for (final PostSearch post1 : response.body()) {
+                                    Integer catId = post1.categories.get(0);
+                                    category = wordPressService.getPostCategoryById(catId);
+                                    post1.categoryname = category.getName();
+                                    foldableListLayout.setVisibility(View.VISIBLE);
+                                    Auth = wordPressService.getPostAuthorById(post1.author);
+                                    post1.authorname = Auth.getName();
+                                    resp2 = wordPressService.getFeaturedImageById(post1.featured_media);
+                                    if (resp2 == null) {
+                                        post1.imagePath = String.valueOf(R.drawable.ic_home_black_24dp);
+                                    } else
+                                        post1.imagePath = resp2.media_details.sizes.medium_large.source_url.toString();
+                                }
+                            } else {
+                                foldableListLayout.setVisibility(View.GONE);
+                                txtnotfound.setVisibility(View.VISIBLE);
+                            }
+                        }
+                        postContentAdapter.setData1(response.body());
+                        postContentAdapter.notifyDataSetChanged();
+                    }
 
-        @Override
-        public boolean onQueryTextChange(String s)
-        {
-            foldableListLayout.setVisibility(View.GONE);
-            txtnotfound.setVisibility(View.GONE);
-            return false;
-        }
+                    @Override
+                    public void onFailure(Call<List<PostSearch>> call, Throwable t) {
+                    }
+                });
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+                foldableListLayout.setVisibility(View.GONE);
+                txtnotfound.setVisibility(View.GONE);
+                return false;
+            }
         });
-        //searchView.setOnQueryTextListener(this);
         return true;
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -168,86 +153,5 @@ public class SearchActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
-
-//    @Override
-//    public void onBackPressed() {
-//      android.support.v4.app.NavUtils.navigateUpFromSameTask(this);
-//    }
-
-//    @Override
-//    public boolean onQueryTextSubmit(String s) {
-//        return false;
-//    }
-//
-//    @Override
-//    public boolean onQueryTextChange(String s) {
-//        return false;
-//    }
-
-
-    // @Override
-//    public boolean onQueryTextSubmit(String s) {
-//        searchText = s;
-//        //imageView.Visibility = ViewStates.Visible;
-//        //  animation = (android.graphics.Drawables.AnimationDrawable)imageView.Drawable;
-//        //  animation.Start();
-//        Retrofit retrofitallpost = new Retrofit.Builder()
-//                .baseUrl("http://192.168.1.5:3000/amdblog/")
-//                .addConverterFactory(GsonConverterFactory.create())
-//                .addCallAdapterFactory(SynchronousCallAdapterFactory.create())
-//                .build();
-//
-//        final WordPressService wordPressService = retrofitallpost.create(WordPressService.class);
-//        Call<List<Post>> call = null;
-//
-//        call = wordPressService.getPostsByQuerySearch(searchText);
-//        call.enqueue(new Callback<List<Post>>() {
-//            @Override
-//            public void onResponse(Call<List<Post>> call, Response<List<Post>> response) {
-//                Media resp2 = null;
-//                Author Auth = null;
-//                Category category = null;
-//                if (response.isSuccessful()) {
-//                    int postsize = response.body().size();
-//                    if (postsize != 0) {
-//                        for (final Post post : response.body()) {
-//                            String date = post.getDate();
-//                            String excerpt = post.getExcerpt();
-//
-//                            //Integer catId = post.categories.get(0);
-//                            // category = wordPressService.getPostCategoryById(catId);
-//                            // post.categoryname = category.name;
-//                            foldableListLayout.setVisibility(View.VISIBLE);
-//                            // Auth = wordPressService.getPostAuthorById(post.author);
-//                            // post.authorname = Auth.name;
-//                            //resp2 = wordPressService.getFeaturedImageById(post.featured_media);
-//                            //if (resp2 == null) {
-//                            //    post.imagePath = String.valueOf(R.drawable.ic_home_black_24dp);
-//                            // } else
-//                            //     post.imagePath = resp2.media_details.sizes.medium_large.source_url.toString();
-//                        }
-//                    } else {
-//                        foldableListLayout.setVisibility(View.GONE);
-//                        txtnotfound.setVisibility(View.VISIBLE);
-//                    }
-//                }
-//                postContentAdapter.setData(response.body());
-//                postContentAdapter.notifyDataSetChanged();
-//            }
-//
-//            @Override
-//            public void onFailure(Call<List<Post>> call, Throwable t) {
-//
-//            }
-//        });
-//        return true;
-//    }
-
- //   @Override
-//    public boolean onQueryTextChange(String s) {
-//       // imageView.setVisibility(View.GONE);
-//        foldableListLayout.setVisibility(View.GONE);
-//        txtnotfound.setVisibility(View.GONE);
-//        return false;
-//    }
 }
+

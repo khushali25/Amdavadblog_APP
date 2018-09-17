@@ -3,15 +3,11 @@ package com.example.xps.amdavadblog_app;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.Typeface;
 import android.net.ConnectivityManager;
-import android.os.Build;
 import android.os.StrictMode;
-import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
@@ -26,8 +22,6 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
@@ -35,13 +29,11 @@ import com.facebook.FacebookSdk;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.appevents.AppEventsLogger;
-import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
-
+import com.google.gson.JsonObject;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -50,13 +42,16 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
-
 import Adapter.IntroScreenAdapter;
+import Core.Helper.SynchronousCallAdapterFactory;
+import Core.Helper.WordPressService;
 import Helper.IntroPageTransformer;
 import Helper.PrefService;
-
-import static android.provider.ContactsContract.Intents.Insert.EMAIL;
-import static com.facebook.FacebookSdk.getApplicationContext;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class Intro_Activity extends AppCompatActivity {
     private ViewPager mViewPager;
@@ -86,9 +81,7 @@ public class Intro_Activity extends AppCompatActivity {
         setContentView(R.layout.activity_intro);
         checkFirstRun();
         callbackManager = CallbackManager.Factory.create();
-
-        relativeLayout = (RelativeLayout) findViewById(R.id
-                .relativelayout);
+        relativeLayout = (RelativeLayout) findViewById(R.id.relativelayout);
         mViewPager = (ViewPager) findViewById(R.id.view_pager);
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabDots);
         tabLayout.setupWithViewPager(mViewPager, true);
@@ -107,10 +100,7 @@ public class Intro_Activity extends AppCompatActivity {
                 R.layout.introscreenfragmentlayout_3,
                 R.layout.introscreenfragmentlayout_4,
                 };
-        //addBottomDots(0);
-        changeStatusBarColor();
         mViewPager.setAdapter(new IntroScreenAdapter(getSupportFragmentManager()));
-
         mViewPager.setPageTransformer(false, new IntroPageTransformer());
         btnSkip.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -144,7 +134,6 @@ public class Intro_Activity extends AppCompatActivity {
                 }
             }
         });
-
         if (isNetworkConnected()) {
             getLoginDetails(fblogincustombtn);
         } else {
@@ -152,43 +141,11 @@ public class Intro_Activity extends AppCompatActivity {
         }
    }
 
-    private void addBottomDots(int i) {
-        dots = new TextView[layouts.length];
-
-        int[] colorsActive = getResources().getIntArray(R.array.array_pager_active);
-
-        int[] colorsInactive = getResources().getIntArray(R.array.array_pager_inactive);
-
-        dotsLayout.removeAllViews();
-
-        for (int j = 0; j < dots.length; i++) {
-
-            dots[j] = new TextView(this);
-
-            dots[j].setText(Html.fromHtml("•"));
-
-            dots[j].setTextSize(35);
-
-           // dots[j].setTextColor(colorsInactive[i]);
-
-            dotsLayout.addView(dots[j]);
-
-        }
-
-       // if (dots.length > 0)
-
-            //dots[i].setTextColor(colorsActive[i]);
-    }
-    //  viewpager change listener
-
     ViewPager.OnPageChangeListener viewPagerPageChangeListener = new ViewPager.OnPageChangeListener() {
         @Override
         public void onPageScrolled(int position, float v, int i1) {
-            addBottomDots(position);
             // changing the next button text 'NEXT' / 'GOT IT'
-
             if (position == layouts.length - 1) {
-
                 // last page. make button text to GOT IT
                 btnNext.setText("Start");
                 btnSkip.setVisibility(View.GONE);
@@ -207,38 +164,22 @@ public class Intro_Activity extends AppCompatActivity {
 
         }
     };
-    private void changeStatusBarColor() {
-
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//
-//            Window window = getWindow();
-//            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-//            window.setStatusBarColor(Color.TRANSPARENT);
-//        }
-    }
     private void checkFirstRun() {
         SharedPreferences sharedPreferences = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
-
         // If the app is launched for first time, view splash screen and setup 'Next >>' link.
         if (sharedPreferences.getBoolean(PREFS_FIRST_RUN, true)) {
-
             // Record that user have done first run.
             sharedPreferences.edit().putBoolean(PREFS_FIRST_RUN, false).apply();
         }
-        // Else, directly go to Registration page.
         else {
-
             goToMainActivity();
         }
     }
-
     private void goToMainActivity() {
-
         Intent intent = new Intent(this, MainNavigationActivity.class);
         startActivity(intent);
         finish();
     }
-
     private void getLoginDetails(Button fblogincustombtn) {
         List< String > permissionNeeds = Arrays.asList("user_photos", "email",
                 "user_birthday", "public_profile", "AccessToken");
@@ -253,7 +194,6 @@ public class Intro_Activity extends AppCompatActivity {
                 getUserInfo(login_result);
                 loginButton.setVisibility(View.GONE);
             }
-
             @Override
             public void onCancel() {
                 System.out.println("onCancel");
@@ -266,7 +206,6 @@ public class Intro_Activity extends AppCompatActivity {
             }
         });
     }
-
     public void onClick(View v) {
         if (v == fblogincustombtn) {
             loginButton.performClick();
@@ -276,9 +215,7 @@ public class Intro_Activity extends AppCompatActivity {
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         return cm.getActiveNetworkInfo() != null;
     }
-
     private void launchHomeScreen() {
-       //  prefManager.setFirstTimeLaunch(false);
         startActivity(new Intent(this, MainNavigationActivity.class));
         finish();
     }
@@ -299,6 +236,7 @@ public class Intro_Activity extends AppCompatActivity {
                     public void onCompleted(
                             JSONObject json_object,
                             GraphResponse response) {
+                        String fbuserdata = json_object.toString();
                         try {
                             userId = json_object.getString("id");
                             profilePicture = new URL("https://graph.facebook.com/" + userId + "/picture?width=500&height=500");
@@ -324,6 +262,23 @@ public class Intro_Activity extends AppCompatActivity {
                         } catch (MalformedURLException e) {
                             e.printStackTrace();
                         }
+                        Retrofit retrofitallpost=new Retrofit.Builder()
+                                .baseUrl("http://10.0.2.2:3000/amdblog/")
+                                .addConverterFactory(GsonConverterFactory.create())
+                                .addCallAdapterFactory(SynchronousCallAdapterFactory.create())
+                                .build();
+                        final WordPressService wordPressService = retrofitallpost.create(WordPressService.class);
+                        Call<JsonObject> call = wordPressService.saveFbUserData(fbuserdata);
+                        call.enqueue(new Callback<JsonObject>() {
+                            @Override
+                            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                                JsonObject object = response.body();
+                            }
+                            @Override
+                            public void onFailure(Call<JsonObject> call, Throwable t) {
+
+                            }
+                        });
                         Intent intent = new Intent(Intro_Activity.this,MainNavigationActivity.class);
                         intent.putExtras(bundle);
                         intent.putExtra("jsondata",json_object.toString());
@@ -352,7 +307,6 @@ public class Intro_Activity extends AppCompatActivity {
             return null;
         }
     }
-
     public void snackbarerror()
     {
        snackbar = Snackbar
@@ -367,7 +321,6 @@ public class Intro_Activity extends AppCompatActivity {
                     }
                 });
         snackbar.setActionTextColor(Color.RED);
-
         View sbView = snackbar.getView();
         TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
         textView.setTextColor(Color.YELLOW);
@@ -385,11 +338,9 @@ public class Intro_Activity extends AppCompatActivity {
         }
         Log.e("data", data.toString());
     }
-
     @Override
     protected void onResume() {
         super.onResume();
-
         // Logs 'install' and 'app activate' App Events.
         AppEventsLogger.activateApp(this);
     }
@@ -397,7 +348,6 @@ public class Intro_Activity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-
         // Logs 'app deactivate' App Event.
         AppEventsLogger.deactivateApp(this);
     }

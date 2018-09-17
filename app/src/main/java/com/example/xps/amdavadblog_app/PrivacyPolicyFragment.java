@@ -1,15 +1,11 @@
 package com.example.xps.amdavadblog_app;
 
-
-import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
-
 /**
  * A simple {@link Fragment} subclass.
  */
@@ -18,32 +14,16 @@ public class PrivacyPolicyFragment extends Fragment {
     String page;
     TextView txtprivacy;
     public int PrivacyInstance;
-//    public int getPrivacyInstance() {
-//        return PrivacyInstance;
-//    }
-//
-//    public void setPrivacyInstance(int privacyInstance) {
-//        PrivacyInstance = privacyInstance;
-//    }
-
     public PrivacyPolicyFragment() {
         // Required empty public constructor
     }
-
-//    @SuppressLint("ValidFragment")
-//    public PrivacyPolicyFragment(int i) {
-//        this.PrivacyInstance = i;
-//    }
-    //public boolean onBackPressed();
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_privacy_policy, container, false);
         txtprivacy = view.findViewById(R.id.txtprivacy);
-
-           txtprivacy.setText("This Privacy Policy was last modified on February 1, 2018.\n" +
+        txtprivacy.setText("This Privacy Policy was last modified on February 1, 2018.\n" +
                    "\n" +
                    "Saprek solution (“us”, “we”, “the Company”, or “our”) operates https://www.amdavadbllog.com (the “Site”). This page informs you of our policies regarding the collection, use and disclosure of Personal Information we receive from users of the Site.\n" +
                    "\n" +
@@ -79,8 +59,5 @@ public class PrivacyPolicyFragment extends Fragment {
                    "\n" +
                    "If you have any questions about this Privacy Policy, please contact us.");
         return view;
-
     }
-
-
 }

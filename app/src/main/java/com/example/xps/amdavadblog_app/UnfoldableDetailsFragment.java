@@ -1,6 +1,5 @@
 package com.example.xps.amdavadblog_app;
 
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetManager;
@@ -20,31 +19,24 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.nostra13.universalimageloader.core.ImageLoader;
-
-//import Helper.IFrameParser;
 import org.apache.commons.lang3.StringEscapeUtils;
-
 import Core.Helper.SynchronousCallAdapterFactory;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-
 /**
  * A simple {@link Fragment} subclass.
  */
 public class UnfoldableDetailsFragment extends Fragment {
-    public static String posturl;
 
+    public static String posturl;
     public String detail;
     ImageView imageView;
     private WebView webviewLayout;
     TextView titleTextView,authortextview,datetextview;
     Retrofit retrofitallpost;
-    private float fontSize;
     static Toast toast;
     android.graphics.drawable.AnimationDrawable animation;
-
     public ImageLoader AppImageLoader;
 
     public UnfoldableDetailsFragment() {
@@ -63,7 +55,6 @@ public class UnfoldableDetailsFragment extends Fragment {
         datetextview = view.findViewById(R.id.postdate);
         imageView = view.findViewById(R.id.webviewloading);
         imageView.setVisibility(View.VISIBLE);
-
         retrofitallpost = new Retrofit.Builder()
                 .baseUrl("http://10.0.2.2:3000/amdblog/")
                 .addConverterFactory(GsonConverterFactory.create())
@@ -71,7 +62,6 @@ public class UnfoldableDetailsFragment extends Fragment {
                 .build();
 
         WebViewInitialize();
-        //  backgroundworker1.RunWorkerAsync();
         return view;
 //        listTouchInterceptor = Views.find(this, R.id.touch_interceptor_view);
 //        listTouchInterceptor.setClickable(false);
@@ -141,11 +131,6 @@ public class UnfoldableDetailsFragment extends Fragment {
         }
         final String stylestr = "<html><head><style type=\"text/css\" link rel=\"stylesheet\" href=\"style.css\" />img{display: inline; height: auto; max-width: 100%;}@font-face {font-family: MyFont;src: url(\"file:///android_asset/fonts/PT_Serif-Web-Regular.ttf\")}body {font-family: MyFont;color: #6d6c6c;line-height: 30px;font-size: 18px;text-align: justify;} iframe {display: block;max-width:100%;margin-top:10px;margin-bottom:10px;}</style></head><body>";
         final String pas = "</body></html>";
-
-      //  String afterparsed = IFrameParser.urlUpdate(Content);
-                                 //String afterParsed = IFrameParser.urlUpdate(tobeParsed);
-                                 //return afterParsed;
-                                 // String BlogContent = Html.fromHtml(call.getClass().);
         detail = stylestr + Content + pas;
 
         Bundle param = new Bundle();
@@ -157,7 +142,6 @@ public class UnfoldableDetailsFragment extends Fragment {
         webSetting.setLoadsImagesAutomatically(true);
         webSetting.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);
         webviewLayout.setWebViewClient(new MyWebChromeClient(getActivity()));
-       // webviewLayout.setInitialScale();
         webviewLayout.loadDataWithBaseURL(null, detail, "text/html", "UTF-8", null);
         webviewLayout.addJavascriptInterface(this, "MyApp");
         imageView.setVisibility(View.GONE);
@@ -181,10 +165,8 @@ public class UnfoldableDetailsFragment extends Fragment {
         public void displayToast(String message) {
             if (toast != null)
                 toast.cancel();
-            // toast = Toast.makeText(con, message, ToastLength.Long);
             toast.show();
         }
-
            public boolean isOnline()
           {
             ConnectivityManager cm = (ConnectivityManager)con.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -202,10 +184,7 @@ public class UnfoldableDetailsFragment extends Fragment {
             openInAppBrowser(url);
             return true;
         }
-
         private void openInAppBrowser(String url) {
-//            if (isOnline())
-//            {
             Intent intent = new Intent(con, BrowserActivity.class);
             intent.putExtra("url", url);
             con.startActivity(intent);

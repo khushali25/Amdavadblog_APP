@@ -1,4 +1,5 @@
 package com.example.xps.amdavadblog_app;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.os.Bundle;
@@ -7,13 +8,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import com.alexvasilkov.foldablelayout.FoldableListLayout;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
-
 import java.util.List;
 import Adapter.PostContentAdapter;
 import Core.Helper.WordPressService;
@@ -29,19 +28,19 @@ import retrofit2.converter.gson.GsonConverterFactory;
  * A simple {@link Fragment} subclass.
  */
 public class FoldableListFragment extends Fragment {
+
     List<Post> postList = null;
     AdView adView;
-
     public int CategoryId;
     public FoldableListLayout foldableListLayout;
     public PostContentAdapter postContentAdapter;
-    public int getCategoryId() {
-        return CategoryId;
-    }
     public List<Post> AllPost;
     public View view;
     public Activity activity;
     String content,Excerpt,title,date,author,category,URL;
+    public int getCategoryId() {
+        return CategoryId;
+    }
     public void setCategoryId(int categoryId) {
         CategoryId = categoryId;
     }
@@ -59,9 +58,8 @@ public class FoldableListFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_foldable_list, container, false);
+
         activity = (Activity) view.getContext();
-
-
         postContentAdapter = new PostContentAdapter(postList,activity);
         foldableListLayout = view.findViewById(R.id.foldable_list);
         foldableListLayout.setAdapter(postContentAdapter);
@@ -78,7 +76,7 @@ public class FoldableListFragment extends Fragment {
         });
 //        LetCall(1);
         Retrofit retrofitallpost=new Retrofit.Builder()
-                .baseUrl("http://api.amdavadblog.xyz/amdblog/")
+                .baseUrl("http://10.0.2.2:3000/amdblog/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(SynchronousCallAdapterFactory.create())
                 .build();
@@ -96,14 +94,12 @@ public class FoldableListFragment extends Fragment {
             @Override
             public void onResponse(Call<StartJsonDataClass> call, Response<StartJsonDataClass> response) {
                     if (response.isSuccessful()) {
-                        // Post post = new Post();
                         AllPost = response.body().getData();
                     }
                     else
-                        {
+                     {
 
-                        }
-
+                     }
                  postContentAdapter.setData(AllPost);
                  postContentAdapter.notifyDataSetChanged();
             }
@@ -226,7 +222,6 @@ public class FoldableListFragment extends Fragment {
                 super.onAdLoaded();
                 adView.setTag(true); // Set tag true if adView is loaded
             }
-
             @Override
             public void onAdFailedToLoad(int i) {
                 super.onAdFailedToLoad(i);
@@ -234,5 +229,4 @@ public class FoldableListFragment extends Fragment {
             }
         });
     }
-
 }

@@ -2,7 +2,6 @@ package Model;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-
 import java.util.List;
 
 public class StartJsonDataClass {
@@ -39,6 +38,5 @@ public class StartJsonDataClass {
 
         public void setData(List<Post> data) {
             this.data = data;
-
     }
 }

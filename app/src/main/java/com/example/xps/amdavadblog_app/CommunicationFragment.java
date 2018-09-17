@@ -15,7 +15,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-
 import Core.Helper.SynchronousCallAdapterFactory;
 import Core.Helper.WordPressService;
 import Model.Contact;
@@ -24,11 +23,8 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-
 import static android.support.constraint.Constraints.TAG;
 import static com.facebook.FacebookSdk.getApplicationContext;
-import static com.facebook.FacebookSdk.isLegacyTokenUpgradeSupported;
-
 
 /**
  * A simple {@link Fragment} subclass.
@@ -59,9 +55,8 @@ public class CommunicationFragment extends Fragment {
 
         edtmessage = view.findViewById(R.id.message_edit_text);
         txtmessage = view.findViewById(R.id.message_text_input);
-//
 
-    final TextInputEditText[] textInputLayouts = new TextInputEditText[]{edtname,edtemail,edtmessage};
+        final TextInputEditText[] textInputLayouts = new TextInputEditText[]{edtname,edtemail,edtmessage};
 
         Button button = view.findViewById(R.id.submitbtn);
         button.setOnClickListener(new View.OnClickListener() {
@@ -89,17 +84,15 @@ public class CommunicationFragment extends Fragment {
                         noErrors = false;}
                         else {
                         textInputLayout.setError(null);
-
                     }
                 }
-                edtemail.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                    edtemail.setOnFocusChangeListener(new View.OnFocusChangeListener() {
                     @Override
                     public void onFocusChange(View v, boolean hasFocus) {
                         if (!hasFocus) {
                             validateemailEditText(String.valueOf(((EditText) v).getText()));
                         }
                     }
-
                     private void validateemailEditText(String text) {
                         if (isvalidemail(text)) {
                             txtemail.setError(null);
@@ -108,7 +101,7 @@ public class CommunicationFragment extends Fragment {
                         }
                     }
                 });
-                edtphone.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                    edtphone.setOnFocusChangeListener(new View.OnFocusChangeListener() {
                     @Override
                     public void onFocusChange(View v, boolean hasFocus) {
                         if(!hasFocus)
@@ -119,7 +112,6 @@ public class CommunicationFragment extends Fragment {
                         if(edtphone.length() == 0)
                         {
                             txtphone.setError(null);
-                            //edtphone.setText("null");
                         }
                         else if (isvalidphone(text)) {
                             txtphone.setError(null);
@@ -149,7 +141,6 @@ public class CommunicationFragment extends Fragment {
 
                             Log.e(TAG, "Success");
                         }
-
                         @Override
                         public void onFailure(Call<Contact> call, Throwable t) {
                             Log.e(TAG, "Fail" + t);
@@ -166,8 +157,7 @@ public class CommunicationFragment extends Fragment {
     }
 
     private boolean isvalidphone(String edtphone) {
-      
-          return edtphone.length() == 10;
+        return edtphone.length() == 10;
     }
 
     private boolean isvalidemail(String email) {

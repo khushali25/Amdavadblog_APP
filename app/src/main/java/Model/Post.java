@@ -35,7 +35,6 @@ public class Post {
     @Expose
     private Author author;
 
-
     public String getId() {
         return id;
     }

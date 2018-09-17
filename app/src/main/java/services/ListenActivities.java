@@ -17,22 +17,14 @@ public class ListenActivities extends Thread{
         context = con;
         am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
     }
-
     public void run(){
-
         Looper.prepare();
-
         while(!exit){
-
             // get the info from the currently running task
             List< ActivityManager.RunningTaskInfo > taskInfo = am.getRunningTasks(MAX_PRIORITY);
-
             String activityName = taskInfo.get(0).topActivity.getClassName();
-
-
             Log.d("topActivity", "CURRENT Activity ::"
                     + activityName);
-
             if (activityName.equals("com.android.packageinstaller.UninstallerActivity")) {
                 // User has clicked on the Uninstall button under the Manage Apps settings
 

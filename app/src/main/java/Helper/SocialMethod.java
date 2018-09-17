@@ -13,9 +13,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.example.xps.amdavadblog_app.R;
-
 import Core.Helper.WordPressService;
 import Model.Subscribe;
 import Core.Helper.SynchronousCallAdapterFactory;
@@ -24,7 +22,6 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-
 import static android.support.constraint.Constraints.TAG;
 import static com.facebook.FacebookSdk.getApplicationContext;
 
@@ -42,7 +39,6 @@ public class SocialMethod {
             }
         }
     }
-
     public static boolean MyStartActivity(Intent intent, Context con) {
         try {
             con.startActivity(intent);
@@ -51,7 +47,6 @@ public class SocialMethod {
             return false;
         }
     }
-
     public static void showFeedback(Context context) {
         Intent emailIntent = new Intent(Intent.ACTION_SENDTO);
         emailIntent.setData(android.net.Uri.parse("mailto:"));
@@ -63,7 +58,6 @@ public class SocialMethod {
             Toast.makeText(context, "There is no email client installed.", Toast.LENGTH_LONG).show();
         }
     }
-
     public static void shareIt(Context context) {
         Intent sharingIntent = new Intent(Intent.ACTION_SEND);
         sharingIntent.setType("text/plain");
@@ -71,7 +65,6 @@ public class SocialMethod {
         sharingIntent.putExtra(Intent.EXTRA_TEXT, "Now follow latest blogs with Amdavad Blog click here to visit https://amdavadblog.com/");
         context.startActivity(Intent.createChooser(sharingIntent, "Share via"));
     }
-
     public static void showSubscription(final Context context) {
         final Subscribe subscribe = new Subscribe();
         Retrofit retrofitallpost=new Retrofit.Builder()
@@ -121,13 +114,11 @@ public class SocialMethod {
                                         Toast.makeText(getApplicationContext(), "Thank you for subscribe", Toast.LENGTH_LONG).show();
                                         Log.e(TAG, "Success");
                                     }
-
                                     @Override
                                     public void onFailure(Call<Subscribe> call, Throwable t) {
                                         Log.e(TAG, "Fail" + t);
                                     }
                                 });
-
                             PrefService ap = new PrefService(context);
                             ap.saveAccessKey("subscribe", userValue);
                             showResult.setVisibility(View.INVISIBLE);
@@ -146,11 +137,9 @@ public class SocialMethod {
         });
         alertDialog.show();
     }
-
     public static boolean isValidEmail(String email) {
         return Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
-
     public static void alreadySubscribed(final Context context) {
 
         LayoutInflater layoutinflater = LayoutInflater.from(context);

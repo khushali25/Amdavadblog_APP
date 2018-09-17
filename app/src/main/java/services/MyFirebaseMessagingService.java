@@ -1,7 +1,5 @@
 package services;
 
-import android.app.AlarmManager;
-import android.app.KeyguardManager;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -9,26 +7,16 @@ import android.app.PendingIntent;
 import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
-import android.os.Bundle;
 import android.os.PowerManager;
-import android.os.SystemClock;
 import android.provider.Settings;
 import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.NotificationManagerCompat;
 import android.util.Log;
-import android.view.WindowManager;
-import android.widget.RemoteViews;
-import android.widget.Toast;
 import com.example.xps.amdavadblog_app.UnfoldableDetailsActivity;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
-
 import java.util.Map;
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
@@ -64,14 +52,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
-//        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-//            boolean settingsCanWrite = Settings.System.canWrite(this);
-//
-//            if(!settingsCanWrite) {
-//                Intent intent1 = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS);
-//                startActivity(intent1);
-//            }
-//        }
         if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.O) {
             NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
                     //.setSmallIcon(android.R.drawable)
@@ -99,32 +79,26 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 PowerManager.WakeLock wl_cpu = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "MH24_SCREENLOCK");
                 wl_cpu.acquire(2000);
             }
-
             NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
             notificationManager.notify(0, notificationBuilder.build());
         }
-
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 
             NotificationManager notificationManager1 =
                     (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
             int notificationId = 1;
             String channelId = "channel-01";
             String channelName = "Channel Name";
             int importance = NotificationManager.IMPORTANCE_HIGH;
-
             NotificationChannel mChannel = new NotificationChannel(
                     channelId, channelName, importance);
             mChannel.setShowBadge(true);
             mChannel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
             assert notificationManager1 != null;
             notificationManager1.createNotificationChannel(mChannel);
-
             PendingIntent pendingIntent1 = PendingIntent.getActivity(this, 0, intent,
                     PendingIntent.FLAG_UPDATE_CURRENT);
             Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-
             NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this, channelId)
                    // .setSmallIcon(R.drawable.icon)
                     .setContentTitle("New Blog")
@@ -135,7 +109,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                     .setContentIntent(pendingIntent)
                     .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                     .setPriority(Notification.PRIORITY_HIGH);
-
             TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
             stackBuilder.addNextIntent(intent);
             PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(
