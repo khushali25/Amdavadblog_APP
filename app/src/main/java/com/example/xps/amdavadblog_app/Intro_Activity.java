@@ -13,7 +13,6 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.Html;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -44,7 +43,7 @@ import java.util.Arrays;
 import java.util.List;
 import Adapter.IntroScreenAdapter;
 import Core.Helper.SynchronousCallAdapterFactory;
-import Core.Helper.WordPressService;
+import Core.Helper.ApiService;
 import Helper.IntroPageTransformer;
 import Helper.PrefService;
 import retrofit2.Call;
@@ -267,8 +266,8 @@ public class Intro_Activity extends AppCompatActivity {
                                 .addConverterFactory(GsonConverterFactory.create())
                                 .addCallAdapterFactory(SynchronousCallAdapterFactory.create())
                                 .build();
-                        final WordPressService wordPressService = retrofitallpost.create(WordPressService.class);
-                        Call<JsonObject> call = wordPressService.saveFbUserData(fbuserdata);
+                        final ApiService apiService = retrofitallpost.create(ApiService.class);
+                        Call<JsonObject> call = apiService.saveFbUserData(fbuserdata);
                         call.enqueue(new Callback<JsonObject>() {
                             @Override
                             public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {

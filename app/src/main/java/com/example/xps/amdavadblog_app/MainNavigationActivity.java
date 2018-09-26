@@ -54,7 +54,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import Core.Helper.SynchronousCallAdapterFactory;
-import Core.Helper.WordPressService;
+import Core.Helper.ApiService;
 import Helper.PrefService;
 import Helper.SocialMethod;
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -331,8 +331,8 @@ public class MainNavigationActivity extends AppCompatActivity
                                 .addConverterFactory(GsonConverterFactory.create())
                                 .addCallAdapterFactory(SynchronousCallAdapterFactory.create())
                                 .build();
-                        final WordPressService wordPressService = retrofitallpost.create(WordPressService.class);
-                        Call<JsonObject> call = wordPressService.saveFbUserData(fbuserdata);
+                        final ApiService apiService = retrofitallpost.create(ApiService.class);
+                        Call<JsonObject> call = apiService.saveFbUserData(fbuserdata);
                         call.enqueue(new Callback<JsonObject>() {
                             @Override
                             public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {

@@ -4,7 +4,6 @@ import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -15,11 +14,10 @@ import android.widget.TextView;
 import com.alexvasilkov.foldablelayout.FoldableListLayout;
 import java.util.List;
 import Adapter.PostContentAdapterSearch;
-import Core.Helper.WordPressService;
+import Core.Helper.ApiService;
 import Model.Author;
 import Model.Category;
 import Model.Media;
-import Model.Post;
 import Model.PostSearch;
 import Core.Helper.SynchronousCallAdapterFactory;
 import retrofit2.Call;
@@ -93,9 +91,9 @@ public class SearchActivity extends AppCompatActivity {
                         .addCallAdapterFactory(SynchronousCallAdapterFactory.create())
                         .build();
 
-                final WordPressService wordPressService = retrofitallpost.create(WordPressService.class);
+                final ApiService apiService = retrofitallpost.create(ApiService.class);
                 Call<List<PostSearch>> call = null;
-                call = wordPressService.getPostsByQuerySearch(searchText);
+                call = apiService.getPostsByQuerySearch(searchText);
                 call.enqueue(new Callback<List<PostSearch>>() {
                     @Override
                     public void onResponse(Call<List<PostSearch>> call, Response<List<PostSearch>> response) {
@@ -107,12 +105,12 @@ public class SearchActivity extends AppCompatActivity {
                             if (postsize != 0) {
                                 for (final PostSearch post1 : response.body()) {
                                     Integer catId = post1.categories.get(0);
-                                    category = wordPressService.getPostCategoryById(catId);
+                                    category = apiService.getPostCategoryById(catId);
                                     post1.categoryname = category.getName();
                                     foldableListLayout.setVisibility(View.VISIBLE);
-                                    Auth = wordPressService.getPostAuthorById(post1.author);
+                                    Auth = apiService.getPostAuthorById(post1.author);
                                     post1.authorname = Auth.getName();
-                                    resp2 = wordPressService.getFeaturedImageById(post1.featured_media);
+                                    resp2 = apiService.getFeaturedImageById(post1.featured_media);
                                     if (resp2 == null) {
                                         post1.imagePath = String.valueOf(R.drawable.ic_home_black_24dp);
                                     } else

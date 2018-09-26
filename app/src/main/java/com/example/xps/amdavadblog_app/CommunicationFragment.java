@@ -16,7 +16,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 import Core.Helper.SynchronousCallAdapterFactory;
-import Core.Helper.WordPressService;
+import Core.Helper.ApiService;
 import Model.Contact;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -127,13 +127,13 @@ public class CommunicationFragment extends Fragment {
                             .addConverterFactory(GsonConverterFactory.create())
                             .addCallAdapterFactory(SynchronousCallAdapterFactory.create())
                             .build();
-                    final WordPressService wordPressService = retrofitallpost.create(WordPressService.class);
+                    final ApiService apiService = retrofitallpost.create(ApiService.class);
                     if(phone.equals(""))
                     {
                         edtphone.setText("null");
                         phone = edtphone.getText().toString();
                     }
-                    Call<Contact> call = wordPressService.saveContactDetail(name, email, phone, message);
+                    Call<Contact> call = apiService.saveContactDetail(name, email, phone, message);
                     call.enqueue(new Callback<Contact>() {
                         @Override
                         public void onResponse(Call<Contact> call, Response<Contact> response) {

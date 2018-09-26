@@ -14,7 +14,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.example.xps.amdavadblog_app.R;
-import Core.Helper.WordPressService;
+import Core.Helper.ApiService;
 import Model.Subscribe;
 import Core.Helper.SynchronousCallAdapterFactory;
 import retrofit2.Call;
@@ -72,7 +72,7 @@ public class SocialMethod {
                 .addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(SynchronousCallAdapterFactory.create())
                 .build();
-        final WordPressService wordPressService = retrofitallpost.create(WordPressService.class);
+        final ApiService apiService = retrofitallpost.create(ApiService.class);
 
         LayoutInflater layoutinflater = LayoutInflater.from(context);
         final View promptView = layoutinflater.inflate(R.layout.subscriptionview, null);
@@ -107,7 +107,7 @@ public class SocialMethod {
                             showResult.setText("Please enter valid email address");
                         } else {
 
-                                Call<Subscribe> call = wordPressService.saveSubscriberEmail(userValue);
+                                Call<Subscribe> call = apiService.saveSubscriberEmail(userValue);
                                 call.enqueue(new Callback<Subscribe>() {
                                     @Override
                                     public void onResponse(Call<Subscribe> call, Response<Subscribe> response) {

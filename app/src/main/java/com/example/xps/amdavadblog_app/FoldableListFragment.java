@@ -10,7 +10,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 
 import com.alexvasilkov.foldablelayout.FoldableListLayout;
 import com.google.android.gms.ads.AdListener;
@@ -18,11 +17,9 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
 
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import Adapter.PostContentAdapter;
-import Core.Helper.WordPressService;
+import Core.Helper.ApiService;
 import Model.Post;
 import Model.StartJsonDataClass;
 import Core.Helper.SynchronousCallAdapterFactory;
@@ -53,8 +50,10 @@ public class FoldableListFragment extends Fragment {
         CategoryId = categoryId;
     }
     int page = 1,postcount,postlessthan10s;
+    boolean loading = false;
+    boolean reachedMax = false;
     Retrofit retrofitallpost=new Retrofit.Builder()
-            .baseUrl("http://10.0.2.2:3000/amdblog/")
+            .baseUrl("http://api.amdavadblog.com/amdblog/")
             .addConverterFactory(GsonConverterFactory.create())
             .addCallAdapterFactory(SynchronousCallAdapterFactory.create())
             .build();
@@ -85,21 +84,27 @@ public class FoldableListFragment extends Fragment {
           int firstVisiblePosition = (int) (rotation / 180f);
           postcount = AllPost.size();
           int count = postcount - 5;
-         if (firstVisiblePosition != 0 && firstVisiblePosition == count) {
-             int temp = page;
-             LetCall(temp + 1);
-              page++;
-             }
+            if (firstVisiblePosition != 0 && firstVisiblePosition == count) {
+                if(loading || reachedMax)
+                {
+
+                }
+                else {
+                    int temp = page + 1;
+                    LetCall(temp);
+                    page++;
+                }
+            }
             }
         });
-        final WordPressService wordPressService = retrofitallpost.create(WordPressService.class);
+        final ApiService apiService = retrofitallpost.create(ApiService.class);
         Call<StartJsonDataClass> call = null;
         if (CategoryId == 100) {
-            call = wordPressService.getAllPostPerPage(1);
+            call = apiService.getAllPostPerPage(1);
         }
         else
         {
-            call = wordPressService.getAllPostByCategoryId(1,CategoryId);
+            call = apiService.getAllPostByCategoryId(1,CategoryId);
         }
         call.enqueue(new Callback<StartJsonDataClass>() {
             @Override
@@ -122,15 +127,15 @@ public class FoldableListFragment extends Fragment {
         return view;
     }
     private void LetCall(int i) {
-
-        final WordPressService wordPressService = retrofitallpost.create(WordPressService.class);
+        loading = true;
+        final ApiService apiService = retrofitallpost.create(ApiService.class);
         Call<StartJsonDataClass> call;
         if (CategoryId == 100) {
-            call = wordPressService.getAllPostPerPage(i);
+            call = apiService.getAllPostPerPage(i);
         }
         else
         {
-            call = wordPressService.getAllPostByCategoryId(i,CategoryId);
+            call = apiService.getAllPostByCategoryId(i,CategoryId);
         }
 
         call.enqueue(new Callback<StartJsonDataClass>() {
@@ -138,28 +143,17 @@ public class FoldableListFragment extends Fragment {
             public void onResponse(Call<StartJsonDataClass> call, Response<StartJsonDataClass> response) {
                 currentPost = response.body().getData();
 
-                for (Post post : currentPost) {
-                    if (response.isSuccessful()) {
-                    } else {
-
-                    }
-                }
-                postlessthan10s = currentPost.size();
-                if(postlessthan10s == 10){
-                    AllPost.addAll(currentPost);
-                }
-                else if(postlessthan10s < 10 && postlessthan10s != 0)
+                AllPost.addAll(currentPost);
+                if(currentPost.size() < 10 || currentPost.isEmpty())
                 {
-                    AllPost.addAll(currentPost);
+                    reachedMax = true;
                 }
-                else
-                {
 
-                }
-         postContentAdapter =new PostContentAdapter(AllPost, activity);
-         foldableListLayout.setAdapter(postContentAdapter);
-         if(postContentAdapter !=null)
-                    postContentAdapter.notifyDataSetChanged();
+                postContentAdapter =new PostContentAdapter(AllPost, activity);
+                 foldableListLayout.setAdapter(postContentAdapter);
+                 if(postContentAdapter !=null)
+                            postContentAdapter.notifyDataSetChanged();
+                 loading = false;
         }
     @Override
     public void onFailure(Call<StartJsonDataClass> call, Throwable t) {
