@@ -263,7 +263,7 @@ public class Intro_Activity extends AppCompatActivity {
                             e.printStackTrace();
                         }
                         Retrofit retrofitallpost=new Retrofit.Builder()
-                                .baseUrl("http://10.0.2.2:3000/amdblog/")
+                                .baseUrl("http://api.amdavadblog.com/amdblog/")
                                 .addConverterFactory(GsonConverterFactory.create())
                                 .addCallAdapterFactory(SynchronousCallAdapterFactory.create())
                                 .build();

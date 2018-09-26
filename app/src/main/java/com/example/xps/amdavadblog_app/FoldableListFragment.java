@@ -1,18 +1,25 @@
 package com.example.xps.amdavadblog_app;
 
 import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.app.Activity;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+
 import com.alexvasilkov.foldablelayout.FoldableListLayout;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
+
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import Adapter.PostContentAdapter;
 import Core.Helper.WordPressService;
@@ -29,22 +36,28 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 public class FoldableListFragment extends Fragment {
 
+    List<Post> currentPost;
     List<Post> postList = null;
     AdView adView;
     public int CategoryId;
     public FoldableListLayout foldableListLayout;
     public PostContentAdapter postContentAdapter;
-    public List<Post> AllPost;
+    public List AllPost;
     public View view;
     public Activity activity;
-    String content,Excerpt,title,date,author,category,URL;
+    String content,title,date,author,category;
     public int getCategoryId() {
         return CategoryId;
     }
     public void setCategoryId(int categoryId) {
         CategoryId = categoryId;
     }
-
+    int page = 1,postcount,postlessthan10s;
+    Retrofit retrofitallpost=new Retrofit.Builder()
+            .baseUrl("http://10.0.2.2:3000/amdblog/")
+            .addConverterFactory(GsonConverterFactory.create())
+            .addCallAdapterFactory(SynchronousCallAdapterFactory.create())
+            .build();
     public FoldableListFragment() {
 
     }
@@ -53,9 +66,10 @@ public class FoldableListFragment extends Fragment {
     {
         CategoryId = id;
     }
+    @TargetApi(Build.VERSION_CODES.M)
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+                             final Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_foldable_list, container, false);
 
@@ -63,28 +77,25 @@ public class FoldableListFragment extends Fragment {
         postContentAdapter = new PostContentAdapter(postList,activity);
         foldableListLayout = view.findViewById(R.id.foldable_list);
         foldableListLayout.setAdapter(postContentAdapter);
+
         foldableListLayout.setOnFoldRotationListener(new FoldableListLayout.OnFoldRotationListener() {
             @Override
-            public void onFoldRotation(float rotation, boolean isFromUser) {
-                final int firstVisiblePosition = (int) (rotation / 180f);
-                if (firstVisiblePosition != 0 &&  firstVisiblePosition % 5 == 0) {
+          public void onFoldRotation(float rotation, boolean isFromUser) {
 
-                    String hello = "I am 5th post";
-                   // LetCall(2);
-                }
+          int firstVisiblePosition = (int) (rotation / 180f);
+          postcount = AllPost.size();
+          int count = postcount - 5;
+         if (firstVisiblePosition != 0 && firstVisiblePosition == count) {
+             int temp = page;
+             LetCall(temp + 1);
+              page++;
+             }
             }
         });
-//        LetCall(1);
-        Retrofit retrofitallpost=new Retrofit.Builder()
-                .baseUrl("http://10.0.2.2:3000/amdblog/")
-                .addConverterFactory(GsonConverterFactory.create())
-                .addCallAdapterFactory(SynchronousCallAdapterFactory.create())
-                .build();
-
         final WordPressService wordPressService = retrofitallpost.create(WordPressService.class);
         Call<StartJsonDataClass> call = null;
         if (CategoryId == 100) {
-             call = wordPressService.getAllPostPerPage(1);
+            call = wordPressService.getAllPostPerPage(1);
         }
         else
         {
@@ -95,13 +106,12 @@ public class FoldableListFragment extends Fragment {
             public void onResponse(Call<StartJsonDataClass> call, Response<StartJsonDataClass> response) {
                     if (response.isSuccessful()) {
                         AllPost = response.body().getData();
-                    }
-                    else
-                     {
+                    } else {
 
-                     }
-                 postContentAdapter.setData(AllPost);
-                 postContentAdapter.notifyDataSetChanged();
+                    }
+
+                postContentAdapter.setData(AllPost);
+                postContentAdapter.notifyDataSetChanged();
             }
             @Override
             public void onFailure(Call<StartJsonDataClass> call, Throwable t) {
@@ -111,99 +121,54 @@ public class FoldableListFragment extends Fragment {
         InitializeAds(view);
         return view;
     }
+    private void LetCall(int i) {
 
-//    private void LetCall(final Integer page){
-//        Retrofit retrofitallpost=new Retrofit.Builder()
-//                .baseUrl("https://amdavadblogs.apps-1and1.com/")
-//                .addConverterFactory(GsonConverterFactory.create())
-//                .addCallAdapterFactory(SynchronousCallAdapterFactory.create())
-//                .build();
-//        final WordPressService wordPressService = retrofitallpost.create(WordPressService.class);
-//        Call<List<Post>> call;
-//        if (CategoryId == 100) {
-//            call = wordPressService.getAllPostPerPage(1);
-//        }
-//        else
-//        {
-//            call = wordPressService.getAllPostByCategoryId(CategoryId);
-//        }
-//
-//        call.enqueue(new Callback<List<Post>>() {
-//            @Override
-//            public void onResponse(Call<List<Post>> call, Response<List<Post>> response) {
-//                Log.d("myResponse:", "Total Post:" + response.body().size());
-//                Media resp2 = null;
-//                Category cat = null;
-//                Author Auth = null;
-//                List<Post> currentPost = response.body();
-//                for (Post post : currentPost) {
-//                    if (response.isSuccessful()) {
-//                        Integer catId = post.categories.get(0);
-//                        Auth = wordPressService.getPostAuthorById(post.author);
-//                        post.authorname = Auth.name;
-//                        cat = wordPressService.getPostCategoryById(catId);
-//                        post.categoryname = cat.name;
-////                        resp2 = wordPressService.getFeaturedImageById(post.featured_media);
-//
-//                        if(true)
-//                        {
-//                            post.imagePath = String.valueOf(R.drawable.ic_home_black_24dp);
-//                        }
-//                        else
-//                            post.imagePath = resp2.media_details.sizes.medium_large.source_url.toString();
-//                    }
-//                    else
-//                    {
-//
-//                    }
-//                }
-//
-//               // AllPost.addAll(currentPost);
-//                postContentAdapter.notify(AllPost);
-//                postContentAdapter = new PostContentAdapter(AllPost,activity);
-//                foldableListLayout.setAdapter(postContentAdapter);
-//                if (postContentAdapter != null)
-//                {
-//                    postContentAdapter.notifyDataSetChanged();
-//                }
-////
-////                getActivity().runOnUiThread(new Runnable() {
-////                    @Override
-////                    public void run() {
-////                        postContentAdapter.notify(AllPost);
-////                        postContentAdapter = new PostContentAdapter(AllPost,activity);
-////                        foldableListLayout.setAdapter(postContentAdapter);
-////                        if (postContentAdapter != null)
-////                        {
-////                            postContentAdapter.notifyDataSetChanged();
-////                        }
-////
-////                        // postContentAdapter.notifyDataSetChanged();
-////                    }
-//                //
-//
-//
-//
-////                if(page == 1) {
-////                    //postContentAdapter.setData(AllPost);
-////                    //postContentAdapter.notify();
-////                    //postContentAdapter.notifyDataSetChanged();
-////                }
-////                else {
-////                    //postContentAdapter.notify(AllPost);
-////                   // postContentAdapter.notify();
-////                    postContentAdapter.notifyDataSetChanged();
-////
-////                }
-//                }
-//
-//            @Override
-//            public void onFailure(Call<List<Post>> call, Throwable t) {
-//
-//            }
-//
-//        });
-//    }
+        final WordPressService wordPressService = retrofitallpost.create(WordPressService.class);
+        Call<StartJsonDataClass> call;
+        if (CategoryId == 100) {
+            call = wordPressService.getAllPostPerPage(i);
+        }
+        else
+        {
+            call = wordPressService.getAllPostByCategoryId(i,CategoryId);
+        }
+
+        call.enqueue(new Callback<StartJsonDataClass>() {
+            @Override
+            public void onResponse(Call<StartJsonDataClass> call, Response<StartJsonDataClass> response) {
+                currentPost = response.body().getData();
+
+                for (Post post : currentPost) {
+                    if (response.isSuccessful()) {
+                    } else {
+
+                    }
+                }
+                postlessthan10s = currentPost.size();
+                if(postlessthan10s == 10){
+                    AllPost.addAll(currentPost);
+                }
+                else if(postlessthan10s < 10 && postlessthan10s != 0)
+                {
+                    AllPost.addAll(currentPost);
+                }
+                else
+                {
+
+                }
+         postContentAdapter =new PostContentAdapter(AllPost, activity);
+         foldableListLayout.setAdapter(postContentAdapter);
+         if(postContentAdapter !=null)
+                    postContentAdapter.notifyDataSetChanged();
+        }
+    @Override
+    public void onFailure(Call<StartJsonDataClass> call, Throwable t) {
+
+    }
+        });
+
+    }
+
     private void InitializeAds(View view) {
         try
         {

@@ -11,7 +11,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import com.alexvasilkov.android.commons.adapters.ItemsAdapter;
 import com.example.xps.amdavadblog_app.R;
@@ -27,6 +26,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import Model.Post;
+import Model.StartJsonDataClass;
 
 public class PostContentAdapter extends ItemsAdapter<Post, PostContentAdapter.ViewHolder>
 {
@@ -100,7 +100,7 @@ public class PostContentAdapter extends ItemsAdapter<Post, PostContentAdapter.Vi
         float dpWidth = pxWidth / displayMetrics.density;
         int pxHeight = displayMetrics.heightPixels;
         float dpHeight = pxHeight / displayMetrics.density;
-        txtsize=dpHeight*0.026f;
+        txtsize=dpHeight*0.020f;
 
         item = getItem(position);
         postid = item.getPostId();

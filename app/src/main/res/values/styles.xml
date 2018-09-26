@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<!--suppress AndroidDomInspection -->
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <style name="MyBaseTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
@@ -15,7 +16,7 @@
         <item name="windowNoTitle">true</item>
         <item name="colorControlActivated">#ffffff</item>
         <item name="android:windowTranslucentStatus">false</item>
-        <item name="android:navigationBarColor">#117887</item>
+        <item name="android:navigationBarColor" tools:targetApi="lollipop">#117887</item>
     </style>
 
     <style name="MyBaseTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
