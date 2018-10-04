@@ -163,18 +163,15 @@ public class PostContentAdapter extends ItemsAdapter<Post, PostContentAdapter.Vi
 
         String Postdatetime = null;
         String currentDateTime = null;
-
+        SimpleDateFormat sdf1 = new SimpleDateFormat("dd-MM-yyyy KK:mm a");
         DateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
         DateFormat outputFormat = new SimpleDateFormat("dd-MM-yyyy KK:mm a");
         try {
-            System.out.println(outputFormat.format(inputFormat.parse(input)));
             Postdatetime = outputFormat.format(inputFormat.parse(input));
             vh1.date.setText(outputFormat.format(inputFormat.parse(input)));
             vh1.date.setTypeface(custom_font1);
             vh1.date.setTextSize(txtsize);
-            SimpleDateFormat sdf1 = new SimpleDateFormat("dd-MM-yyyy KK:mm a");
             currentDateTime = sdf1.format(new Date());
-            System.out.print("Time.........." + currentDateTime + "....End");
 
         } catch (ParseException e) {
             e.printStackTrace();
@@ -189,10 +186,14 @@ public class PostContentAdapter extends ItemsAdapter<Post, PostContentAdapter.Vi
             d2 = format.parse(currentDateTime);
             //in milliseconds
             long diff = d2.getTime() - d1.getTime();
-            long diffSeconds = diff / 1000 % 60;
-            long diffMinutes = diff / (60 * 1000) % 60;
-            long diffHours = diff / (60 * 60 * 1000) % 24;
-            long diffDays = diff / (24 * 60 * 60 * 1000);
+            long diffSeconds = diff / 1000;
+            long diffMinutes = diffSeconds / 60;
+            long diffHours = diffMinutes / 60;
+            long diffDays = diffHours / 24;
+//            long diffSeconds = diff / 1000 % 60;
+//            long diffMinutes = diff / (60 * 1000) % 60;
+//            long diffHours = diff / (60 * 60 * 1000) % 24;
+//            long diffDays = diff / (24 * 60 * 60 * 1000);
 
             System.out.print(diffDays + " days, ");
             System.out.print(diffHours + " hours, ");
