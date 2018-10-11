@@ -256,14 +256,13 @@ public class CacheService {
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private static boolean IsRequiredToReadFromCache(String filePath) {
         //return true;
-        int frequency = 1;
+        int frequency = 10;
         boolean result = false;
         try {
             if ((new File(filePath)).isFile()) {
                     File f = new File(filePath);
                     Date date = new Date();
                     Date filedate = new Date(f.lastModified());
-                    LocalDateTime localdatetime = LocalDateTime.now();
 
                 long diff = new Date().getTime() - filedate.getTime();
                 long seconds = diff / 1000;

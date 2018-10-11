@@ -10,9 +10,12 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
+
+import com.crashlytics.android.Crashlytics;
 
 public class SplashScreenActivity extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback {
     private Boolean firstTime = null;
@@ -21,7 +24,6 @@ public class SplashScreenActivity extends AppCompatActivity implements ActivityC
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         if (Build.VERSION.SDK_INT >= 23) {
             String[] PERMISSIONS = {android.Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE};
 
@@ -45,7 +47,7 @@ public class SplashScreenActivity extends AppCompatActivity implements ActivityC
                             finish();
                             startActivity(i);
                         } catch (Exception e) {
-
+                            Crashlytics.logException(e);
                         }
                     }
                 };

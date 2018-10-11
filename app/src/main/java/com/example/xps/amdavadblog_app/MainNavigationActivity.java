@@ -26,6 +26,8 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.crashlytics.android.Crashlytics;
 import com.facebook.AccessToken;
 import com.facebook.AccessTokenTracker;
 import com.facebook.CallbackManager;
@@ -95,29 +97,37 @@ public class MainNavigationActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         FacebookSdk.sdkInitialize(getApplicationContext());
+
         setContentView(R.layout.activity_main_navigation);
+
         callbackManager = CallbackManager.Factory.create();
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.newtoolbar);
         setSupportActionBar(toolbar);
-
         getSupportActionBar().setDisplayShowTitleEnabled(false);
+
         InitiaalizeGoogleAppConfig();
+
         FirebaseApp app = FirebaseApp.initializeApp(this);
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         mFirebaseAnalytics.setAnalyticsCollectionEnabled(true);
         mFirebaseAnalytics.setMinimumSessionDuration(20000);
         mFirebaseAnalytics.setUserId(String.valueOf(GetRandomIndex()));
+
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
+
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS,
                     WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         }
+
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
@@ -125,12 +135,10 @@ public class MainNavigationActivity extends AppCompatActivity
         fbname = (TextView)headerView.findViewById(R.id.fbname);
         fbemail = (TextView)headerView.findViewById(R.id.fbemail);
         fbphoto = (CircleImageView) headerView.findViewById(R.id.circleView);
-        //fbbtn = (Button)headerView.findViewById(R.id.fblogincustombtn);
         fbloginbutton = (LoginButton)headerView.findViewById(R.id.login_button);
         fblogout = (Button)headerView.findViewById(R.id.fblogout);
 
         getloginstatus();
-        InitializeFirstScreenUI();
 
         fbicon = (ImageView)findViewById(R.id.fbicon);
         twittericon = (ImageView)findViewById(R.id.twittericon);
@@ -201,6 +209,14 @@ public class MainNavigationActivity extends AppCompatActivity
             }
         });
         AppEventsLogger.activateApp(this);
+
+        InitializeFirstScreenUI();
+
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        catInstance = new FoldableListFragment(100);
+        ft.replace(R.id.content_frame, new FoldableListFragment(100), "Fragment1");
+        ft.commit();
+
     }
 
     private void getloginstatus() {
@@ -408,7 +424,6 @@ public class MainNavigationActivity extends AppCompatActivity
     private void InitializeFirstScreenUI() {
         try
         {
-            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             txt = findViewById(R.id.toolbartxt);
             getSupportActionBar().setTitle("Home");
             txt.setText("Home");
@@ -416,9 +431,7 @@ public class MainNavigationActivity extends AppCompatActivity
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_menu_black_24dp);
             getStatusBarHeight();
-            catInstance = new FoldableListFragment(100);
-            ft.replace(R.id.content_frame, new FoldableListFragment(100), "Fragment1");
-            ft.commit();
+
         }
         catch (Exception ex)
         {
