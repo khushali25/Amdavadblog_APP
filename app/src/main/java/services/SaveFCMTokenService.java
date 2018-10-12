@@ -4,6 +4,8 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.IBinder;
+
+import com.crashlytics.android.Crashlytics;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import java.util.HashMap;
@@ -18,13 +20,18 @@ public class SaveFCMTokenService extends Service {
     }
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        // TODO Auto-generated method stub
-        if(intent != null){
-            Bundle b = intent.getExtras();
-            if(b != null) {
-                String token = b.getString("TOKEN");
-                sendRegistrationToServer(token);
+        try {
+            // TODO Auto-generated method stub
+            if (intent != null) {
+                Bundle b = intent.getExtras();
+                if (b != null) {
+                    String token = b.getString("TOKEN");
+                    sendRegistrationToServer(token);
+                }
             }
+        }
+        catch (Exception ex) {
+            Crashlytics.logException(ex);
         }
         return super.onStartCommand(intent, flags, startId);
     }
@@ -40,11 +47,19 @@ public class SaveFCMTokenService extends Service {
     }
     private boolean sendRegistrationToServer(final String token) {
         // Add custom implementation, as needed.
-        UUID uuid = UUID.randomUUID();
-        String randomUUIDString = uuid.toString();
-        String randomstring = randomUUIDString.substring(0,10);
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
-        int currentapiVersion = android.os.Build.VERSION.SDK_INT;
+        int currentapiVersion = 0;
+        String randomstring = null;
+        DatabaseReference ref = null;
+        try {
+            UUID uuid = UUID.randomUUID();
+            String randomUUIDString = uuid.toString();
+            randomstring = randomUUIDString.substring(0, 10);
+            ref = FirebaseDatabase.getInstance().getReference();
+            currentapiVersion = android.os.Build.VERSION.SDK_INT;
+        }
+        catch (Exception ex) {
+            Crashlytics.logException(ex);
+        }
         switch (currentapiVersion) {
 
             case 23:

@@ -11,6 +11,8 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
+
+import com.crashlytics.android.Crashlytics;
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
 import android.support.v7.app.AppCompatActivity;
@@ -56,112 +58,112 @@ public class UnfoldableDetailsActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+        try {
+            super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_unfoldable_details);
+            setContentView(R.layout.activity_unfoldable_details);
 
-        Bundle param = new Bundle();
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_itemdetail);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_arrow_back_white_24dp);
-        postfeaturedimage = (ImageView)findViewById(R.id.imgpost);
-        AppImageLoader =  ImageLoader.getInstance();
-        if (!AppImageLoader.isInited()) {
-            AppImageLoader.init(ImageLoaderConfiguration
-                    .createDefault(UnfoldableDetailsActivity.this));
-        }
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
-        getWindow().addFlags(
-                WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
-                        + WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED |
-                        + WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
-        );
-        materialDesignFAM = (FloatingActionMenu) findViewById(R.id.material_design_android_floating_action_menu);
-        floatingActionButton1 = (FloatingActionButton) findViewById(R.id.material_design_floating_action_menu_item1);
-        floatingActionButton2 = (FloatingActionButton) findViewById(R.id.material_design_floating_action_menu_item2);
-        floatingActionButton3 = (FloatingActionButton) findViewById(R.id.material_design_floating_action_menu_item3);
-        floatingActionButton4 = (FloatingActionButton) findViewById(R.id.material_design_floating_action_menu_item4);
-        materialDesignFAM.setClosedOnTouchOutside(true);
-        floatingActionButton1.setColorNormal(Color.WHITE);
-        floatingActionButton1.setColorPressed(Color.DKGRAY);
-        floatingActionButton2.setColorNormal(Color.WHITE);
-        floatingActionButton2.setColorPressed(Color.DKGRAY);
-        floatingActionButton3.setColorNormal(Color.WHITE);
-        floatingActionButton3.setColorPressed(Color.DKGRAY);
-        floatingActionButton4.setColorNormal(Color.WHITE);
-        floatingActionButton4.setColorPressed(Color.DKGRAY);
-        floatingActionButton1.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                //TODO something when floating action menu first item clicked
-                PrefService ap = new PrefService(getApplication());
-                String subscribed = ap.getAccessKey("subscribe");
-                if (subscribed == "")
-                {
-                    SocialMethod.showSubscription(UnfoldableDetailsActivity.this);
-                }
-                else
-                {
-                    SocialMethod.alreadySubscribed(UnfoldableDetailsActivity.this);
-                }
+            Bundle param = new Bundle();
+            Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_itemdetail);
+            setSupportActionBar(toolbar);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_arrow_back_white_24dp);
+            postfeaturedimage = (ImageView) findViewById(R.id.imgpost);
+            AppImageLoader = ImageLoader.getInstance();
+            if (!AppImageLoader.isInited()) {
+                AppImageLoader.init(ImageLoaderConfiguration
+                        .createDefault(UnfoldableDetailsActivity.this));
             }
-        });
-        floatingActionButton2.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                //TODO something when floating action menu second item clicked
-                SocialMethod.showFeedback(UnfoldableDetailsActivity.this);
-
-            }
-        });
-        floatingActionButton3.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                //TODO something when floating action menu third item clicked
-                SocialMethod.showRateApp(UnfoldableDetailsActivity.this);
-
-            }
-        });
-        floatingActionButton4.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                //TODO something when floating action menu third item clicked
-                SocialMethod.showRateApp(UnfoldableDetailsActivity.this);
-                shareBlog();
-            }
-        });
-        ctl = findViewById(R.id.collapsetoolbar);
-        final String title = this.getIntent().getStringExtra("Title");
-        ctl.setTitle(" ");
-
-        AppBarLayout appBarLayout = (AppBarLayout)findViewById(R.id.applayout);
-        appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
-             boolean isShow = false;
-             int scrollRange = -1;
-
-            @Override
-            public void onOffsetChanged(AppBarLayout appBarLayout, int i) {
-                if (scrollRange == -1)
-                {
-                    scrollRange = appBarLayout.getTotalScrollRange();
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
+            getWindow().addFlags(
+                    WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
+                            + WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED |
+                            +WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
+            );
+            materialDesignFAM = (FloatingActionMenu) findViewById(R.id.material_design_android_floating_action_menu);
+            floatingActionButton1 = (FloatingActionButton) findViewById(R.id.material_design_floating_action_menu_item1);
+            floatingActionButton2 = (FloatingActionButton) findViewById(R.id.material_design_floating_action_menu_item2);
+            floatingActionButton3 = (FloatingActionButton) findViewById(R.id.material_design_floating_action_menu_item3);
+            floatingActionButton4 = (FloatingActionButton) findViewById(R.id.material_design_floating_action_menu_item4);
+            materialDesignFAM.setClosedOnTouchOutside(true);
+            floatingActionButton1.setColorNormal(Color.WHITE);
+            floatingActionButton1.setColorPressed(Color.DKGRAY);
+            floatingActionButton2.setColorNormal(Color.WHITE);
+            floatingActionButton2.setColorPressed(Color.DKGRAY);
+            floatingActionButton3.setColorNormal(Color.WHITE);
+            floatingActionButton3.setColorPressed(Color.DKGRAY);
+            floatingActionButton4.setColorNormal(Color.WHITE);
+            floatingActionButton4.setColorPressed(Color.DKGRAY);
+            floatingActionButton1.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    //TODO something when floating action menu first item clicked
+                    PrefService ap = new PrefService(getApplication());
+                    String subscribed = ap.getAccessKey("subscribe");
+                    if (subscribed == "") {
+                        SocialMethod.showSubscription(UnfoldableDetailsActivity.this);
+                    } else {
+                        SocialMethod.alreadySubscribed(UnfoldableDetailsActivity.this);
+                    }
                 }
-                if (scrollRange + i == 0)
-                {
-                    ctl.setTitle(title);
+            });
+            floatingActionButton2.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    //TODO something when floating action menu second item clicked
+                    SocialMethod.showFeedback(UnfoldableDetailsActivity.this);
 
-                    ctl.setExpandedTitleTextAppearance(R.style.CollapsedAppBar);
-                    ctl.setCollapsedTitleTextAppearance(R.style.CollapsedAppBar);
-                    isShow = true;
                 }
-                else if (isShow)
-                {
-                    ctl.setTitle(" ");
-                    isShow = false;
+            });
+            floatingActionButton3.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    //TODO something when floating action menu third item clicked
+                    SocialMethod.showRateApp(UnfoldableDetailsActivity.this);
+
                 }
-             }
-    });
+            });
+            floatingActionButton4.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    //TODO something when floating action menu third item clicked
+                    SocialMethod.showRateApp(UnfoldableDetailsActivity.this);
+                    shareBlog();
+                }
+            });
+            ctl = findViewById(R.id.collapsetoolbar);
+            final String title = this.getIntent().getStringExtra("Title");
+            ctl.setTitle(" ");
+
+            AppBarLayout appBarLayout = (AppBarLayout) findViewById(R.id.applayout);
+            appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
+                boolean isShow = false;
+                int scrollRange = -1;
+
+                @Override
+                public void onOffsetChanged(AppBarLayout appBarLayout, int i) {
+                    if (scrollRange == -1) {
+                        scrollRange = appBarLayout.getTotalScrollRange();
+                    }
+                    if (scrollRange + i == 0) {
+                        ctl.setTitle(title);
+
+                        ctl.setExpandedTitleTextAppearance(R.style.CollapsedAppBar);
+                        ctl.setCollapsedTitleTextAppearance(R.style.CollapsedAppBar);
+                        isShow = true;
+                    } else if (isShow) {
+                        ctl.setTitle(" ");
+                        isShow = false;
+                    }
+                }
+            });
             InitializeAds();
             GetBlogDetails();
             GetFragment();
+        }
+        catch (Exception ex)
+        {
+            Crashlytics.logException(ex);
+        }
     }
     private void GetBlogDetails() {
+        try {
 
             String refreshedToken = FirebaseInstanceId.getInstance().getToken();
             Log.d(TAG, "Refreshed token: " + refreshedToken);
@@ -181,17 +183,19 @@ public class UnfoldableDetailsActivity extends AppCompatActivity {
                             if (darkMutedSwatch == null) {
                                 Palette.Swatch mutedSwatch = palette.getLightMutedSwatch();
                                 materialDesignFAM.setMenuButtonColorNormal(mutedSwatch.getRgb());
-                            }
-                            else {
+                            } else {
                                 materialDesignFAM.setMenuButtonColorNormal(darkMutedSwatch.getRgb());
                             }
                         }
                     });
                 }
+
                 @Override
                 public void onBitmapFailed(Exception e, Drawable errorDrawable) {
+                    Crashlytics.logException(e);
 
                 }
+
                 @Override
                 public void onPrepareLoad(Drawable placeHolderDrawable) {
 
@@ -200,59 +204,88 @@ public class UnfoldableDetailsActivity extends AppCompatActivity {
             Picasso.get()
                     .load(img1).into(target);
             postfeaturedimage.setTag(target);
+        }
+        catch (Exception ex)
+        {
+            Crashlytics.logException(ex);
+        }
 
        }
             @Override
-            protected void onPause() {
+     protected void onPause() {
                 super.onPause();
                 adView.pause();
-            }
-            @Override
-            protected void onResume() {
+     }
+      @Override
+      protected void onResume() {
                 super.onResume();
                 adView.resume();
+      }
+      private void GetFragment() {
+            try {
+            android.support.v4.app.FragmentManager fm = getSupportFragmentManager();
+            android.support.v4.app.FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            ft.replace(R.id.frcontent, new UnfoldableDetailsFragment());
+            ft.commit();
             }
-            private void GetFragment() {
-                android.support.v4.app.FragmentManager fm = getSupportFragmentManager();
-                android.support.v4.app.FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-                ft.replace(R.id.frcontent, new UnfoldableDetailsFragment());
-                ft.commit();
+            catch (Exception ex)
+            {
+            Crashlytics.logException(ex);
             }
-            public void onBackPressed() {
-                android.support.v4.app.NavUtils.navigateUpFromSameTask(this);
+      }
+      public void onBackPressed() {
+             try {
+            android.support.v4.app.NavUtils.navigateUpFromSameTask(this);
             }
-            @Override
-            public boolean onOptionsItemSelected(MenuItem item) {
-                Bundle param = new Bundle();
-                param.putString("name", String.valueOf(item.getItemId()));
-                android.support.v4.app.FragmentManager fm = getSupportFragmentManager();
-                android.support.v4.app.FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-                switch (item.getItemId()) {
+            catch (Exception ex)
+            {
+            Crashlytics.logException(ex);
+            }
+      }
+      @Override
+      public boolean onOptionsItemSelected(MenuItem item) {
+            try {
+            Bundle param = new Bundle();
+            param.putString("name", String.valueOf(item.getItemId()));
+            android.support.v4.app.FragmentManager fm = getSupportFragmentManager();
+            android.support.v4.app.FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            switch (item.getItemId()) {
 
-                    case android.R.id.home:
-                          android.support.v4.app.NavUtils.navigateUpFromSameTask(this);
-                        return true;
-                }
+                case android.R.id.home:
+                    android.support.v4.app.NavUtils.navigateUpFromSameTask(this);
+                    return true;
+            }
+            }
+            catch (Exception ex)
+            {
+             Crashlytics.logException(ex);
+            }
                 return super.onOptionsItemSelected(item);
-            }
+      }
 
-            @Override
-            public boolean onCreateOptionsMenu(Menu menu) {
+     @Override
+     public boolean onCreateOptionsMenu(Menu menu) {
                 return true;
-            }
+     }
 
-            public void shareBlog() {
-                int id = this.getIntent().getIntExtra("BlogId", 0);
+     public void shareBlog() {
+                try {
+                    int id = this.getIntent().getIntExtra("BlogId", 0);
 
-                String title = this.getIntent().getStringExtra("Title");
-                String replacedtitle = title.replace(" ", "-");
-                String finaltitle = replacedtitle.toLowerCase();
-                Intent sendIntent = new Intent();
-                sendIntent.setAction(Intent.ACTION_SEND);
-                sendIntent.putExtra(Intent.EXTRA_COMPONENT_NAME, "http://amdavadblog.com" + finaltitle);
-                sendIntent.setType("text/plain");
-                startActivity(Intent.createChooser(sendIntent, "Share Blog via"));
-            }
+                    String title = this.getIntent().getStringExtra("Title");
+                    String replacedtitle = title.replace(" ", "-");
+                    String finaltitle = replacedtitle.toLowerCase();
+                    Intent sendIntent = new Intent();
+                    sendIntent.setAction(Intent.ACTION_SEND);
+                    sendIntent.putExtra(Intent.EXTRA_COMPONENT_NAME, "http://amdavadblog.com" + finaltitle);
+                    sendIntent.setType("text/plain");
+                    startActivity(Intent.createChooser(sendIntent, "Share Blog via"));
+                }
+                catch (Exception ex)
+                {
+                    Crashlytics.logException(ex);
+                }
+     }
 
     private void InitializeAds() {
         try
@@ -265,6 +298,7 @@ public class UnfoldableDetailsActivity extends AppCompatActivity {
         }
         catch (Exception ex)
         {
+            Crashlytics.logException(ex);
             android.util.Log.e("Initialize UI failed", ex.getMessage());
         }
         adView.setAdListener(new AdListener() {

@@ -14,6 +14,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.alexvasilkov.android.commons.adapters.ItemsAdapter;
+import com.crashlytics.android.Crashlytics;
 import com.example.xps.amdavadblog_app.R;
 import com.example.xps.amdavadblog_app.UnfoldableDetailsActivity;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
@@ -44,15 +45,29 @@ public class PostContentAdapterSearch extends ItemsAdapter<Post, PostContentAdap
     PostContentAdapterSearch.ViewHolder vh1;
 
     public PostContentAdapterSearch(List<PostSearch> posts, Activity context) {
-        this.posts = posts;
-        this.context = context;
-        setItemsList1(this.posts);
-        imgloader = ImageLoader.getInstance();
+        try {
+            this.posts = posts;
+            this.context = context;
+            setItemsList1(this.posts);
+            imgloader = ImageLoader.getInstance();
+        }
+        catch(Exception ex)
+        {
+            Crashlytics.logException(ex);
+        }
+
     }
 
     public void setItemsList1(List<PostSearch> post) {
-        posts = post;
-        notifyDataSetChanged();
+        try {
+            posts = post;
+            notifyDataSetChanged();
+        }
+        catch(Exception ex)
+        {
+            Crashlytics.logException(ex);
+        }
+
     }
 
     @Override
@@ -60,8 +75,15 @@ public class PostContentAdapterSearch extends ItemsAdapter<Post, PostContentAdap
         return posts == null ? 0 : posts.size();
     }
     public void setData1(List<PostSearch> questionList) {
-        this.posts=questionList;
-        setItemsList1(this.posts);
+        try {
+            this.posts = questionList;
+            setItemsList1(this.posts);
+        }
+        catch(Exception ex)
+        {
+            Crashlytics.logException(ex);
+        }
+
     }
     class ViewHolder extends ItemsAdapter.ViewHolder {
         public TextView Title;
@@ -73,90 +95,124 @@ public class PostContentAdapterSearch extends ItemsAdapter<Post, PostContentAdap
 
         public ViewHolder(View itemView) {
             super(itemView);
-            Title = itemView.findViewById(R.id.posttitletext);
-            Art = itemView.findViewById(R.id.postimage);
-            Title = itemView.findViewById(R.id.posttitletext);
-            Category = itemView.findViewById(R.id.category);
-            Author = itemView.findViewById(R.id.author);
-            Excerpts = itemView.findViewById(R.id.excerpt);
-            date = itemView.findViewById(R.id.date1);
+            try {
+                Title = itemView.findViewById(R.id.posttitletext);
+                Art = itemView.findViewById(R.id.postimage);
+                Title = itemView.findViewById(R.id.posttitletext);
+                Category = itemView.findViewById(R.id.category);
+                Author = itemView.findViewById(R.id.author);
+                Excerpts = itemView.findViewById(R.id.excerpt);
+                date = itemView.findViewById(R.id.date1);
+            }
+            catch(Exception ex)
+            {
+                Crashlytics.logException(ex);
+            }
+
         }
     }
     @Override
     protected PostContentAdapterSearch.ViewHolder onCreateHolder(ViewGroup parent, int viewType) {
+        PostContentAdapterSearch.ViewHolder vh = null;
+        try {
 
-        View view = LayoutInflater.from(parent.getContext()).
-                inflate(R.layout.post_listing, null);
-        PostContentAdapterSearch.ViewHolder vh = new PostContentAdapterSearch.ViewHolder(view);
-        if (!imgloader.isInited()) {
-            imgloader.init(ImageLoaderConfiguration
-                    .createDefault(parent.getContext()));
+            View view = LayoutInflater.from(parent.getContext()).
+                    inflate(R.layout.post_listing, null);
+            vh = new PostContentAdapterSearch.ViewHolder(view);
+            if (!imgloader.isInited()) {
+                imgloader.init(ImageLoaderConfiguration
+                        .createDefault(parent.getContext()));
+            }
         }
+        catch(Exception ex)
+        {
+            Crashlytics.logException(ex);
+        }
+
         return vh;
     }
     @Override
     protected void onBindHolder(PostContentAdapterSearch.ViewHolder vh, final int position) {
-        vh1 = vh;
-        AssetManager am = context.getApplicationContext().getAssets();
-        Typeface custom_font = Typeface.createFromAsset(am, "font/Lora-Bold.ttf");
-        Typeface custom_font1 = Typeface.createFromAsset(am, "font/WorkSans-Regular.ttf");
-        custom_font3 = Typeface.createFromAsset(am, "font/Martel-Bold.ttf");
+        try {
+            vh1 = vh;
+            AssetManager am = context.getApplicationContext().getAssets();
+            Typeface custom_font = Typeface.createFromAsset(am, "font/Lora-Bold.ttf");
+            Typeface custom_font1 = Typeface.createFromAsset(am, "font/WorkSans-Regular.ttf");
+            custom_font3 = Typeface.createFromAsset(am, "font/Martel-Bold.ttf");
 
-        item = getItem1(position);
-        String title = item.title.rendered;
-        String decodedtitle= StringEscapeUtils.unescapeHtml3(title);
-        vh1.Title.setText(decodedtitle);
-        vh.Title.setTypeface(custom_font);
-        vh.Category.setText(Html.fromHtml("#" + item.getCategoryname()));
-        vh.Category.setTypeface(custom_font1);
-        vh.Author.setText(Html.fromHtml(item.getAuthorname()));
-        vh.Author.setTypeface(custom_font3);
-        vh.Excerpts.setText(Html.fromHtml(item.excerpt.rendered));
-        vh.Excerpts.setTypeface(custom_font3);
-        GetDateTime();
+            item = getItem1(position);
+            String title = item.title.rendered;
+            String decodedtitle = StringEscapeUtils.unescapeHtml3(title);
+            vh1.Title.setText(decodedtitle);
+            vh.Title.setTypeface(custom_font);
+            vh.Category.setText(Html.fromHtml("#" + item.getCategoryname()));
+            vh.Category.setTypeface(custom_font1);
+            vh.Author.setText(Html.fromHtml(item.getAuthorname()));
+            vh.Author.setTypeface(custom_font3);
+            vh.Excerpts.setText(Html.fromHtml(item.excerpt.rendered));
+            vh.Excerpts.setTypeface(custom_font3);
+            GetDateTime();
 
-        if (item.imagePath != null) {
+            if (item.imagePath != null) {
 
-            File file = ImageLoader.getInstance().getDiskCache().get(item.imagePath);
-            if (!file.exists()) {
+                File file = ImageLoader.getInstance().getDiskCache().get(item.imagePath);
+                if (!file.exists()) {
+                    DisplayImageOptions options = new DisplayImageOptions.Builder()
+                            .cacheOnDisk(true)
+                            .build();
+                    imgloader.displayImage(item.imagePath, vh1.Art, options);
+                } else {
+                    vh1.Art.setImageURI(android.net.Uri.parse(file.getAbsolutePath()));
+                }
+            } else {
+                String imageUri = "drawable://" + R.drawable.ic_home_black_24dp;
                 DisplayImageOptions options = new DisplayImageOptions.Builder()
                         .cacheOnDisk(true)
                         .build();
-                imgloader.displayImage(item.imagePath, vh1.Art, options);
-            } else {
-                vh1.Art.setImageURI(android.net.Uri.parse(file.getAbsolutePath()));
+                imgloader.displayImage(imageUri, vh1.Art, options);
             }
-        } else {
-            String imageUri = "drawable://" + R.drawable.ic_home_black_24dp;
-            DisplayImageOptions options = new DisplayImageOptions.Builder()
-                    .cacheOnDisk(true)
-                    .build();
-            imgloader.displayImage(imageUri, vh1.Art, options);
-        }
 
-        final String dateTime = vh1.date.getText().toString();
+
+        }
+        catch(Exception ex)
+        {
+            Crashlytics.logException(ex);
+        }
         vh1.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent;
-                intent = new Intent(context, UnfoldableDetailsActivity.class);
-                PostSearch tempitem = getItem1(position);
-                int posttempid = tempitem.getId();
-                intent.putExtra("Position",position);
-                intent.putExtra("BlogId", posttempid);
-                intent.putExtra("Title", tempitem.title.rendered);
-                intent.putExtra("Author", tempitem.getAuthorname());
-                intent.putExtra("Date", dateTime);
-                intent.putExtra("Excepts", tempitem.excerpt.rendered);
-                intent.putExtra("content",tempitem.content.getRendered());
-                intent.putExtra("Image", item.imagePath);
-                context.startActivity(intent);
+                try {
+                    final String dateTime = vh1.date.getText().toString();
+                    Intent intent;
+                    intent = new Intent(context, UnfoldableDetailsActivity.class);
+                    PostSearch tempitem = getItem1(position);
+                    int posttempid = tempitem.getId();
+                    intent.putExtra("Position", position);
+                    intent.putExtra("BlogId", posttempid);
+                    intent.putExtra("Title", tempitem.title.rendered);
+                    intent.putExtra("Author", tempitem.getAuthorname());
+                    intent.putExtra("Date", dateTime);
+                    intent.putExtra("Excepts", tempitem.excerpt.rendered);
+                    intent.putExtra("content", tempitem.content.getRendered());
+                    intent.putExtra("Image", item.imagePath);
+                    context.startActivity(intent);
+                }
+                catch(Exception ex)
+                {
+                    Crashlytics.logException(ex);
+                }
             }
         });
     }
     private PostSearch getItem1(int position) {
-        if (posts == null || position < 0 || position >= posts.size()) {
-            return null;
+        try {
+            if (posts == null || position < 0 || position >= posts.size()) {
+                return null;
+            }
+        }
+        catch(Exception ex)
+        {
+            Crashlytics.logException(ex);
         }
         return posts.get(position);
     }
@@ -178,6 +234,7 @@ public class PostContentAdapterSearch extends ItemsAdapter<Post, PostContentAdap
             System.out.print("Time.........." + currentDateTime + "....End");
 
         } catch (ParseException e) {
+            Crashlytics.logException(e);
             e.printStackTrace();
         }
         SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy KK:mm a");
@@ -217,6 +274,7 @@ public class PostContentAdapterSearch extends ItemsAdapter<Post, PostContentAdap
                 vh1.date.setVisibility(View.GONE);
             }
         } catch (Exception e) {
+            Crashlytics.logException(e);
             e.printStackTrace();
         }
 

@@ -10,6 +10,8 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.EditText;
 import android.widget.ImageView;
+
+import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
@@ -24,33 +26,38 @@ public class BrowserActivity extends AppCompatActivity {
     private WebView webView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_browser);
-        android.support.v7.widget.Toolbar toolbar = findViewById(R.id.toolbarbrowser);
-        setSupportActionBar(toolbar);
+        try {
+            super.onCreate(savedInstanceState);
+            setContentView(R.layout.activity_browser);
+            android.support.v7.widget.Toolbar toolbar = findViewById(R.id.toolbarbrowser);
+            setSupportActionBar(toolbar);
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_arrow_back_white_24dp);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_arrow_back_white_24dp);
 
-        url = getIntent().getStringExtra("url");
-        txt = findViewById(R.id.toolbartitle);
-        txt.setBackgroundColor(Color.MAGENTA);
+            url = getIntent().getStringExtra("url");
+            txt = findViewById(R.id.toolbartitle);
+            txt.setBackgroundColor(Color.MAGENTA);
 
-        if (android.text.TextUtils.isEmpty(url))
-        {
-            finish();
+            if (android.text.TextUtils.isEmpty(url)) {
+                finish();
+            }
+            imageView = findViewById(R.id.browserloading);
+            animation = (android.graphics.drawable.AnimationDrawable) imageView.getDrawable();
+            webView = findViewById(R.id.webviewbrowser);
+
+            InitializeAds();
+            initWebView();
+
+            webView.loadUrl(url);
+            getSupportActionBar().setTitle(url);
+            txt.setText(getSupportActionBar().getTitle());
+            txt.setBackgroundResource(R.drawable.browsertoolbartitile);
         }
-        imageView = findViewById(R.id.browserloading);
-        animation = (android.graphics.drawable.AnimationDrawable)imageView.getDrawable();
-        webView = findViewById(R.id.webviewbrowser);
-
-        InitializeAds();
-        initWebView();
-
-        webView.loadUrl(url);
-        getSupportActionBar().setTitle(url);
-        txt.setText(getSupportActionBar().getTitle());
-        txt.setBackgroundResource(R.drawable.browsertoolbartitile);
+        catch (Exception ex)
+        {
+            Crashlytics.logException(ex);
+        }
     }
 
     private void InitializeAds() {
@@ -63,6 +70,7 @@ public class BrowserActivity extends AppCompatActivity {
         }
         catch (Exception ex)
         {
+            Crashlytics.logException(ex);
             //Log.ERROR("Couldnt initialize ads", ex.getMessage());
         }
         adView.setAdListener(new AdListener() {
@@ -81,74 +89,109 @@ public class BrowserActivity extends AppCompatActivity {
 
     private void initWebView()
     {
-        MyWebChromeClient client = new MyWebChromeClient(this);
-        webView.setWebViewClient(client);
-        webView.clearCache(true);
-        webView.clearHistory();
-        webView.getSettings().setJavaScriptEnabled(true);
-        webView.setHorizontalScrollBarEnabled(false);
-        webView.getSettings().setLoadWithOverviewMode(true);
+        try {
+            MyWebChromeClient client = new MyWebChromeClient(this);
+            webView.setWebViewClient(client);
+            webView.clearCache(true);
+            webView.clearHistory();
+            webView.getSettings().setJavaScriptEnabled(true);
+            webView.setHorizontalScrollBarEnabled(false);
+            webView.getSettings().setLoadWithOverviewMode(true);
+        }
+        catch (Exception ex)
+        {
+            Crashlytics.logException(ex);
+        }
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         Bundle param = new Bundle();
-        param.putString("name", String.valueOf(item.getItemId()));
-        android.support.v4.app.FragmentManager fm = getSupportFragmentManager();
-        android.support.v4.app.FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                finish();
-                return true;
+        try {
+            param.putString("name", String.valueOf(item.getItemId()));
+            android.support.v4.app.FragmentManager fm = getSupportFragmentManager();
+            android.support.v4.app.FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            switch (item.getItemId()) {
+                case android.R.id.home:
+                    finish();
+                    return true;
+            }
+        }
+        catch (Exception ex)
+        {
+            Crashlytics.logException(ex);
         }
         return super.onOptionsItemSelected(item);
     }
     @Override
     public void onBackPressed() {
-        if (webView.canGoBack())
-        {
-            WebBackForwardList mWebBackForwardList = webView.copyBackForwardList();
-            String historyUrl = mWebBackForwardList.getItemAtIndex(mWebBackForwardList.getCurrentIndex()- 1).getUrl();
-            getSupportActionBar().setTitle(historyUrl);
-            getSupportActionBar().getTitle();
-            txt.setText(getSupportActionBar().getTitle());
-            txt.setBackgroundResource(R.drawable.browsertoolbartitile);
-            webView.goBack();
+        try {
+            if (webView.canGoBack()) {
+                WebBackForwardList mWebBackForwardList = webView.copyBackForwardList();
+                String historyUrl = mWebBackForwardList.getItemAtIndex(mWebBackForwardList.getCurrentIndex() - 1).getUrl();
+                getSupportActionBar().setTitle(historyUrl);
+                getSupportActionBar().getTitle();
+                txt.setText(getSupportActionBar().getTitle());
+                txt.setBackgroundResource(R.drawable.browsertoolbartitile);
+                webView.goBack();
+            } else
+                super.onBackPressed();
         }
-        else
-            super.onBackPressed();
+        catch (Exception ex)
+        {
+            Crashlytics.logException(ex);
+        }
     }
 
     private class MyWebChromeClient extends WebViewClient {
+
         Context context;
         private InterestingEvent ie;
         private boolean somethingHappened;
 
         public MyWebChromeClient(CallMe callMe) {
             super();
-           // this.context = context;
-            // Save the event object for later use.
-            ie = callMe;
-            // Nothing to report yet.
-            somethingHappened = false;
+            try {
+
+                // this.context = context;
+                // Save the event object for later use.
+                ie = callMe;
+                // Nothing to report yet.
+                somethingHappened = false;
+            }
+            catch (Exception ex)
+            {
+                Crashlytics.logException(ex);
+            }
         }
         public MyWebChromeClient(BrowserActivity browserActivity) {
             super();
-            this.context = browserActivity;
+            try {
+                this.context = browserActivity;
+            }
+            catch (Exception ex)
+            {
+                Crashlytics.logException(ex);
+            }
         }
         @Override
         public boolean shouldOverrideUrlLoading(WebView view,String url)
         {
-            // Check the predicate, which is set elsewhere.
-            if (somethingHappened)
-            {
-                // Signal the even by invoking the interface's method.
-                ie.interestingEvent ();
+            try {
+                // Check the predicate, which is set elsewhere.
+                if (somethingHappened) {
+                    // Signal the even by invoking the interface's method.
+                    ie.interestingEvent();
+                }
+                view.loadUrl(url);
+                getSupportActionBar().setTitle(url);
+                txt.setText(getSupportActionBar().getTitle());
+                txt.setBackgroundResource(R.drawable.browsertoolbartitile);
             }
-            view.loadUrl(url);
-            getSupportActionBar().setTitle(url);
-            txt.setText(getSupportActionBar().getTitle());
-            txt.setBackgroundResource(R.drawable.browsertoolbartitile);
+            catch (Exception ex)
+            {
+                Crashlytics.logException(ex);
+            }
             return true;
         }
     }
@@ -161,11 +204,18 @@ public class BrowserActivity extends AppCompatActivity {
 
     public class CallMe implements InterestingEvent
     {
+
         private MyWebChromeClient en;
         public CallMe ()
         {
-            // Create the event notifier and pass ourself to it.
-            en = new MyWebChromeClient (this);
+            try {
+                // Create the event notifier and pass ourself to it.
+                en = new MyWebChromeClient(this);
+            }
+            catch (Exception ex)
+            {
+                Crashlytics.logException(ex);
+            }
         }
         // Define the actual handler for the event.
         public void interestingEvent ()

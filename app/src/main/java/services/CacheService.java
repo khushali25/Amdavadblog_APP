@@ -7,6 +7,7 @@ import android.app.ActivityManager;
 import android.content.Context;
 import android.os.Build;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.firebase.crash.FirebaseCrash;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -72,124 +73,138 @@ public class CacheService {
     @SuppressLint("NewApi")
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public static List GetAllPostnew(boolean isForce, final int page) throws IOException {
-        Call<StartJsonDataClass> call = null;
-        context = getApplicationContext();
+        try {
+            Call<StartJsonDataClass> call = null;
+            context = getApplicationContext();
 
-        final ApiService apiService = retrofitallpost.create(ApiService.class);
-        final String filePath = AppConstants.getPostsCacheFilePath();
+            final ApiService apiService = retrofitallpost.create(ApiService.class);
+            final String filePath = AppConstants.getPostsCacheFilePath();
 
-        if (!IsRequiredToReadFromCache(filePath) || isForce) {
-            call = apiService.getAllPostPerPage(page);
-            Response<StartJsonDataClass> response = null;
-            try {
-                response = call.execute();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            if (response.isSuccessful()) {
-                // Toast.makeText(this, "server returned so many repositories: " + response.body().size(), Toast.LENGTH_SHORT).show();
-                // todo display the data instead of just a toast
-                if (page == 1) {
-                    AllPost = response.body().getData();
-
-                } else {
-                    currentPost = response.body().getData();
-                    AllPost.addAll(currentPost);
-                    if (currentPost.size() < 10 || currentPost.isEmpty()) {
-                        reachedMax = true;
-                    }
-                }
-            } else {
-            }
-            Gson gsonBuilder = new GsonBuilder().create();
-            String jsonFromJavaArrayList = gsonBuilder.toJson(currentPost);
-            String json = jsonFromJavaArrayList;
-            if (page == 1) {
+            if (!IsRequiredToReadFromCache(filePath) || isForce) {
+                call = apiService.getAllPostPerPage(page);
+                Response<StartJsonDataClass> response = null;
                 try {
-                    SaveData(filePath, gsonBuilder.toJson(AllPost));
-
+                    response = call.execute();
                 } catch (IOException e) {
+                    Crashlytics.logException(e);
                     e.printStackTrace();
                 }
-            } else {
-                if (json.length() > 5)
+                if (response.isSuccessful()) {
+                    // Toast.makeText(this, "server returned so many repositories: " + response.body().size(), Toast.LENGTH_SHORT).show();
+                    // todo display the data instead of just a toast
+                    if (page == 1) {
+                        AllPost = response.body().getData();
 
+                    } else {
+                        currentPost = response.body().getData();
+                        AllPost.addAll(currentPost);
+                        if (currentPost.size() < 10 || currentPost.isEmpty()) {
+                            reachedMax = true;
+                        }
+                    }
+                } else {
+                }
+                Gson gsonBuilder = new GsonBuilder().create();
+                String jsonFromJavaArrayList = gsonBuilder.toJson(currentPost);
+                String json = jsonFromJavaArrayList;
+                if (page == 1) {
                     try {
-                        AppendData(filePath, json);
+                        SaveData(filePath, gsonBuilder.toJson(AllPost));
+
                     } catch (IOException e) {
+                        Crashlytics.logException(e);
                         e.printStackTrace();
                     }
+                } else {
+                    if (json.length() > 5)
+
+                        try {
+                            AppendData(filePath, json);
+                        } catch (IOException e) {
+                            Crashlytics.logException(e);
+                            e.printStackTrace();
+                        }
+                }
+
+            } else {
+                String json = GetData(filePath);
+                Gson gson = new Gson();
+                Type listType = new TypeToken<ArrayList<Post>>() {
+                }.getType();
+                AllPost = new Gson().fromJson(json, listType);
             }
-
-        } else {
-            String json = GetData(filePath);
-            Gson gson = new Gson();
-            Type listType = new TypeToken<ArrayList<Post>>() {}.getType();
-            AllPost = new Gson().fromJson(json, listType);
-
         }
-
+        catch (IOException e) {
+            Crashlytics.logException(e);
+        }
         return AllPost;
 
     }
-
     public static List GetPostByCategoryId(int page, int categoryId, boolean b) throws IOException {
-        Call<StartJsonDataClass> call = null;
-        context = getApplicationContext();
+        try {
+            Call<StartJsonDataClass> call = null;
+            context = getApplicationContext();
 
-        final ApiService apiService = retrofitallpost.create(ApiService.class);
-        final String filePath = AppConstants.getPostsCacheFilePathByCategory(categoryId);
+            final ApiService apiService = retrofitallpost.create(ApiService.class);
+            final String filePath = AppConstants.getPostsCacheFilePathByCategory(categoryId);
 
-        if (!IsRequiredToReadFromCache(filePath) || b) {
-            call = apiService.getAllPostByCategoryId(page, categoryId);
-            Response<StartJsonDataClass> response = null;
-            try {
-                response = call.execute();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            if (response.isSuccessful()) {
-                // Toast.makeText(this, "server returned so many repositories: " + response.body().size(), Toast.LENGTH_SHORT).show();
-                // todo display the data instead of just a toast
-                if (page == 1) {
-                    AllPost = response.body().getData();
-
-                } else {
-                    currentPost = response.body().getData();
-                    AllPost.addAll(currentPost);
-                    if (currentPost.size() < 10 || currentPost.isEmpty()) {
-                        reachedMax = true;
-                    }
-                }
-            } else {
-            }
-            Gson gsonBuilder = new GsonBuilder().create();
-            String jsonFromJavaArrayList = gsonBuilder.toJson(currentPost);
-            String json = jsonFromJavaArrayList;
-            if (page == 1) {
+            if (!IsRequiredToReadFromCache(filePath) || b) {
+                call = apiService.getAllPostByCategoryId(page, categoryId);
+                Response<StartJsonDataClass> response = null;
                 try {
-                    SaveData(filePath, gsonBuilder.toJson(AllPost));
-
+                    response = call.execute();
                 } catch (IOException e) {
+                    Crashlytics.logException(e);
                     e.printStackTrace();
                 }
-            } else {
-                if (json.length() > 5)
+                if (response.isSuccessful()) {
+                    // Toast.makeText(this, "server returned so many repositories: " + response.body().size(), Toast.LENGTH_SHORT).show();
+                    // todo display the data instead of just a toast
+                    if (page == 1) {
+                        AllPost = response.body().getData();
 
+                    } else {
+                        currentPost = response.body().getData();
+                        AllPost.addAll(currentPost);
+                        if (currentPost.size() < 10 || currentPost.isEmpty()) {
+                            reachedMax = true;
+                        }
+                    }
+                } else {
+                }
+                Gson gsonBuilder = new GsonBuilder().create();
+                String jsonFromJavaArrayList = gsonBuilder.toJson(currentPost);
+                String json = jsonFromJavaArrayList;
+                if (page == 1) {
                     try {
-                        AppendData(filePath, json);
+                        SaveData(filePath, gsonBuilder.toJson(AllPost));
+
                     } catch (IOException e) {
+                        Crashlytics.logException(e);
                         e.printStackTrace();
                     }
+                } else {
+                    if (json.length() > 5)
+
+                        try {
+                            AppendData(filePath, json);
+                        } catch (IOException e) {
+                            Crashlytics.logException(e);
+                            e.printStackTrace();
+                        }
+                }
+
+            } else {
+                String json = GetData(filePath);
+                Gson gson = new Gson();
+                Type listType = new TypeToken<ArrayList<Post>>() {
+                }.getType();
+                AllPost = new Gson().fromJson(json, listType);
             }
-
-        } else {
-            String json = GetData(filePath);
-            Gson gson = new Gson();
-            Type listType = new TypeToken<ArrayList<Post>>() {}.getType();
-            AllPost = new Gson().fromJson(json, listType);
         }
-
+        catch (IOException e) {
+            Crashlytics.logException(e);
+        }
         return AllPost;
 
     }
@@ -200,7 +215,13 @@ public class CacheService {
         String content = "";
         int i;
         char c;
-        String content2 = new String(Files.readAllBytes(Paths.get(filePath)));
+        String content2 = null;
+        try {
+           content2  = new String(Files.readAllBytes(Paths.get(filePath)));
+        }
+        catch (IOException e) {
+            Crashlytics.logException(e);
+        }
         return content2;
 
     }
@@ -209,6 +230,7 @@ public class CacheService {
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private static void AppendData(String filePath, String json) throws IOException {
         String content = "";
+        try {
         String content2 = new String(Files.readAllBytes(Paths.get(filePath)));
 
         content2 = content2.replace("]", ",");
@@ -220,12 +242,13 @@ public class CacheService {
         Files.write(Paths.get(filePath), finalData.getBytes());
 
         BasicFileAttributes attr = null;
-        try {
+
             attr = Files.readAttributes(Paths.get(filePath), BasicFileAttributes.class);
             Date creationDate = new Date(attr.creationTime().to(TimeUnit.MILLISECONDS));
             Files.setAttribute(Paths.get(filePath), "creationTime", FileTime.fromMillis(creationDate.getTime()));
 
         } catch (IOException e) {
+            Crashlytics.logException(e);
             System.out.println("error! " + e.getMessage());
         }
     }
@@ -233,7 +256,7 @@ public class CacheService {
     @SuppressLint("NewApi")
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private static void SaveData(String filePath, String json) throws IOException {
-
+        try {
         if ((new File(filePath)).isFile()) {
             (new File(filePath)).delete();
         }
@@ -242,12 +265,13 @@ public class CacheService {
 
         //Calendar c = Calendar.getInstance();
         BasicFileAttributes attr = null;
-        try {
+
             attr = Files.readAttributes(Paths.get(filePath), BasicFileAttributes.class);
             Date creationDate = new Date(attr.creationTime().to(TimeUnit.MILLISECONDS));
             Files.setAttribute(Paths.get(filePath), "creationTime", FileTime.fromMillis(creationDate.getTime()));
 
         } catch (IOException e) {
+            Crashlytics.logException(e);
             System.out.println("error! " + e.getMessage());
         }
     }
@@ -275,6 +299,7 @@ public class CacheService {
         }
           catch(Exception ex)
             {
+                Crashlytics.logException(ex);
               //  FirebaseCrash.Report(ex);
             }
             return result;

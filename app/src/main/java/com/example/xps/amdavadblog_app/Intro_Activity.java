@@ -21,6 +21,8 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import com.crashlytics.android.Crashlytics;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
@@ -73,85 +75,95 @@ public class Intro_Activity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        try {
+            requestWindowFeature(Window.FEATURE_NO_TITLE);
+            getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-        facebookSDKInitialize();
-        setContentView(R.layout.activity_intro);
-        checkFirstRun();
-        callbackManager = CallbackManager.Factory.create();
-        relativeLayout = (RelativeLayout) findViewById(R.id.relativelayout);
-        mViewPager = (ViewPager) findViewById(R.id.view_pager);
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabDots);
-        tabLayout.setupWithViewPager(mViewPager, true);
-        dotsLayout = (LinearLayout) findViewById(R.id.layoutDots);
-        btnSkip = (Button) findViewById(R.id.btn_skip);
-        btnNext = (Button) findViewById(R.id.btn_next);
-        loginButton = (LoginButton) findViewById(R.id.login_button);
-        fblogincustombtn = (Button) findViewById(R.id.fblogincustombtn);
+            facebookSDKInitialize();
+            setContentView(R.layout.activity_intro);
+            checkFirstRun();
 
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
+            callbackManager = CallbackManager.Factory.create();
+            relativeLayout = (RelativeLayout) findViewById(R.id.relativelayout);
+            mViewPager = (ViewPager) findViewById(R.id.view_pager);
+            TabLayout tabLayout = (TabLayout) findViewById(R.id.tabDots);
+            tabLayout.setupWithViewPager(mViewPager, true);
+            dotsLayout = (LinearLayout) findViewById(R.id.layoutDots);
+            btnSkip = (Button) findViewById(R.id.btn_skip);
+            btnNext = (Button) findViewById(R.id.btn_next);
+            loginButton = (LoginButton) findViewById(R.id.login_button);
+            fblogincustombtn = (Button) findViewById(R.id.fblogincustombtn);
 
-        layouts = new int[]{
-                R.layout.introscreenfragmentlayout_1,
-                R.layout.introscreenfragmentlayout_2,
-                R.layout.introscreenfragmentlayout_3,
-                R.layout.introscreenfragmentlayout_4,
-                };
-        mViewPager.setAdapter(new IntroScreenAdapter(getSupportFragmentManager()));
-        mViewPager.setPageTransformer(false, new IntroPageTransformer());
-        btnSkip.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!isNetworkConnected())
-                {
-                    snackbarerror();
-                }
-                else
-                launchHomeScreen();
-            }
-        });
+            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+            StrictMode.setThreadPolicy(policy);
 
-        btnNext.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // checking for last page
-                // if last page home screen will be launched
-                if (!isNetworkConnected())
-                {
-                    snackbarerror();
-                }
-                else {
-                    int current = getItem(+1);
-                    if (current < layouts.length) {
-                        // move to next screen
-                        mViewPager.setCurrentItem(current);
-                    } else {
+            layouts = new int[]{
+                    R.layout.introscreenfragmentlayout_1,
+                    R.layout.introscreenfragmentlayout_2,
+                    R.layout.introscreenfragmentlayout_3,
+                    R.layout.introscreenfragmentlayout_4,
+            };
+            mViewPager.setAdapter(new IntroScreenAdapter(getSupportFragmentManager()));
+            mViewPager.setPageTransformer(false, new IntroPageTransformer());
+            btnSkip.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (!isNetworkConnected()) {
+                        snackbarerror();
+                    } else
                         launchHomeScreen();
+                }
+            });
+
+            btnNext.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // checking for last page
+                    // if last page home screen will be launched
+                    if (!isNetworkConnected()) {
+                        snackbarerror();
+                    } else {
+                        int current = getItem(+1);
+                        if (current < layouts.length) {
+                            // move to next screen
+                            mViewPager.setCurrentItem(current);
+                        } else {
+                            launchHomeScreen();
+                        }
                     }
                 }
+            });
+            if (isNetworkConnected()) {
+                getLoginDetails(fblogincustombtn);
+            } else {
+                snackbarerror();
             }
-        });
-        if (isNetworkConnected()) {
-            getLoginDetails(fblogincustombtn);
-        } else {
-            snackbarerror();
+        }
+        catch (Exception ex)
+        {
+            Crashlytics.logException(ex);
         }
    }
 
     ViewPager.OnPageChangeListener viewPagerPageChangeListener = new ViewPager.OnPageChangeListener() {
+
         @Override
         public void onPageScrolled(int position, float v, int i1) {
-            // changing the next button text 'NEXT' / 'GOT IT'
-            if (position == layouts.length - 1) {
-                // last page. make button text to GOT IT
-                btnNext.setText("Start");
-                btnSkip.setVisibility(View.GONE);
-            } else {
-                // still pages are left
-                btnNext.setText("NEXT");
-                btnSkip.setVisibility(View.VISIBLE);
+            try {
+                // changing the next button text 'NEXT' / 'GOT IT'
+                if (position == layouts.length - 1) {
+                    // last page. make button text to GOT IT
+                    btnNext.setText("Start");
+                    btnSkip.setVisibility(View.GONE);
+                } else {
+                    // still pages are left
+                    btnNext.setText("NEXT");
+                    btnSkip.setVisibility(View.VISIBLE);
+                }
+            }
+            catch(Exception ex)
+            {
+                Crashlytics.logException(ex);
             }
         }
         @Override
@@ -164,66 +176,112 @@ public class Intro_Activity extends AppCompatActivity {
         }
     };
     private void checkFirstRun() {
+        try
+        {
         SharedPreferences sharedPreferences = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
         // If the app is launched for first time, view splash screen and setup 'Next >>' link.
         if (sharedPreferences.getBoolean(PREFS_FIRST_RUN, true)) {
             // Record that user have done first run.
             sharedPreferences.edit().putBoolean(PREFS_FIRST_RUN, false).apply();
-        }
-        else {
+        } else {
             goToMainActivity();
+        }
+        }
+         catch(Exception ex)
+        {
+            Crashlytics.logException(ex);
         }
     }
     private void goToMainActivity() {
-        Intent intent = new Intent(this, MainNavigationActivity.class);
-        startActivity(intent);
-        finish();
+        try {
+            Intent intent = new Intent(this, MainNavigationActivity.class);
+            startActivity(intent);
+            finish();
+        }
+        catch(Exception ex)
+        {
+            Crashlytics.logException(ex);
+        }
     }
     private void getLoginDetails(Button fblogincustombtn) {
-        List< String > permissionNeeds = Arrays.asList("user_photos", "email",
-                "user_birthday", "public_profile", "AccessToken");
+        try {
 
-        loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
-            @Override
-            public void onSuccess(LoginResult login_result) {
-                System.out.println("onSuccess");
-                String accessToken = login_result.getAccessToken()
-                        .getToken();
-                Log.i("accessToken", accessToken);
-                getUserInfo(login_result);
-                loginButton.setVisibility(View.GONE);
-            }
-            @Override
-            public void onCancel() {
-                System.out.println("onCancel");
-            }
+            List<String> permissionNeeds = Arrays.asList("user_photos", "email",
+                    "user_birthday", "public_profile", "AccessToken");
 
-            @Override
-            public void onError(FacebookException exception) {
-                System.out.println("onError");
-                Log.v("LoginActivity", exception.getCause().toString());
-            }
-        });
+            loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+                @Override
+                public void onSuccess(LoginResult login_result) {
+                    System.out.println("onSuccess");
+                    String accessToken = login_result.getAccessToken()
+                            .getToken();
+                    Log.i("accessToken", accessToken);
+                    getUserInfo(login_result);
+                    loginButton.setVisibility(View.GONE);
+                }
+
+                @Override
+                public void onCancel() {
+                    System.out.println("onCancel");
+                }
+
+                @Override
+                public void onError(FacebookException exception) {
+                    Crashlytics.logException(exception);
+                    System.out.println("onError");
+                    Log.v("LoginActivity", exception.getCause().toString());
+                }
+            });
+        }
+        catch(Exception ex)
+        {
+            Crashlytics.logException(ex);
+        }
     }
     public void onClick(View v) {
-        if (v == fblogincustombtn) {
-            loginButton.performClick();
+        try {
+            if (v == fblogincustombtn) {
+                loginButton.performClick();
+            }
+        }
+        catch(Exception ex)
+        {
+            Crashlytics.logException(ex);
         }
     }
     private boolean isNetworkConnected() {
-        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        ConnectivityManager cm = null;
+        try {
+            cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        }
+        catch(Exception ex)
+        {
+            Crashlytics.logException(ex);
+        }
         return cm.getActiveNetworkInfo() != null;
     }
     private void launchHomeScreen() {
-        startActivity(new Intent(this, MainNavigationActivity.class));
-        finish();
+        try {
+            startActivity(new Intent(this, MainNavigationActivity.class));
+            finish();
+        }
+        catch(Exception ex)
+        {
+            Crashlytics.logException(ex);
+        }
     }
     private int getItem(int i) {
         return mViewPager.getCurrentItem() + i;
     }
 
     protected void facebookSDKInitialize() {
-        FacebookSdk.sdkInitialize(getApplicationContext());
+        try {
+            FacebookSdk.sdkInitialize(getApplicationContext());
+        }
+        catch(Exception ex)
+        {
+            Crashlytics.logException(ex);
+        }
     }
 
     protected void getUserInfo(LoginResult login_result){
@@ -257,32 +315,42 @@ public class Intro_Activity extends AppCompatActivity {
                             ap.saveAccessKey("textofbtn", "Logout");
 
                         } catch (JSONException e) {
+                            Crashlytics.logException(e);
                             e.printStackTrace();
+
                         } catch (MalformedURLException e) {
+                            Crashlytics.logException(e);
                             e.printStackTrace();
                         }
-                        Retrofit retrofitallpost=new Retrofit.Builder()
-                                .baseUrl("http://api.amdavadblog.com/amdblog/")
-                                .addConverterFactory(GsonConverterFactory.create())
-                                .addCallAdapterFactory(SynchronousCallAdapterFactory.create())
-                                .build();
-                        final ApiService apiService = retrofitallpost.create(ApiService.class);
-                        Call<JsonObject> call = apiService.saveFbUserData(fbuserdata);
-                        call.enqueue(new Callback<JsonObject>() {
-                            @Override
-                            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
-                                JsonObject object = response.body();
-                            }
-                            @Override
-                            public void onFailure(Call<JsonObject> call, Throwable t) {
+                        try {
+                            Retrofit retrofitallpost = new Retrofit.Builder()
+                                    .baseUrl("http://api.amdavadblog.com/amdblog/")
+                                    .addConverterFactory(GsonConverterFactory.create())
+                                    .addCallAdapterFactory(SynchronousCallAdapterFactory.create())
+                                    .build();
+                            final ApiService apiService = retrofitallpost.create(ApiService.class);
+                            Call<JsonObject> call = apiService.saveFbUserData(fbuserdata);
+                            call.enqueue(new Callback<JsonObject>() {
+                                @Override
+                                public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                                    JsonObject object = response.body();
+                                }
 
-                            }
-                        });
-                        Intent intent = new Intent(Intro_Activity.this,MainNavigationActivity.class);
-                        intent.putExtras(bundle);
-                        intent.putExtra("jsondata",json_object.toString());
-                        startActivity(intent);
-                        finish();
+                                @Override
+                                public void onFailure(Call<JsonObject> call, Throwable t) {
+
+                                }
+                            });
+                            Intent intent = new Intent(Intro_Activity.this, MainNavigationActivity.class);
+                            intent.putExtras(bundle);
+                            intent.putExtra("jsondata", json_object.toString());
+                            startActivity(intent);
+                            finish();
+                        }
+                        catch(Exception ex)
+                        {
+                            Crashlytics.logException(ex);
+                        }
                     }
                 });
         Bundle permission_param = new Bundle();
@@ -302,38 +370,51 @@ public class Intro_Activity extends AppCompatActivity {
             img = BitmapFactory.decodeStream(buf);
             return img;
         } catch (IOException e) {
+            Crashlytics.logException(e);
             e.printStackTrace();
             return null;
         }
     }
     public void snackbarerror()
     {
-       snackbar = Snackbar
-                .make(relativeLayout,"No internet connection!", Snackbar.LENGTH_INDEFINITE)
-                .setAction("RETRY", new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        if(isNetworkConnected())
-                        snackbar.dismiss();
-                        else
-                            snackbarerror();
-                    }
-                });
-        snackbar.setActionTextColor(Color.RED);
-        View sbView = snackbar.getView();
-        TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
-        textView.setTextColor(Color.YELLOW);
-        snackbar.show();
+        try {
+            snackbar = Snackbar
+                    .make(relativeLayout, "No internet connection!", Snackbar.LENGTH_INDEFINITE)
+                    .setAction("RETRY", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            if (isNetworkConnected())
+                                snackbar.dismiss();
+                            else
+                                snackbarerror();
+                        }
+                    });
+            snackbar.setActionTextColor(Color.RED);
+            View sbView = snackbar.getView();
+            TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
+            textView.setTextColor(Color.YELLOW);
+            snackbar.show();
+        }
+        catch(Exception ex)
+        {
+            Crashlytics.logException(ex);
+        }
     }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        callbackManager.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 1) {
-            SharedPreferences settings = getSharedPreferences("prefs", 0);
-            SharedPreferences.Editor editor = settings.edit();
-            editor.putBoolean("firstRun", false);
-            editor.commit();
+        try {
+            super.onActivityResult(requestCode, resultCode, data);
+            callbackManager.onActivityResult(requestCode, resultCode, data);
+            if (requestCode == 1) {
+                SharedPreferences settings = getSharedPreferences("prefs", 0);
+                SharedPreferences.Editor editor = settings.edit();
+                editor.putBoolean("firstRun", false);
+                editor.commit();
+            }
+        }
+        catch(Exception ex)
+        {
+            Crashlytics.logException(ex);
         }
         Log.e("data", data.toString());
     }

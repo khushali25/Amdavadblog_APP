@@ -95,156 +95,167 @@ public class MainNavigationActivity extends AppCompatActivity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        FacebookSdk.sdkInitialize(getApplicationContext());
+        try {
+            super.onCreate(savedInstanceState);
+            FacebookSdk.sdkInitialize(getApplicationContext());
 
-        setContentView(R.layout.activity_main_navigation);
+            setContentView(R.layout.activity_main_navigation);
 
-        callbackManager = CallbackManager.Factory.create();
+            callbackManager = CallbackManager.Factory.create();
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.newtoolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
+            Toolbar toolbar = (Toolbar) findViewById(R.id.newtoolbar);
+            setSupportActionBar(toolbar);
+            getSupportActionBar().setDisplayShowTitleEnabled(false);
 
-        InitiaalizeGoogleAppConfig();
+            InitiaalizeGoogleAppConfig();
 
-        FirebaseApp app = FirebaseApp.initializeApp(this);
-        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
-        mFirebaseAnalytics.setAnalyticsCollectionEnabled(true);
-        mFirebaseAnalytics.setMinimumSessionDuration(20000);
-        mFirebaseAnalytics.setUserId(String.valueOf(GetRandomIndex()));
+            FirebaseApp app = FirebaseApp.initializeApp(this);
+            mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
+            mFirebaseAnalytics.setAnalyticsCollectionEnabled(true);
+            mFirebaseAnalytics.setMinimumSessionDuration(20000);
+            mFirebaseAnalytics.setUserId(String.valueOf(GetRandomIndex()));
 
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
+            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+            StrictMode.setThreadPolicy(policy);
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.addDrawerListener(toggle);
-        toggle.syncState();
+            DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+            ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                    this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+            drawer.addDrawerListener(toggle);
+            toggle.syncState();
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS,
-                    WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                getWindow().setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS,
+                        WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            }
+
+            navigationView = (NavigationView) findViewById(R.id.nav_view);
+            navigationView.setNavigationItemSelectedListener(this);
+
+            headerView = navigationView.getHeaderView(0);
+            fbname = (TextView) headerView.findViewById(R.id.fbname);
+            fbemail = (TextView) headerView.findViewById(R.id.fbemail);
+            fbphoto = (CircleImageView) headerView.findViewById(R.id.circleView);
+            fbloginbutton = (LoginButton) headerView.findViewById(R.id.login_button);
+            fblogout = (Button) headerView.findViewById(R.id.fblogout);
+
+            getloginstatus();
+
+            fbicon = (ImageView) findViewById(R.id.fbicon);
+            twittericon = (ImageView) findViewById(R.id.twittericon);
+            instaicon = (ImageView) findViewById(R.id.instaicon);
+            googleplusicon = (ImageView) findViewById(R.id.googleplusicon);
+            websiteicon = (ImageView) findViewById(R.id.websiteicon);
+            fbicon.setOnClickListener(
+                    new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            Intent facebookIntent = new Intent(Intent.ACTION_VIEW);
+                            String facebookUrl = getFacebookPageURL(this);
+                            facebookIntent.setData(Uri.parse(facebookUrl));
+                            startActivity(facebookIntent);
+                        }
+                    });
+            twittericon.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    try {
+                        Intent intent = new Intent(Intent.ACTION_VIEW,
+                                Uri.parse("twitter://user?screen_name=[amdavadblog]"));
+                        startActivity(intent);
+                    } catch (Exception e) {
+                        startActivity(new Intent(Intent.ACTION_VIEW,
+                                Uri.parse("https://twitter.com/amdavadblog")));
+                    }
+                }
+            });
+            instaicon.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Uri uri = Uri.parse("http://instagram.com/_u/amdavadblog");
+                    Intent i = new Intent(Intent.ACTION_VIEW, uri);
+                    i.setPackage("com.instagram.android");
+                    try {
+                        startActivity(i);
+                    } catch (ActivityNotFoundException e) {
+                        startActivity(new Intent(Intent.ACTION_VIEW,
+                                Uri.parse("http://instagram.com/amdavadblog")));
+                    }
+                }
+            });
+            googleplusicon.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    newGooglePlusIntent("116682005972414924881");
+                }
+            });
+            websiteicon.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    startActivity(new Intent(Intent.ACTION_VIEW,
+                            Uri.parse("https://amdavadblog.com/")));
+                }
+            });
+            fblogout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    LoginManager.getInstance().logOut();
+                    Intent intent1 = new Intent(MainNavigationActivity.this, MainNavigationActivity.class);
+                    startActivity(intent1);
+                    fbname.setVisibility(View.GONE);
+                    fbemail.setVisibility(View.GONE);
+                    fbphoto.setVisibility(View.GONE);
+                    fbloginbutton.setVisibility(View.VISIBLE);
+                    fblogout.setVisibility(View.GONE);
+                }
+            });
+            AppEventsLogger.activateApp(this);
+
+            InitializeFirstScreenUI();
+
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            catInstance = new FoldableListFragment(100);
+            ft.replace(R.id.content_frame, new FoldableListFragment(100), "Fragment1");
+            ft.commit();
+        }
+        catch(Exception ex)
+        {
+            Crashlytics.logException(ex);
         }
 
-        navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
+    }
 
-        headerView = navigationView.getHeaderView(0);
-        fbname = (TextView)headerView.findViewById(R.id.fbname);
-        fbemail = (TextView)headerView.findViewById(R.id.fbemail);
-        fbphoto = (CircleImageView) headerView.findViewById(R.id.circleView);
-        fbloginbutton = (LoginButton)headerView.findViewById(R.id.login_button);
-        fblogout = (Button)headerView.findViewById(R.id.fblogout);
+    private void getloginstatus() {
+        try {
+            PrefService ap = new PrefService(this);
+            String name = ap.getAccessKey("Username");
+            String emailid = ap.getAccessKey("Password");
+            String photo = ap.getAccessKey("loginkey");
+            String tetxtofloginbtn = ap.getAccessKey("textofbtn");
 
-        getloginstatus();
-
-        fbicon = (ImageView)findViewById(R.id.fbicon);
-        twittericon = (ImageView)findViewById(R.id.twittericon);
-        instaicon = (ImageView)findViewById(R.id.instaicon);
-        googleplusicon = (ImageView)findViewById(R.id.googleplusicon);
-        websiteicon = (ImageView)findViewById(R.id.websiteicon);
-        fbicon.setOnClickListener(
-                new View.OnClickListener() {
-                                      @Override
-                                      public void onClick(View view) {
-                                          Intent facebookIntent = new Intent(Intent.ACTION_VIEW);
-                                          String facebookUrl = getFacebookPageURL(this);
-                                          facebookIntent.setData(Uri.parse(facebookUrl));
-                                          startActivity(facebookIntent);
-                                      }
-                                      });
-        twittericon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                try {
-                    Intent intent = new Intent(Intent.ACTION_VIEW,
-                            Uri.parse("twitter://user?screen_name=[amdavadblog]"));
-                    startActivity(intent);
-                } catch (Exception e) {
-                    startActivity(new Intent(Intent.ACTION_VIEW,
-                            Uri.parse("https://twitter.com/amdavadblog")));
-                }
-            }
-        });
-        instaicon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Uri uri = Uri.parse("http://instagram.com/_u/amdavadblog");
-                Intent i= new Intent(Intent.ACTION_VIEW,uri);
-                i.setPackage("com.instagram.android");
-                try {
-                    startActivity(i);
-                } catch (ActivityNotFoundException e) {
-                    startActivity(new Intent(Intent.ACTION_VIEW,
-                            Uri.parse("http://instagram.com/amdavadblog")));
-                }
-            }
-        });
-        googleplusicon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                newGooglePlusIntent("116682005972414924881");
-            }
-        });
-        websiteicon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(Intent.ACTION_VIEW,
-                        Uri.parse("https://amdavadblog.com/")));
-            }
-        });
-        fblogout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                LoginManager.getInstance().logOut();
-                Intent intent1 = new Intent(MainNavigationActivity.this,MainNavigationActivity.class);
-                startActivity(intent1);
+            AccessToken accessToken = AccessToken.getCurrentAccessToken();
+            if (accessToken == null) {
                 fbname.setVisibility(View.GONE);
                 fbemail.setVisibility(View.GONE);
                 fbphoto.setVisibility(View.GONE);
                 fbloginbutton.setVisibility(View.VISIBLE);
                 fblogout.setVisibility(View.GONE);
+
+            } else {
+                fbname.setVisibility(View.VISIBLE);
+                fbemail.setVisibility(View.VISIBLE);
+                fbphoto.setVisibility(View.VISIBLE);
+                fbname.setText(name);
+                fbemail.setText(emailid);
+                getBitmapFromURL(photo);
+                fbphoto.setImageURI(null);
+                fbphoto.setImageBitmap(img);
+                fbloginbutton.setVisibility(View.GONE);
+                fblogout.setVisibility(View.VISIBLE);
             }
-        });
-        AppEventsLogger.activateApp(this);
-
-        InitializeFirstScreenUI();
-
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        catInstance = new FoldableListFragment(100);
-        ft.replace(R.id.content_frame, new FoldableListFragment(100), "Fragment1");
-        ft.commit();
-
-    }
-
-    private void getloginstatus() {
-        PrefService ap = new PrefService(this);
-        String name = ap.getAccessKey("Username");
-        String emailid = ap.getAccessKey("Password");
-        String photo = ap.getAccessKey("loginkey");
-        String tetxtofloginbtn = ap.getAccessKey("textofbtn");
-
-        AccessToken accessToken = AccessToken.getCurrentAccessToken();
-        if (accessToken == null) {
-            fbname.setVisibility(View.GONE);
-            fbemail.setVisibility(View.GONE);
-            fbphoto.setVisibility(View.GONE);
-            fbloginbutton.setVisibility(View.VISIBLE);
-            fblogout.setVisibility(View.GONE);
-
-        } else {
-            fbname.setVisibility(View.VISIBLE);
-            fbemail.setVisibility(View.VISIBLE);
-            fbphoto.setVisibility(View.VISIBLE);
-            fbname.setText(name);
-            fbemail.setText(emailid);
-            getBitmapFromURL(photo);
-            fbphoto.setImageURI(null);
-            fbphoto.setImageBitmap(img);
-            fbloginbutton.setVisibility(View.GONE);
-            fblogout.setVisibility(View.VISIBLE);
+        } catch(Exception ex)
+        {
+            Crashlytics.logException(ex);
         }
     }
 
@@ -259,6 +270,7 @@ public class MainNavigationActivity extends AppCompatActivity
                 return "fb://page/" + FACEBOOK_PAGE_ID;
             }
         } catch (PackageManager.NameNotFoundException e) {
+            Crashlytics.logException(e);
             return FACEBOOK_URL; //normal web url
         }
     }
@@ -270,6 +282,7 @@ public class MainNavigationActivity extends AppCompatActivity
             intent.putExtra("customAppUri", s);
             startActivity(intent);
         } catch(ActivityNotFoundException e) {
+            Crashlytics.logException(e);
             startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://plus.google.com/"+s+"/posts")));
         }
     }
@@ -282,6 +295,7 @@ public class MainNavigationActivity extends AppCompatActivity
               try {
                   instanceId.deleteInstanceId();
               } catch (IOException e) {
+                  Crashlytics.logException(e);
                   e.printStackTrace();
               }
           }
@@ -294,6 +308,7 @@ public class MainNavigationActivity extends AppCompatActivity
         return min + rand.nextInt((max - min) + 1);
     }
     private void initfacebooklogin() {
+
         fbloginbutton = (LoginButton) headerView.findViewById(R.id.login_button);
         List<String> permissionNeeds = Arrays.asList("user_photos","user_birthday","user_gender","user_link","user_location","user_posts","public_profile",EMAIL);
         fbloginbutton.setReadPermissions(permissionNeeds);
@@ -338,27 +353,37 @@ public class MainNavigationActivity extends AppCompatActivity
                             ap.saveAccessKey("textofbtn", "Logout");
 
                         } catch (JSONException e) {
+                            Crashlytics.logException(e);
                             e.printStackTrace();
                         } catch (MalformedURLException e) {
+                            Crashlytics.logException(e);
                             e.printStackTrace();
                         }
-                        Retrofit retrofitallpost=new Retrofit.Builder()
-                                .baseUrl("http://api.amdavadblog.com/amdblog/")
-                                .addConverterFactory(GsonConverterFactory.create())
-                                .addCallAdapterFactory(SynchronousCallAdapterFactory.create())
-                                .build();
-                        final ApiService apiService = retrofitallpost.create(ApiService.class);
-                        Call<JsonObject> call = apiService.saveFbUserData(fbuserdata);
-                        call.enqueue(new Callback<JsonObject>() {
-                            @Override
-                            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
-                                JsonObject object = response.body();
-                            }
-                            @Override
-                            public void onFailure(Call<JsonObject> call, Throwable t) {
+                        try {
+                            Retrofit retrofitallpost = new Retrofit.Builder()
+                                    .baseUrl("http://api.amdavadblog.com/amdblog/")
+                                    .addConverterFactory(GsonConverterFactory.create())
+                                    .addCallAdapterFactory(SynchronousCallAdapterFactory.create())
+                                    .build();
+                            final ApiService apiService = retrofitallpost.create(ApiService.class);
+                            Call<JsonObject> call = apiService.saveFbUserData(fbuserdata);
+                            call.enqueue(new Callback<JsonObject>() {
+                                @Override
+                                public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                                    JsonObject object = response.body();
+                                }
 
-                            }
-                        });
+                                @Override
+                                public void onFailure(Call<JsonObject> call, Throwable t) {
+                                    Crashlytics.logException(t);
+
+                                }
+                            });
+                        }
+                        catch (Exception ex)
+                        {
+                            Crashlytics.logException(ex);
+                        }
                     }
                 });
                 Bundle bundle = new Bundle();
@@ -375,6 +400,7 @@ public class MainNavigationActivity extends AppCompatActivity
             @Override
             public void onError(FacebookException error) {
                 System.out.println("onError");
+                Crashlytics.logException(error);
                 Log.v("LoginActivity", error.getCause().toString());
             }
         });
@@ -413,6 +439,7 @@ public class MainNavigationActivity extends AppCompatActivity
             img = BitmapFactory.decodeStream(buf);
             return img;
         } catch (IOException e) {
+            Crashlytics.logException(e);
             e.printStackTrace();
             return null;
         }
@@ -435,63 +462,88 @@ public class MainNavigationActivity extends AppCompatActivity
         }
         catch (Exception ex)
         {
+            Crashlytics.logException(ex);
             android.util.Log.e("Initialize UI failed", ex.getMessage());
         }
     }
     private int getStatusBarHeight() {
         int result = 0;
-        int resourceId = MainNavigationActivity.this.getResources().getIdentifier("status_bar_height", "dimen", "android");
-        if (resourceId > 0)
+        try {
+
+            int resourceId = MainNavigationActivity.this.getResources().getIdentifier("status_bar_height", "dimen", "android");
+            if (resourceId > 0) {
+                result = MainNavigationActivity.this.getResources().getDimensionPixelSize(resourceId);
+            }
+        }
+        catch (Exception ex)
         {
-            result = MainNavigationActivity.this.getResources().getDimensionPixelSize(resourceId);
+            Crashlytics.logException(ex);
         }
         return result;
     }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        callbackManager.onActivityResult(requestCode, resultCode, data);
+        try {
+            super.onActivityResult(requestCode, resultCode, data);
+            callbackManager.onActivityResult(requestCode, resultCode, data);
+        }
+        catch (Exception ex)
+        {
+            Crashlytics.logException(ex);
+        }
     }
 
     private void replaceFragment(Fragment fragment){
         fragmentCurrent = fragment;
-        getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, fragment)
-                .addToBackStack(null).commit();
+        try {
+            getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, fragment)
+                    .addToBackStack(null).commit();
+        }
+        catch (Exception ex)
+        {
+            Crashlytics.logException(ex);
+        }
 
     }
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout)findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        }
-         else if(fragmentCurrent.equals(catInstance))
-         {
-            if (catInstance.CategoryId == 100)
-            {
-                getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                super.onBackPressed();
-            }
-            else
-            {
+        try {
+            DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+            if (drawer.isDrawerOpen(GravityCompat.START)) {
+                drawer.closeDrawer(GravityCompat.START);
+            } else if (fragmentCurrent.equals(catInstance)) {
+                if (catInstance.CategoryId == 100) {
+                    getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                    super.onBackPressed();
+                } else {
                     getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
                     replaceFragment(catInstance);
                     catInstance.CategoryId = 100;
                     getSupportActionBar().setTitle("Home");
                     txt.setText("Home");
-             }
+                }
+            } else {
+                onNavigationItemSelected(navigationView.getMenu().getItem(0));
+                getSupportActionBar().setTitle("Home");
+                txt.setText("Home");
             }
-            else{
-                    onNavigationItemSelected(navigationView.getMenu().getItem(0));
-                    getSupportActionBar().setTitle("Home");
-                    txt.setText("Home");
-            }
+        }
+        catch (Exception ex)
+        {
+            Crashlytics.logException(ex);
+        }
         }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main_navigation, menu);
+        try {
+            getMenuInflater().inflate(R.menu.main_navigation, menu);
+        }
+        catch (Exception ex)
+        {
+            Crashlytics.logException(ex);
+        }
         return true;
     }
 
@@ -500,36 +552,39 @@ public class MainNavigationActivity extends AppCompatActivity
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+        try {
+            int id = item.getItemId();
 
-        switch (id) {
-            case R.id.searchitem:
-                Intent intent = new Intent(this,SearchActivity.class);
-                startActivity(intent);
-                return true;
+            switch (id) {
+                case R.id.searchitem:
+                    Intent intent = new Intent(this, SearchActivity.class);
+                    startActivity(intent);
+                    return true;
 
-            case R.id.subscribepost:
-                PrefService ap = new PrefService(this);
-                String subscribed = ap.getAccessKey("subscribe");
-                if (subscribed == "")
-                {
-                    SocialMethod.showSubscription(this);
-                }
-                else
-                {
-                    SocialMethod.alreadySubscribed(this);
-                }
-                return true;
-            case R.id.feedbackpost:
-                SocialMethod.showFeedback(this);
-                return true;
-            case R.id.rateus:
-                SocialMethod.showRateApp(this);
-                return true;
-            case R.id.shareApp:
-                SocialMethod.shareIt(this);
-                return true;
-          }
+                case R.id.subscribepost:
+                    PrefService ap = new PrefService(this);
+                    String subscribed = ap.getAccessKey("subscribe");
+                    if (subscribed == "") {
+                        SocialMethod.showSubscription(this);
+                    } else {
+                        SocialMethod.alreadySubscribed(this);
+                    }
+                    return true;
+                case R.id.feedbackpost:
+                    SocialMethod.showFeedback(this);
+                    return true;
+                case R.id.rateus:
+                    SocialMethod.showRateApp(this);
+                    return true;
+                case R.id.shareApp:
+                    SocialMethod.shareIt(this);
+                    return true;
+            }
+        }
+        catch (Exception ex)
+        {
+            Crashlytics.logException(ex);
+        }
             return super.onOptionsItemSelected(item);
         }
 
@@ -537,63 +592,59 @@ public class MainNavigationActivity extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
-        int id = item.getItemId();
-        txt = findViewById(R.id.toolbartxt);
-        FragmentManager fm = getSupportFragmentManager();
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        if (id == R.id.home)
-        {
-            catInstance = new FoldableListFragment(100);
-            replaceFragment(catInstance);
-            getSupportActionBar().setTitle("Home");
-            txt.setText("Home");
+        try {
+            int id = item.getItemId();
+            txt = findViewById(R.id.toolbartxt);
+            FragmentManager fm = getSupportFragmentManager();
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            if (id == R.id.home) {
+                catInstance = new FoldableListFragment(100);
+                replaceFragment(catInstance);
+                getSupportActionBar().setTitle("Home");
+                txt.setText("Home");
 
-        }
-        else if (id == R.id.explore)
-        {
-            catInstance = new FoldableListFragment(35);
-            replaceFragment(catInstance);
-            getSupportActionBar().setTitle("Explore Amdavad");
-            txt.setText("Explore Amdavad");
-        }
-        else if (id == R.id.flavor)
-        {
-            catInstance = new FoldableListFragment(36);
-            replaceFragment(catInstance);
-            getSupportActionBar().setTitle("Flavors of Amdavad");
-            txt.setText("Flavors of Amdavad");
-        }
-        else if (id == R.id.news)
-        {
-            catInstance = new FoldableListFragment(5);
-            replaceFragment(catInstance);
-            getSupportActionBar().setTitle("News");
-            txt.setText("News");
-        }
-        else if (id == R.id.thingstodo)
-        {
-            catInstance = new FoldableListFragment(37);
-            replaceFragment(catInstance);
-            getSupportActionBar().setTitle("Things to Do");
-            txt.setText("Things to Do");
-        }
-         if (id == R.id.privacypolicy) {
-            privacyInstance = new PrivacyPolicyFragment();
-            replaceFragment(privacyInstance);
-            getSupportActionBar().setTitle("Privacy Policy");
-            txt.setText("Privacy Policy");
+            } else if (id == R.id.explore) {
+                catInstance = new FoldableListFragment(35);
+                replaceFragment(catInstance);
+                getSupportActionBar().setTitle("Explore Amdavad");
+                txt.setText("Explore Amdavad");
+            } else if (id == R.id.flavor) {
+                catInstance = new FoldableListFragment(36);
+                replaceFragment(catInstance);
+                getSupportActionBar().setTitle("Flavors of Amdavad");
+                txt.setText("Flavors of Amdavad");
+            } else if (id == R.id.news) {
+                catInstance = new FoldableListFragment(5);
+                replaceFragment(catInstance);
+                getSupportActionBar().setTitle("News");
+                txt.setText("News");
+            } else if (id == R.id.thingstodo) {
+                catInstance = new FoldableListFragment(37);
+                replaceFragment(catInstance);
+                getSupportActionBar().setTitle("Things to Do");
+                txt.setText("Things to Do");
+            }
+            if (id == R.id.privacypolicy) {
+                privacyInstance = new PrivacyPolicyFragment();
+                replaceFragment(privacyInstance);
+                getSupportActionBar().setTitle("Privacy Policy");
+                txt.setText("Privacy Policy");
 
+            } else if (id == R.id.contactus) {
+                comInstance = new CommunicationFragment();
+                replaceFragment(comInstance);
+                getSupportActionBar().setTitle("Contact");
+                txt.setText("Contact");
+            }
+            Bundle param = new Bundle();
+            param.putString("name", String.valueOf(getSupportActionBar().getTitle()));
+            DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+            drawer.closeDrawer(GravityCompat.START);
         }
-        else if (id == R.id.contactus) {
-            comInstance = new CommunicationFragment();
-            replaceFragment(comInstance);
-            getSupportActionBar().setTitle("Contact");
-            txt.setText("Contact");
+        catch (Exception ex)
+        {
+            Crashlytics.logException(ex);
         }
-        Bundle param = new Bundle();
-        param.putString("name", String.valueOf(getSupportActionBar().getTitle()));
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
         return true;
     }
 }

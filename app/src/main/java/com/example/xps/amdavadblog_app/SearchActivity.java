@@ -12,6 +12,8 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.alexvasilkov.foldablelayout.FoldableListLayout;
+import com.crashlytics.android.Crashlytics;
+
 import java.util.List;
 import Adapter.PostContentAdapterSearch;
 import Core.Helper.ApiService;
@@ -38,23 +40,34 @@ public class SearchActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_search);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbarSearch);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_arrow_back_white_24dp);
-        txtnotfound = findViewById(R.id.txtnodatafound);
-        layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-        foldableListLayout = findViewById(R.id.foldable_list_search);
-        postContentAdapter = new PostContentAdapterSearch(posts, this);
-        foldableListLayout.setAdapter(postContentAdapter);
-        UpdateView();
+        try {
+            super.onCreate(savedInstanceState);
+            setContentView(R.layout.activity_search);
+            Toolbar toolbar = (Toolbar) findViewById(R.id.toolbarSearch);
+            setSupportActionBar(toolbar);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_arrow_back_white_24dp);
+            txtnotfound = findViewById(R.id.txtnodatafound);
+            layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+            foldableListLayout = findViewById(R.id.foldable_list_search);
+            postContentAdapter = new PostContentAdapterSearch(posts, this);
+            foldableListLayout.setAdapter(postContentAdapter);
+            UpdateView();
+        }
+        catch (Exception ex)
+        {
+            Crashlytics.logException(ex);
+        }
     }
 
     private void UpdateView() {
-        if (postContentAdapter != null) {
-            postContentAdapter.notifyDataSetChanged();
+        try {
+            if (postContentAdapter != null) {
+                postContentAdapter.notifyDataSetChanged();
+            }
+        } catch (Exception ex)
+        {
+            Crashlytics.logException(ex);
         }
     }
     @Override
@@ -70,84 +83,99 @@ public class SearchActivity extends AppCompatActivity {
 
             foldableListLayout.setVisibility(View.GONE);
         } catch (Exception exx) {
+            Crashlytics.logException(exx);
             // Log.ERROR("Initialize UI failed", exx.getMessage());
         }
-        View searchPlate = searchView.findViewById(R.id.search_plate);
-        if (searchPlate != null) {
-            TextView searchText = searchPlate.findViewById(R.id.search_src_text);
-            searchText.setTextColor(Color.WHITE);
-            searchText.setHintTextColor(Color.WHITE);
-        }
-        searchView.setIconifiedByDefault(false);
-        onSearchRequested();
-        searchView.requestFocus();
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String s) {
-                searchText = s;
-                Retrofit retrofitallpost = new Retrofit.Builder()
-                        .baseUrl("https://amdavadblog.com/")
-                        .addConverterFactory(GsonConverterFactory.create())
-                        .addCallAdapterFactory(SynchronousCallAdapterFactory.create())
-                        .build();
+        try {
+            View searchPlate = searchView.findViewById(R.id.search_plate);
+            if (searchPlate != null) {
+                TextView searchText = searchPlate.findViewById(R.id.search_src_text);
+                searchText.setTextColor(Color.WHITE);
+                searchText.setHintTextColor(Color.WHITE);
+            }
+            searchView.setIconifiedByDefault(false);
+            onSearchRequested();
+            searchView.requestFocus();
+            searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                @Override
+                public boolean onQueryTextSubmit(String s) {
+                    searchText = s;
+                    Retrofit retrofitallpost = new Retrofit.Builder()
+                            .baseUrl("https://amdavadblog.com/")
+                            .addConverterFactory(GsonConverterFactory.create())
+                            .addCallAdapterFactory(SynchronousCallAdapterFactory.create())
+                            .build();
 
-                final ApiService apiService = retrofitallpost.create(ApiService.class);
-                Call<List<PostSearch>> call = null;
-                call = apiService.getPostsByQuerySearch(searchText);
-                call.enqueue(new Callback<List<PostSearch>>() {
-                    @Override
-                    public void onResponse(Call<List<PostSearch>> call, Response<List<PostSearch>> response) {
-                        Media resp2 = null;
-                        Author Auth = null;
-                        Category category = null;
-                        if (response.isSuccessful()) {
-                            int postsize = response.body().size();
-                            if (postsize != 0) {
-                                for (final PostSearch post1 : response.body()) {
-                                    Integer catId = post1.categories.get(0);
-                                    category = apiService.getPostCategoryById(catId);
-                                    post1.categoryname = category.getName();
-                                    foldableListLayout.setVisibility(View.VISIBLE);
-                                    Auth = apiService.getPostAuthorById(post1.author);
-                                    post1.authorname = Auth.getName();
-                                    resp2 = apiService.getFeaturedImageById(post1.featured_media);
-                                    if (resp2 == null) {
-                                        post1.imagePath = String.valueOf(R.drawable.ic_home_black_24dp);
-                                    } else
-                                        post1.imagePath = resp2.media_details.sizes.medium_large.source_url.toString();
+                    final ApiService apiService = retrofitallpost.create(ApiService.class);
+                    Call<List<PostSearch>> call = null;
+                    call = apiService.getPostsByQuerySearch(searchText);
+                    call.enqueue(new Callback<List<PostSearch>>() {
+                        @Override
+                        public void onResponse(Call<List<PostSearch>> call, Response<List<PostSearch>> response) {
+                            Media resp2 = null;
+                            Author Auth = null;
+                            Category category = null;
+                            if (response.isSuccessful()) {
+                                int postsize = response.body().size();
+                                if (postsize != 0) {
+                                    for (final PostSearch post1 : response.body()) {
+                                        Integer catId = post1.categories.get(0);
+                                        category = apiService.getPostCategoryById(catId);
+                                        post1.categoryname = category.getName();
+                                        foldableListLayout.setVisibility(View.VISIBLE);
+                                        Auth = apiService.getPostAuthorById(post1.author);
+                                        post1.authorname = Auth.getName();
+                                        resp2 = apiService.getFeaturedImageById(post1.featured_media);
+                                        if (resp2 == null) {
+                                            post1.imagePath = String.valueOf(R.drawable.ic_home_black_24dp);
+                                        } else
+                                            post1.imagePath = resp2.media_details.sizes.medium_large.source_url.toString();
+                                    }
+                                } else {
+                                    foldableListLayout.setVisibility(View.GONE);
+                                    txtnotfound.setVisibility(View.VISIBLE);
                                 }
-                            } else {
-                                foldableListLayout.setVisibility(View.GONE);
-                                txtnotfound.setVisibility(View.VISIBLE);
                             }
+                            postContentAdapter.setData1(response.body());
+                            postContentAdapter.notifyDataSetChanged();
                         }
-                        postContentAdapter.setData1(response.body());
-                        postContentAdapter.notifyDataSetChanged();
-                    }
 
-                    @Override
-                    public void onFailure(Call<List<PostSearch>> call, Throwable t) {
-                    }
-                });
-                return true;
-            }
+                        @Override
+                        public void onFailure(Call<List<PostSearch>> call, Throwable t) {
+                            Crashlytics.logException(t);
+                        }
+                    });
+                    return true;
+                }
 
-            @Override
-            public boolean onQueryTextChange(String s) {
-                foldableListLayout.setVisibility(View.GONE);
-                txtnotfound.setVisibility(View.GONE);
-                return false;
-            }
-        });
+                @Override
+                public boolean onQueryTextChange(String s) {
+                    foldableListLayout.setVisibility(View.GONE);
+                    txtnotfound.setVisibility(View.GONE);
+                    return false;
+                }
+            });
+        }
+
+    catch (Exception ex)
+    {
+        Crashlytics.logException(ex);
+    }
+
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                onBackPressed();
-                return true;
+        try {
+            switch (item.getItemId()) {
+                case android.R.id.home:
+                    onBackPressed();
+                    return true;
+            }
+        } catch (Exception ex)
+        {
+            Crashlytics.logException(ex);
         }
         return super.onOptionsItemSelected(item);
     }

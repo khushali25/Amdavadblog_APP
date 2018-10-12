@@ -3,6 +3,8 @@ package Helper;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.crashlytics.android.Crashlytics;
+
 public class PrefService
 {
     private SharedPreferences nameSharedPrefs;
@@ -13,20 +15,38 @@ public class PrefService
 
     public PrefService(Context context)
     {
-        this.mContext = context;
-        nameSharedPrefs = android.preference.PreferenceManager.getDefaultSharedPreferences(mContext);
-        namePrefsEditor = nameSharedPrefs.edit();
+        try {
+            this.mContext = context;
+            nameSharedPrefs = android.preference.PreferenceManager.getDefaultSharedPreferences(mContext);
+            namePrefsEditor = nameSharedPrefs.edit();
+        }
+        catch(Exception ex)
+        {
+            Crashlytics.logException(ex);
+        }
     }
     public String getAccessKey(String key) // Return Get the Value
     {
         return nameSharedPrefs.getString(key, "");
     }
     public void saveAccessKey(String key, String value) {
-        namePrefsEditor.putString(key,value);
-        namePrefsEditor.commit();
+        try {
+            namePrefsEditor.putString(key, value);
+            namePrefsEditor.commit();
+        }
+        catch(Exception ex)
+        {
+            Crashlytics.logException(ex);
+        }
     }
     public void setFirstTimeLaunch(boolean isFirstTime) {
-        namePrefsEditor.putBoolean(IS_FIRST_TIME_LAUNCH, isFirstTime);
-        namePrefsEditor.commit();
+        try {
+            namePrefsEditor.putBoolean(IS_FIRST_TIME_LAUNCH, isFirstTime);
+            namePrefsEditor.commit();
+        }
+        catch(Exception ex)
+        {
+            Crashlytics.logException(ex);
+        }
     }
 }

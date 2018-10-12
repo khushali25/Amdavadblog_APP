@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 
 import com.alexvasilkov.foldablelayout.FoldableListLayout;
+import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
@@ -59,7 +60,7 @@ public class FoldableListFragment extends Fragment implements SwipeRefreshLayout
     public void setCategoryId(int categoryId) {
         CategoryId = categoryId;
     }
-    int page = 1,postcount,postlessthan10s;
+    int page = 1,postcount;
     SwipeRefreshLayout mSwipeRefreshLayout;
     boolean loading = false;
     boolean reachedMax = false;
@@ -83,41 +84,44 @@ public class FoldableListFragment extends Fragment implements SwipeRefreshLayout
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              final Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        view = inflater.inflate(R.layout.fragment_foldable_list, container, false);
+        try {
+            view = inflater.inflate(R.layout.fragment_foldable_list, container, false);
 
-        activity = (Activity) view.getContext();
-        mSwipeRefreshLayout = (SwipeRefreshLayout)view.findViewById(R.id.swipeRefreshLayout);
+            activity = (Activity) view.getContext();
+            mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefreshLayout);
+            mSwipeRefreshLayout.setOnRefreshListener(this);
+            postContentAdapter = new PostContentAdapter(postList, activity);
+            foldableListLayout = view.findViewById(R.id.foldable_list);
+            foldableListLayout.setAdapter(postContentAdapter);
 
-        mSwipeRefreshLayout.setColorSchemeColors(android.R.color.holo_blue_bright, android.R.color.holo_green_light, android.R.color.holo_orange_light, android.R.color.holo_red_light);
-        mSwipeRefreshLayout.setOnRefreshListener(this);
-        postContentAdapter = new PostContentAdapter(postList,activity);
-        foldableListLayout = view.findViewById(R.id.foldable_list);
-        foldableListLayout.setAdapter(postContentAdapter);
+            foldableListLayout.setOnFoldRotationListener(new FoldableListLayout.OnFoldRotationListener() {
+                @Override
+                public void onFoldRotation(float rotation, boolean isFromUser) {
+                    int firstVisiblePosition = (int) (rotation / 180f);
+                    mSwipeRefreshLayout.setEnabled(firstVisiblePosition == 0);
+                    postcount = AllPost.size();
+                    int count = postcount - 5;
+                    if (firstVisiblePosition != 0 && firstVisiblePosition == count) {
+                        if (loading || reachedMax) {
 
-        foldableListLayout.setOnFoldRotationListener(new FoldableListLayout.OnFoldRotationListener() {
-            @Override
-            public void onFoldRotation(float rotation, boolean isFromUser) {
-                int firstVisiblePosition = (int) (rotation / 180f);
-                mSwipeRefreshLayout.setEnabled(firstVisiblePosition == 0);
-                postcount = AllPost.size();
-                int count = postcount - 5;
-                if (firstVisiblePosition != 0 && firstVisiblePosition == count) {
-                    if(loading || reachedMax)
-                    {
-
-                    }
-                    else {
-                        int temp = page + 1;
-                        try {
-                            LetCall(temp);
-                        } catch (IOException e) {
-                            e.printStackTrace();
+                        } else {
+                            int temp = page + 1;
+                            try {
+                                LetCall(temp);
+                            } catch (IOException e) {
+                                Crashlytics.logException(e);
+                                e.printStackTrace();
+                            }
+                            page++;
                         }
-                        page++;
                     }
                 }
-            }
-        });
+            });
+        }
+        catch (Exception ex)
+        {
+            Crashlytics.logException(ex);
+        }
 
         InitializeAds(view);
         return view;
@@ -140,24 +144,34 @@ public class FoldableListFragment extends Fragment implements SwipeRefreshLayout
             try {
                 AllPost = CacheService.GetPostByCategoryId(1,CategoryId,true);
             } catch (IOException e) {
+                Crashlytics.logException(e);
                 e.printStackTrace();
             }
         }
-      //  postContentAdapter =new PostContentAdapter(AllPost, activity);
-       // foldableListLayout.setAdapter(postContentAdapter);
-//        foldableListLayout.notify();
-        if(postContentAdapter !=null)
-            postContentAdapter.notifyDataSetChanged();
-        mSwipeRefreshLayout.setRefreshing(false);
+        try {
+            if (postContentAdapter != null)
+                postContentAdapter.notifyDataSetChanged();
+            mSwipeRefreshLayout.setRefreshing(false);
+        }
+        catch (Exception ex)
+        {
+            Crashlytics.logException(ex);
+        }
     }
 
     @Override
     public void onPause() {
-        super.onPause();
-        if (mSwipeRefreshLayout!=null) {
-            mSwipeRefreshLayout.setRefreshing(false);
-            mSwipeRefreshLayout.destroyDrawingCache();
-            mSwipeRefreshLayout.clearAnimation();
+        try {
+            super.onPause();
+            if (mSwipeRefreshLayout != null) {
+                mSwipeRefreshLayout.setRefreshing(false);
+                mSwipeRefreshLayout.destroyDrawingCache();
+                mSwipeRefreshLayout.clearAnimation();
+            }
+        }
+        catch (Exception ex)
+        {
+            Crashlytics.logException(ex);
         }
     }
     private void LetCall(int i) throws IOException {
@@ -166,48 +180,65 @@ public class FoldableListFragment extends Fragment implements SwipeRefreshLayout
             try {
                 AllPost = CacheService.GetAllPostnew(true,i);
             } catch (FileNotFoundException e) {
+                Crashlytics.logException(e);
                 e.printStackTrace();
             }
 
         }
         else
         {
-            AllPost = CacheService.GetPostByCategoryId(i,CategoryId,true);
+            try {
+                AllPost = CacheService.GetPostByCategoryId(i, CategoryId, true);
+            }
+            catch (Exception ex)
+            {
+                Crashlytics.logException(ex);
+            }
         }
-          postContentAdapter =new PostContentAdapter(AllPost, activity);
-          foldableListLayout.setAdapter(postContentAdapter);
-          if(postContentAdapter !=null)
-          postContentAdapter.notifyDataSetChanged();
-          loading = false;
-
-
+        try {
+            postContentAdapter = new PostContentAdapter(AllPost, activity);
+            foldableListLayout.setAdapter(postContentAdapter);
+            if (postContentAdapter != null)
+                postContentAdapter.notifyDataSetChanged();
+            loading = false;
+        }
+        catch (Exception ex)
+        {
+            Crashlytics.logException(ex);
+        }
     }
 
     @Override
     public void onResume() {
-        super.onResume();
-        adView.resume();
+        try {
+            super.onResume();
+            adView.resume();
 
-        if (CategoryId == 100) {
-            try {
-                AllPost = CacheService.GetAllPostnew(false,1);
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
+            if (CategoryId == 100) {
+                try {
+                    AllPost = CacheService.GetAllPostnew(false, 1);
+                } catch (FileNotFoundException e) {
+                    Crashlytics.logException(e);
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    Crashlytics.logException(e);
+                    e.printStackTrace();
+                }
+            } else {
+                try {
+                    AllPost = CacheService.GetPostByCategoryId(1, CategoryId, false);
+                } catch (IOException e) {
+                    Crashlytics.logException(e);
+                    e.printStackTrace();
+                }
             }
+            postContentAdapter.setData(AllPost);
+            postContentAdapter.notifyDataSetChanged();
         }
-        else
+        catch (Exception ex)
         {
-            try {
-                AllPost = CacheService.GetPostByCategoryId(1,CategoryId,false);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            Crashlytics.logException(ex);
         }
-        postContentAdapter.setData(AllPost);
-        postContentAdapter.notifyDataSetChanged();
-
     }
 
     private void InitializeAds(View view) {
@@ -220,6 +251,7 @@ public class FoldableListFragment extends Fragment implements SwipeRefreshLayout
         }
         catch (Exception ex)
         {
+            Crashlytics.logException(ex);
             android.util.Log.e("Couldnt initialize ads", ex.getMessage());
         }
         adView.setAdListener(new AdListener() {
