@@ -13,12 +13,20 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.lang.reflect.Type;
+
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
@@ -49,6 +57,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 import static com.facebook.FacebookSdk.getApplicationContext;
+import static java.nio.file.Files.*;
 
 public class CacheService {
     static List AllPost;
@@ -212,26 +221,42 @@ public class CacheService {
     @SuppressLint("NewApi")
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private static String GetData(String filePath) throws IOException {
-        String content = "";
-        int i;
-        char c;
-        String content2 = null;
-        try {
-           content2  = new String(Files.readAllBytes(Paths.get(filePath)));
-        }
-        catch (IOException e) {
-            Crashlytics.logException(e);
-        }
-        return content2;
 
+        BufferedReader br = new BufferedReader(new FileReader(filePath));
+
+            StringBuilder sb = new StringBuilder();
+            String line = br.readLine();
+
+            while (line != null) {
+                sb.append(line);
+                sb.append("\n");
+                line = br.readLine();
+            }
+            return sb.toString();
     }
 
     @SuppressLint("NewApi")
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private static void AppendData(String filePath, String json) throws IOException {
-        String content = "";
+        try
+        {
+        String content2 = "";
+        int size = (int) filePath.length();
+        byte[] bytes = new byte[size];
         try {
-        String content2 = new String(Files.readAllBytes(Paths.get(filePath)));
+            BufferedInputStream buf = new BufferedInputStream(new FileInputStream(filePath));
+            buf.read(bytes, 0, bytes.length);
+            buf.close();
+            content2 = buf.toString();
+        } catch (FileNotFoundException e) {
+            // TODO Auto-generated catch block
+            Crashlytics.logException(e);
+            e.printStackTrace();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            Crashlytics.logException(e);
+            e.printStackTrace();
+        }
 
         content2 = content2.replace("]", ",");
         json = json.substring(1);
@@ -239,19 +264,33 @@ public class CacheService {
         if ((new File(filePath)).isFile()) {
             (new File(filePath)).delete();
         }
-        Files.write(Paths.get(filePath), finalData.getBytes());
+//        Files.write(Paths.get(filePath), finalData.getBytes());
+//
+//        BasicFileAttributes attr = null;
+//
+//            attr = Files.readAttributes(Paths.get(filePath), BasicFileAttributes.class);
+        // BasicFileAttributes attr = Files.readAttributes(file, BasicFileAttributes.class);
+        OutputStreamWriter outputStreamWriter = new OutputStreamWriter(context.openFileOutput("config.txt", Context.MODE_PRIVATE));
+        outputStreamWriter.write(finalData);
+        outputStreamWriter.close();
 
-        BasicFileAttributes attr = null;
+            DateFormat dt = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
+            Date date = new Date();
+            String d =dt.format(date).toString();
 
-            attr = Files.readAttributes(Paths.get(filePath), BasicFileAttributes.class);
-            Date creationDate = new Date(attr.creationTime().to(TimeUnit.MILLISECONDS));
-            Files.setAttribute(Paths.get(filePath), "creationTime", FileTime.fromMillis(creationDate.getTime()));
+            File dir = new File("E:\\");
+            File f = new File(filePath+d);
+            if(f.createNewFile())
+            {
+                System.out.println("file creates");
+            }
 
-        } catch (IOException e) {
-            Crashlytics.logException(e);
-            System.out.println("error! " + e.getMessage());
-        }
+    } catch (IOException e) {
+        Crashlytics.logException(e);
+        System.out.println("error! " + e.getMessage());
     }
+}
+
 
     @SuppressLint("NewApi")
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
@@ -260,15 +299,20 @@ public class CacheService {
         if ((new File(filePath)).isFile()) {
             (new File(filePath)).delete();
         }
+            BufferedWriter writer = new BufferedWriter(new FileWriter(filePath));
+            writer.write(json);
+            writer.close();
 
-        Files.write(Paths.get(filePath), json.getBytes());
+            DateFormat dt = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
+            Date date = new Date();
+            String d =dt.format(date).toString();
 
-        //Calendar c = Calendar.getInstance();
-        BasicFileAttributes attr = null;
-
-            attr = Files.readAttributes(Paths.get(filePath), BasicFileAttributes.class);
-            Date creationDate = new Date(attr.creationTime().to(TimeUnit.MILLISECONDS));
-            Files.setAttribute(Paths.get(filePath), "creationTime", FileTime.fromMillis(creationDate.getTime()));
+            File dir = new File("E:\\");
+            File f = new File(filePath+d);
+            if(f.createNewFile())
+            {
+                System.out.println("file creates");
+            }
 
         } catch (IOException e) {
             Crashlytics.logException(e);

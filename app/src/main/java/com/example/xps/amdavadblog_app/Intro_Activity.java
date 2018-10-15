@@ -81,7 +81,7 @@ public class Intro_Activity extends AppCompatActivity {
 
             facebookSDKInitialize();
             setContentView(R.layout.activity_intro);
-            checkFirstRun();
+           // checkFirstRun();
 
             callbackManager = CallbackManager.Factory.create();
             relativeLayout = (RelativeLayout) findViewById(R.id.relativelayout);

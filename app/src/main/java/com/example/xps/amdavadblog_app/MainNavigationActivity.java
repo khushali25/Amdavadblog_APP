@@ -109,11 +109,11 @@ public class MainNavigationActivity extends AppCompatActivity
 
             InitiaalizeGoogleAppConfig();
 
-            FirebaseApp app = FirebaseApp.initializeApp(this);
-            mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
-            mFirebaseAnalytics.setAnalyticsCollectionEnabled(true);
-            mFirebaseAnalytics.setMinimumSessionDuration(20000);
-            mFirebaseAnalytics.setUserId(String.valueOf(GetRandomIndex()));
+//            FirebaseApp app = FirebaseApp.initializeApp(this);
+//            mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
+//            mFirebaseAnalytics.setAnalyticsCollectionEnabled(true);
+//            mFirebaseAnalytics.setMinimumSessionDuration(20000);
+//            mFirebaseAnalytics.setUserId(String.valueOf(GetRandomIndex()));
 
             StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
             StrictMode.setThreadPolicy(policy);

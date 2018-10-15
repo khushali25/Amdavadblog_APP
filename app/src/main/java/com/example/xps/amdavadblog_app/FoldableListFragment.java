@@ -216,7 +216,7 @@ public class FoldableListFragment extends Fragment implements SwipeRefreshLayout
 
             if (CategoryId == 100) {
                 try {
-                    AllPost = CacheService.GetAllPostnew(false, 1);
+                   AllPost = CacheService.GetAllPostnew(false, 1);
                 } catch (FileNotFoundException e) {
                     Crashlytics.logException(e);
                     e.printStackTrace();
