@@ -105,14 +105,28 @@ public class FoldableListFragment extends Fragment implements SwipeRefreshLayout
                         if (loading || reachedMax) {
 
                         } else {
-                            int temp = page + 1;
-                            try {
-                                LetCall(temp);
-                            } catch (IOException e) {
-                                Crashlytics.logException(e);
-                                e.printStackTrace();
-                            }
-                            page++;
+
+//                            Thread background = new Thread() {
+//                                public void run() {
+//                                    try {
+//                                        LetCall(temp);
+//                                    } catch (IOException e) {
+//                                        Crashlytics.logException(e);
+//                                        e.printStackTrace();
+//                                    }
+//                                }
+//                            };
+//                            background.start();
+////                            try {
+////                                LetCall(temp);
+////                            } catch (IOException e) {
+////                                Crashlytics.logException(e);
+////                                e.printStackTrace();
+////                            }
+//                            page++;
+                            Thread thread = new Thread(null, loadMoreListItems);
+                            thread.start();
+
                         }
                     }
                 }
@@ -174,39 +188,83 @@ public class FoldableListFragment extends Fragment implements SwipeRefreshLayout
             Crashlytics.logException(ex);
         }
     }
-    private void LetCall(int i) throws IOException {
-        loading = true;
-        if (CategoryId == 100) {
-            try {
-                AllPost = CacheService.GetAllPostnew(true,i);
-            } catch (FileNotFoundException e) {
-                Crashlytics.logException(e);
-                e.printStackTrace();
-            }
+//    private void LetCall(int i) throws IOException {
+//        loading = true;
+//        if (CategoryId == 100) {
+//            try {
+//                AllPost = CacheService.GetAllPostnew(true,i);
+//            } catch (FileNotFoundException e) {
+//                Crashlytics.logException(e);
+//                e.printStackTrace();
+//            }
+//
+//        }
+//        else
+//        {
+//            try {
+//                AllPost = CacheService.GetPostByCategoryId(i, CategoryId, true);
+//            }
+//            catch (Exception ex)
+//            {
+//                Crashlytics.logException(ex);
+//            }
+//        }
+//        try {
+//            postContentAdapter = new PostContentAdapter(AllPost, activity);
+//            foldableListLayout.setAdapter(postContentAdapter);
+//            if (postContentAdapter != null)
+//                postContentAdapter.notifyDataSetChanged();
+//            loading = false;
+//        }
+//        catch (Exception ex)
+//        {
+//            Crashlytics.logException(ex);
+//        }
+//    }
+    private Runnable loadMoreListItems = new Runnable() {
 
+        @Override
+        synchronized public void run() {
+            // Set flag so we cant load new items 2 at the same time
+            final int temp = page + 1;
+        loading = true;
+        if (CategoryId == 100) try {
+            AllPost = CacheService.GetAllPostnew(true, temp);
+        } catch (FileNotFoundException e) {
+            Crashlytics.logException(e);
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
         else
         {
             try {
-                AllPost = CacheService.GetPostByCategoryId(i, CategoryId, true);
+                AllPost = CacheService.GetPostByCategoryId(temp, CategoryId, true);
             }
             catch (Exception ex)
             {
                 Crashlytics.logException(ex);
             }
         }
-        try {
-            postContentAdapter = new PostContentAdapter(AllPost, activity);
-            foldableListLayout.setAdapter(postContentAdapter);
+        activity.runOnUiThread(returnRes);
+
+        }
+    };
+
+    private Runnable returnRes = new Runnable() {
+        @Override
+        public void run() {
+
+            // Add the new items to the adapter
             if (postContentAdapter != null)
                 postContentAdapter.notifyDataSetChanged();
+
             loading = false;
+            page++;
         }
-        catch (Exception ex)
-        {
-            Crashlytics.logException(ex);
-        }
-    }
+    };
+
+
 
     @Override
     public void onResume() {

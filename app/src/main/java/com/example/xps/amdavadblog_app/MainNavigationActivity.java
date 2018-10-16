@@ -121,6 +121,7 @@ public class MainNavigationActivity extends AppCompatActivity
             DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
             ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                     this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+
             drawer.addDrawerListener(toggle);
             toggle.syncState();
 
@@ -552,6 +553,7 @@ public class MainNavigationActivity extends AppCompatActivity
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
+
         try {
             int id = item.getItemId();
 
@@ -594,43 +596,51 @@ public class MainNavigationActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         try {
             int id = item.getItemId();
+            DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
             txt = findViewById(R.id.toolbartxt);
             FragmentManager fm = getSupportFragmentManager();
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             if (id == R.id.home) {
+                drawer.closeDrawer(GravityCompat.START);
                 catInstance = new FoldableListFragment(100);
                 replaceFragment(catInstance);
                 getSupportActionBar().setTitle("Home");
                 txt.setText("Home");
 
             } else if (id == R.id.explore) {
+                drawer.closeDrawer(GravityCompat.START);
                 catInstance = new FoldableListFragment(35);
                 replaceFragment(catInstance);
                 getSupportActionBar().setTitle("Explore Amdavad");
                 txt.setText("Explore Amdavad");
             } else if (id == R.id.flavor) {
+                drawer.closeDrawer(GravityCompat.START);
                 catInstance = new FoldableListFragment(36);
                 replaceFragment(catInstance);
                 getSupportActionBar().setTitle("Flavors of Amdavad");
                 txt.setText("Flavors of Amdavad");
             } else if (id == R.id.news) {
+                drawer.closeDrawer(GravityCompat.START);
                 catInstance = new FoldableListFragment(5);
                 replaceFragment(catInstance);
                 getSupportActionBar().setTitle("News");
                 txt.setText("News");
             } else if (id == R.id.thingstodo) {
+                drawer.closeDrawer(GravityCompat.START);
                 catInstance = new FoldableListFragment(37);
                 replaceFragment(catInstance);
                 getSupportActionBar().setTitle("Things to Do");
                 txt.setText("Things to Do");
             }
             if (id == R.id.privacypolicy) {
+                drawer.closeDrawer(GravityCompat.START);
                 privacyInstance = new PrivacyPolicyFragment();
                 replaceFragment(privacyInstance);
                 getSupportActionBar().setTitle("Privacy Policy");
                 txt.setText("Privacy Policy");
 
             } else if (id == R.id.contactus) {
+                drawer.closeDrawer(GravityCompat.START);
                 comInstance = new CommunicationFragment();
                 replaceFragment(comInstance);
                 getSupportActionBar().setTitle("Contact");
@@ -638,8 +648,8 @@ public class MainNavigationActivity extends AppCompatActivity
             }
             Bundle param = new Bundle();
             param.putString("name", String.valueOf(getSupportActionBar().getTitle()));
-            DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-            drawer.closeDrawer(GravityCompat.START);
+
+
         }
         catch (Exception ex)
         {

@@ -187,6 +187,7 @@ public class PostContentAdapter extends ItemsAdapter<Post, PostContentAdapter.Vi
                     intent.putExtra("Excepts", tempitem.getExcerpt());
                     intent.putExtra("content", tempitem.getContent());
                     intent.putExtra("Image", tempitem.getFeaturedMedia().getURL());
+                    intent.putExtra("link", tempitem.getLink());
                     context.startActivity(intent);
                 }
                 catch (Exception ex)

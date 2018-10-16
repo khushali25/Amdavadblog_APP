@@ -323,8 +323,8 @@ public class CacheService {
     @SuppressLint("NewApi")
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private static boolean IsRequiredToReadFromCache(String filePath) {
-        //return true;
-        int frequency = 10;
+       // return false;
+        int frequency = 1;
         boolean result = false;
         try {
             if ((new File(filePath)).isFile()) {
@@ -347,5 +347,6 @@ public class CacheService {
               //  FirebaseCrash.Report(ex);
             }
             return result;
-        }
+//
+    }
     }

@@ -197,6 +197,12 @@ import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.List;
+
+import services.CacheService;
+
 public class SplashScreenActivity extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback {
     private Boolean firstTime = null;
     private static final int REQUEST = 112;
@@ -221,6 +227,7 @@ public class SplashScreenActivity extends AppCompatActivity implements ActivityC
                             WindowManager.LayoutParams.FLAG_FULLSCREEN);
                     setContentView(R.layout.activity_splash_screen);
                     checkFirstRun();
+//                    GetPosts();
 //                    Thread background = new Thread() {
 //                        public void run() {
 //                            try {
@@ -260,6 +267,7 @@ public class SplashScreenActivity extends AppCompatActivity implements ActivityC
                         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
                         setContentView(R.layout.activity_splash_screen);
+
                         Thread background = new Thread() {
                             public void run() {
                                 try {
@@ -270,6 +278,7 @@ public class SplashScreenActivity extends AppCompatActivity implements ActivityC
                                     //Remove activity
                                     finish();
                                     startActivity(i);
+                                    //GetPosts();
                                 } catch (Exception e) {
                                     Crashlytics.logException(e);
                                 }
@@ -309,6 +318,19 @@ public class SplashScreenActivity extends AppCompatActivity implements ActivityC
         }
     }
 
+    private  void GetPosts()
+    {
+        try {
+           List AllPost = CacheService.GetAllPostnew(false, 1);
+        } catch (FileNotFoundException e) {
+            Crashlytics.logException(e);
+            e.printStackTrace();
+        } catch (IOException e) {
+            Crashlytics.logException(e);
+            e.printStackTrace();
+        }
+    }
+
     private void gotoIntroActivity() {
         try {
             Intent intent = new Intent(this, Intro_Activity.class);
@@ -323,9 +345,24 @@ public class SplashScreenActivity extends AppCompatActivity implements ActivityC
 
     private void goToMainActivity() {
         try {
-            Intent intent = new Intent(this, MainNavigationActivity.class);
-            startActivity(intent);
-            finish();
+            //GetPosts();
+            setContentView(R.layout.activity_splash_screen);
+            Thread background = new Thread() {
+                public void run() {
+                    try {
+                        // Thread will sleep for 5 seconds
+                        sleep(2 * 1000);
+                        Intent intent = new Intent(getBaseContext(), MainNavigationActivity.class);
+                        startActivity(intent);
+                        finish();
+                        // After 5 seconds redirect to another intent
+                    } catch (Exception e) {
+                        Crashlytics.logException(e);
+                    }
+                }
+            };
+            background.start();
+
         }
         catch(Exception ex)
         {

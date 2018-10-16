@@ -36,6 +36,9 @@ import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
+
+import org.apache.commons.lang3.StringEscapeUtils;
+
 import Helper.PrefService;
 import Helper.SocialMethod;
 
@@ -123,12 +126,12 @@ public class UnfoldableDetailsActivity extends AppCompatActivity {
             floatingActionButton4.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
                     //TODO something when floating action menu third item clicked
-                    SocialMethod.showRateApp(UnfoldableDetailsActivity.this);
                     shareBlog();
                 }
             });
             ctl = findViewById(R.id.collapsetoolbar);
             final String title = this.getIntent().getStringExtra("Title");
+            final String decodedtitle = StringEscapeUtils.unescapeHtml3(title);
             ctl.setTitle(" ");
 
             AppBarLayout appBarLayout = (AppBarLayout) findViewById(R.id.applayout);
@@ -142,7 +145,7 @@ public class UnfoldableDetailsActivity extends AppCompatActivity {
                         scrollRange = appBarLayout.getTotalScrollRange();
                     }
                     if (scrollRange + i == 0) {
-                        ctl.setTitle(title);
+                        ctl.setTitle(decodedtitle);
 
                         ctl.setExpandedTitleTextAppearance(R.style.CollapsedAppBar);
                         ctl.setCollapsedTitleTextAppearance(R.style.CollapsedAppBar);
@@ -271,13 +274,10 @@ public class UnfoldableDetailsActivity extends AppCompatActivity {
      public void shareBlog() {
                 try {
                     int id = this.getIntent().getIntExtra("BlogId", 0);
-
-                    String title = this.getIntent().getStringExtra("Title");
-                    String replacedtitle = title.replace(" ", "-");
-                    String finaltitle = replacedtitle.toLowerCase();
+                    String link = this.getIntent().getStringExtra("link");
                     Intent sendIntent = new Intent();
                     sendIntent.setAction(Intent.ACTION_SEND);
-                    sendIntent.putExtra(Intent.EXTRA_COMPONENT_NAME, "http://amdavadblog.com" + finaltitle);
+                    sendIntent.putExtra(Intent.EXTRA_TEXT,link);
                     sendIntent.setType("text/plain");
                     startActivity(Intent.createChooser(sendIntent, "Share Blog via"));
                 }

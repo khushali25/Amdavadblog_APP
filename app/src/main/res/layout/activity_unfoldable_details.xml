@@ -115,7 +115,6 @@
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_rate_review_black_24dp"
                 fab:fab_label="Feedback"
-
                 fab:fab_size="mini" />
 
             <com.github.clans.fab.FloatingActionButton
