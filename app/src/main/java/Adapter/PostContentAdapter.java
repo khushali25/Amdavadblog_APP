@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetManager;
+import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.text.Html;
 import android.util.DisplayMetrics;
@@ -19,6 +20,9 @@ import com.example.xps.amdavadblog_app.UnfoldableDetailsActivity;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.nostra13.universalimageloader.core.assist.ImageScaleType;
+import com.nostra13.universalimageloader.utils.MemoryCacheUtils;
+
 import org.apache.commons.lang3.StringEscapeUtils;
 import java.io.File;
 import java.text.DateFormat;
@@ -32,6 +36,7 @@ import Model.StartJsonDataClass;
 public class PostContentAdapter extends ItemsAdapter<Post, PostContentAdapter.ViewHolder>
 {
     public ImageLoader imgloader;
+    ImageLoaderConfiguration config;
     Context context;
     private int index;
     List<Post> post;
@@ -147,20 +152,52 @@ public class PostContentAdapter extends ItemsAdapter<Post, PostContentAdapter.Vi
 
             if (item.getFeaturedMedia().getURL() != null) {
 
+//                File imageFile = imageLoader.getDiscCache().get(imageUri)
+//                if (imageFile.exists()) {
+//                    imageFile.delete();
+//                }
+
+
                 File file = ImageLoader.getInstance().getDiskCache().get(item.getFeaturedMedia().getURL());
                 if (!file.exists()) {
+
                     DisplayImageOptions options = new DisplayImageOptions.Builder()
+                            .delayBeforeLoading(0)
+                            .resetViewBeforeLoading(true)
+                            .cacheInMemory(true)
                             .cacheOnDisk(true)
+                            .bitmapConfig(Bitmap.Config.RGB_565)
+                            .imageScaleType(ImageScaleType.EXACTLY)
+                            .resetViewBeforeLoading(true)
                             .build();
+
+                   config = new ImageLoaderConfiguration.Builder(context)
+                            .denyCacheImageMultipleSizesInMemory()
+                            .defaultDisplayImageOptions(options)
+                            .diskCacheExtraOptions(480, 320, null)
+//                .memoryCacheSize(41943040)
+                            .threadPoolSize(10)
+                            .build();
+
+                   // ImageLoader.getInstance().init(config);
+                   // MemoryCacheUtils.removeFromCache(item.getFeaturedMedia().getURL(), imgloader.getMemoryCache());
                     imgloader.displayImage(item.getFeaturedMedia().getURL(), vh1.Art, options);
                 } else {
 
+
+                   // MemoryCacheUtils.removeFromCache(item.getFeaturedMedia().getURL(), imgloader.getMemoryCache());
                     vh1.Art.setImageURI(android.net.Uri.parse(file.getAbsolutePath()));
                 }
             } else {
                 String imageUri = "drawable://" + R.drawable.ic_home_black_24dp;
                 DisplayImageOptions options = new DisplayImageOptions.Builder()
+                        .delayBeforeLoading(0)
+                        .resetViewBeforeLoading(true)
+                        .cacheInMemory(true)
                         .cacheOnDisk(true)
+                        .bitmapConfig(Bitmap.Config.RGB_565)
+                        .imageScaleType(ImageScaleType.EXACTLY)
+                        .resetViewBeforeLoading(true)
                         .build();
                 imgloader.displayImage(imageUri, vh1.Art, options);
             }
@@ -227,10 +264,6 @@ public class PostContentAdapter extends ItemsAdapter<Post, PostContentAdapter.Vi
             long diffMinutes = diffSeconds / 60;
             long diffHours = diffMinutes / 60;
             long diffDays = diffHours / 24;
-//            long diffSeconds = diff / 1000 % 60;
-//            long diffMinutes = diff / (60 * 1000) % 60;
-//            long diffHours = diff / (60 * 60 * 1000) % 24;
-//            long diffDays = diff / (24 * 60 * 60 * 1000);
 
             System.out.print(diffDays + " days, ");
             System.out.print(diffHours + " hours, ");
