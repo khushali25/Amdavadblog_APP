@@ -12,7 +12,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.alexvasilkov.android.commons.adapters.ItemsAdapter;
 import com.crashlytics.android.Crashlytics;
 import com.example.xps.amdavadblog_app.R;
@@ -20,7 +23,10 @@ import com.example.xps.amdavadblog_app.UnfoldableDetailsActivity;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.assist.ImageScaleType;
+import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
+import com.nostra13.universalimageloader.core.listener.ImageLoadingProgressListener;
 import com.nostra13.universalimageloader.utils.MemoryCacheUtils;
 
 import org.apache.commons.lang3.StringEscapeUtils;
@@ -31,7 +37,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import Model.Post;
-import Model.StartJsonDataClass;
 
 public class PostContentAdapter extends ItemsAdapter<Post, PostContentAdapter.ViewHolder>
 {
@@ -44,6 +49,7 @@ public class PostContentAdapter extends ItemsAdapter<Post, PostContentAdapter.Vi
     Post item;
     Typeface custom_font3,custom_font1;
     ViewHolder vh1;
+    View view;
     float txtsize;
 
     public PostContentAdapter(List<Post> posts,Activity context) {
@@ -101,7 +107,7 @@ public class PostContentAdapter extends ItemsAdapter<Post, PostContentAdapter.Vi
     protected PostContentAdapter.ViewHolder onCreateHolder(ViewGroup parent, int viewType) {
         PostContentAdapter.ViewHolder vh = null;
         try {
-            View view = LayoutInflater.from(parent.getContext()).
+           view = LayoutInflater.from(parent.getContext()).
                     inflate(R.layout.post_listing, null);
 
             vh = new PostContentAdapter.ViewHolder(view);
@@ -152,16 +158,10 @@ public class PostContentAdapter extends ItemsAdapter<Post, PostContentAdapter.Vi
 
             if (item.getFeaturedMedia().getURL() != null) {
 
-//                File imageFile = imageLoader.getDiscCache().get(imageUri)
-//                if (imageFile.exists()) {
-//                    imageFile.delete();
-//                }
-
-
-                File file = ImageLoader.getInstance().getDiskCache().get(item.getFeaturedMedia().getURL());
+                final File file = ImageLoader.getInstance().getDiskCache().get(item.getFeaturedMedia().getURL());
                 if (!file.exists()) {
 
-                    DisplayImageOptions options = new DisplayImageOptions.Builder()
+                    final DisplayImageOptions options = new DisplayImageOptions.Builder()
                             .delayBeforeLoading(0)
                             .resetViewBeforeLoading(true)
                             .cacheInMemory(true)
@@ -175,16 +175,41 @@ public class PostContentAdapter extends ItemsAdapter<Post, PostContentAdapter.Vi
                             .denyCacheImageMultipleSizesInMemory()
                             .defaultDisplayImageOptions(options)
                             .diskCacheExtraOptions(480, 320, null)
-//                .memoryCacheSize(41943040)
                             .threadPoolSize(10)
                             .build();
-
-                   // ImageLoader.getInstance().init(config);
-                   // MemoryCacheUtils.removeFromCache(item.getFeaturedMedia().getURL(), imgloader.getMemoryCache());
                     imgloader.displayImage(item.getFeaturedMedia().getURL(), vh1.Art, options);
+
                 } else {
 
+                   // assert imageLayout != null;
+                   // ImageView imageView = (ImageView) view.findViewById(R.id.image);
 
+                    ImageLoader.getInstance().displayImage(item.getFeaturedMedia().getURL(), vh1.Art,
+                            new ImageLoadingListener() {
+                                @Override
+                                public void onLoadingStarted(String arg0, View arg1) {
+                                    // TODO Auto-generated method stub
+                                    //vh1.Art.setImageResource(R.drawable.ic_access_time_black_24dp);
+
+
+                                }
+                                @Override
+                                public void onLoadingFailed(String arg0, View arg1,
+                                                            FailReason arg2) {
+
+                                }
+                                @Override
+                                public void onLoadingComplete(String arg0, View arg1,
+                                                              Bitmap arg2) {
+                                    // TODO Auto-generated method stub
+                                    vh1.Art.setImageURI(android.net.Uri.parse(file.getAbsolutePath()));
+                                }
+                                @Override
+                                public void onLoadingCancelled(String arg0, View arg1) {
+                                        // TODO Auto-generated method stub
+                                    vh1.Art.setImageResource(R.drawable.ic_access_time_black_24dp);
+                                }
+                            });
                    // MemoryCacheUtils.removeFromCache(item.getFeaturedMedia().getURL(), imgloader.getMemoryCache());
                     vh1.Art.setImageURI(android.net.Uri.parse(file.getAbsolutePath()));
                 }

@@ -180,10 +180,12 @@
 package com.example.xps.amdavadblog_app;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -193,6 +195,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
@@ -208,6 +211,7 @@ public class SplashScreenActivity extends AppCompatActivity implements ActivityC
     private static final int REQUEST = 112;
     final String PREFS_NAME = "MyPrefsFile";
     final String PREFS_FIRST_RUN = "first_run";
+    ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -222,30 +226,10 @@ public class SplashScreenActivity extends AppCompatActivity implements ActivityC
                     ActivityCompat.requestPermissions(this, PERMISSIONS, REQUEST);
                 } else {
                     //do here
-
                     getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                             WindowManager.LayoutParams.FLAG_FULLSCREEN);
                     setContentView(R.layout.activity_splash_screen);
                     checkFirstRun();
-//                    GetPosts();
-//                    Thread background = new Thread() {
-//                        public void run() {
-//                            try {
-//                                // Thread will sleep for 5 seconds
-//                                sleep(2 * 1000);
-//                                // After 5 seconds redirect to another intent
-//                                Intent i = new Intent(getBaseContext(), Intro_Activity.class);
-//                                //Remove activity
-//                                finish();
-//                                startActivity(i);
-//                            } catch (Exception e) {
-//                                Crashlytics.logException(e);
-//                            }
-//                        }
-//                    };
-//
-//                    background.start();
-
                 }
             }
         }
@@ -318,7 +302,7 @@ public class SplashScreenActivity extends AppCompatActivity implements ActivityC
         }
     }
 
-    private  void GetPosts()
+    private void GetPosts()
     {
         try {
            List AllPost = CacheService.GetAllPostnew(false, 1);
@@ -345,23 +329,7 @@ public class SplashScreenActivity extends AppCompatActivity implements ActivityC
 
     private void goToMainActivity() {
         try {
-            //GetPosts();
-            setContentView(R.layout.activity_splash_screen);
-            Thread background = new Thread() {
-                public void run() {
-                    try {
-                        // Thread will sleep for 5 seconds
-                        sleep(2 * 1000);
-                        Intent intent = new Intent(getBaseContext(), MainNavigationActivity.class);
-                        startActivity(intent);
-                        finish();
-                        // After 5 seconds redirect to another intent
-                    } catch (Exception e) {
-                        Crashlytics.logException(e);
-                    }
-                }
-            };
-            background.start();
+            new LoadViewTask().execute("");
 
         }
         catch(Exception ex)
@@ -386,5 +354,32 @@ public class SplashScreenActivity extends AppCompatActivity implements ActivityC
             Crashlytics.logException(ex);
         }
         return true;
+    }
+
+    private class LoadViewTask extends AsyncTask<String,Void,String> {
+        @Override
+        protected String doInBackground(String... strings) {
+            for (int i = 0; i < 2; i++) {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    Thread.interrupted();
+                }
+            }
+            return "whatever result you have";
+        }
+        @Override
+        protected void onPostExecute(String result) {
+            Intent i = new Intent(SplashScreenActivity.this, MainNavigationActivity.class);
+           // i.putExtra("data", result);
+            startActivity(i);
+            finish();
+        }
+
+        @Override
+        protected void onPreExecute()
+        {
+
+        }
     }
 }

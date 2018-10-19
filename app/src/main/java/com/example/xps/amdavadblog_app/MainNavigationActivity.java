@@ -1,14 +1,20 @@
 package com.example.xps.amdavadblog_app;
 
+import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.PersistableBundle;
 import android.os.StrictMode;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -22,6 +28,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -74,24 +81,24 @@ public class MainNavigationActivity extends AppCompatActivity
     public static String FACEBOOK_PAGE_ID = "2012829695602790";
     TextView txt,fbname,fbemail;
     ImageView fbicon,twittericon,instaicon,googleplusicon,websiteicon;
-    Button fbbtn,fblogout;
+    Button fblogout;
     CircleImageView fbphoto;
-    String appTitle;
     LoginButton fbloginbutton;
     TextView info;
     CallbackManager callbackManager;
-    String firstName,lastName,birthdate,gender,emailtostore,nametostore,link;
-    private FoldableListFragment catInstance;
-    private PrivacyPolicyFragment privacyInstance;
-    private CommunicationFragment comInstance;
+    String firstName,lastName,emailtostore,nametostore,link;
     URL profilePicture;
-    String userId,email1,personname,gen,add,dob;
-    private FirebaseAnalytics mFirebaseAnalytics;
-    Intent main;
+    String userId,add;
     View headerView;
     Bitmap img;
     NavigationView navigationView;
     Fragment fragmentCurrent;
+    DrawerLayout drawer;
+    private int checkedItem = 0;
+    private boolean navItemSelected = false;
+    private Fragment fragment;
+    ActionBarDrawerToggle toggle;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,20 +113,12 @@ public class MainNavigationActivity extends AppCompatActivity
             Toolbar toolbar = (Toolbar) findViewById(R.id.newtoolbar);
             setSupportActionBar(toolbar);
             getSupportActionBar().setDisplayShowTitleEnabled(false);
-
             InitiaalizeGoogleAppConfig();
-
-//            FirebaseApp app = FirebaseApp.initializeApp(this);
-//            mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
-//            mFirebaseAnalytics.setAnalyticsCollectionEnabled(true);
-//            mFirebaseAnalytics.setMinimumSessionDuration(20000);
-//            mFirebaseAnalytics.setUserId(String.valueOf(GetRandomIndex()));
-
             StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
             StrictMode.setThreadPolicy(policy);
 
-            DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-            ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+            drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+            toggle = new ActionBarDrawerToggle(
                     this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
 
             drawer.addDrawerListener(toggle);
@@ -214,16 +213,74 @@ public class MainNavigationActivity extends AppCompatActivity
 
             InitializeFirstScreenUI();
 
-            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            catInstance = new FoldableListFragment(100);
-            ft.replace(R.id.content_frame, new FoldableListFragment(100), "Fragment1");
-            ft.commit();
+            checkedItem = R.id.home;
+            fragment = new FoldableListFragment(100);
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.content_frame, fragment)
+                    .commit();
+            navigationView.setCheckedItem(R.id.home);
         }
         catch(Exception ex)
         {
             Crashlytics.logException(ex);
         }
 
+    }
+
+    @Override
+    public void onPostCreate(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {
+        super.onPostCreate(savedInstanceState, persistentState);
+        try
+        {
+            toggle.syncState();
+        }
+        catch (Exception ex)
+        {
+           Crashlytics.logException(ex);
+           // Android.Util.Log.Error("Initialize UI failed", ex.Message);
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        try {
+            super.onPause();
+        }
+        catch (Exception ex)
+        {
+            Crashlytics.logException(ex);
+            // Android.Util.Log.Error("Initialize UI failed", ex.Message);
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        try {
+            super.onStop();
+        }
+        catch (Exception ex)
+        {
+            Crashlytics.logException(ex);
+            // Android.Util.Log.Error("Initialize UI failed", ex.Message);
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        try {
+            super.onDestroy();
+        }
+        catch (Exception ex)
+        {
+            Crashlytics.logException(ex);
+            // Android.Util.Log.Error("Initialize UI failed", ex.Message);
+        }
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        this.toggle.onConfigurationChanged(newConfig);
     }
 
     private void getloginstatus() {
@@ -459,7 +516,6 @@ public class MainNavigationActivity extends AppCompatActivity
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_menu_black_24dp);
             getStatusBarHeight();
-
         }
         catch (Exception ex)
         {
@@ -512,18 +568,20 @@ public class MainNavigationActivity extends AppCompatActivity
             DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
             if (drawer.isDrawerOpen(GravityCompat.START)) {
                 drawer.closeDrawer(GravityCompat.START);
-            } else if (fragmentCurrent.equals(catInstance)) {
-                if (catInstance.CategoryId == 100) {
-                    getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                    super.onBackPressed();
-                } else {
-                    getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                    replaceFragment(catInstance);
-                    catInstance.CategoryId = 100;
-                    getSupportActionBar().setTitle("Home");
-                    txt.setText("Home");
-                }
-            } else {
+            }
+//            else if (fragmentCurrent.equals(catInstance)) {
+//                if (catInstance.CategoryId == 100) {
+//                    getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+//                    super.onBackPressed();
+//                } else {
+//                    getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+//                    replaceFragment(catInstance);
+//                    catInstance.CategoryId = 100;
+//                    getSupportActionBar().setTitle("Home");
+//                    txt.setText("Home");
+//                }
+  //          }
+            else {
                 onNavigationItemSelected(navigationView.getMenu().getItem(0));
                 getSupportActionBar().setTitle("Home");
                 txt.setText("Home");
@@ -590,66 +648,95 @@ public class MainNavigationActivity extends AppCompatActivity
             return super.onOptionsItemSelected(item);
         }
 
-    @SuppressWarnings("StatementWithEmptyBody")
+
     @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
+    public boolean onNavigationItemSelected(final MenuItem item) {
         // Handle navigation view item clicks here.
         try {
-            int id = item.getItemId();
-            DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-            txt = findViewById(R.id.toolbartxt);
-            FragmentManager fm = getSupportFragmentManager();
-            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            if (id == R.id.home) {
-                drawer.closeDrawer(GravityCompat.START);
-                catInstance = new FoldableListFragment(100);
-                replaceFragment(catInstance);
-                getSupportActionBar().setTitle("Home");
-                txt.setText("Home");
+            navItemSelected = true;
+            drawer= (DrawerLayout) findViewById(R.id.drawer_layout);
+            drawer.closeDrawer(GravityCompat.START);
 
-            } else if (id == R.id.explore) {
-                drawer.closeDrawer(GravityCompat.START);
-                catInstance = new FoldableListFragment(35);
-                replaceFragment(catInstance);
-                getSupportActionBar().setTitle("Explore Amdavad");
-                txt.setText("Explore Amdavad");
-            } else if (id == R.id.flavor) {
-                drawer.closeDrawer(GravityCompat.START);
-                catInstance = new FoldableListFragment(36);
-                replaceFragment(catInstance);
-                getSupportActionBar().setTitle("Flavors of Amdavad");
-                txt.setText("Flavors of Amdavad");
-            } else if (id == R.id.news) {
-                drawer.closeDrawer(GravityCompat.START);
-                catInstance = new FoldableListFragment(5);
-                replaceFragment(catInstance);
-                getSupportActionBar().setTitle("News");
-                txt.setText("News");
-            } else if (id == R.id.thingstodo) {
-                drawer.closeDrawer(GravityCompat.START);
-                catInstance = new FoldableListFragment(37);
-                replaceFragment(catInstance);
-                getSupportActionBar().setTitle("Things to Do");
-                txt.setText("Things to Do");
-            }
-            if (id == R.id.privacypolicy) {
-                drawer.closeDrawer(GravityCompat.START);
-                privacyInstance = new PrivacyPolicyFragment();
-                replaceFragment(privacyInstance);
-                getSupportActionBar().setTitle("Privacy Policy");
-                txt.setText("Privacy Policy");
+                    int id = item.getItemId();
+                    txt = findViewById(R.id.toolbartxt);
 
-            } else if (id == R.id.contactus) {
-                drawer.closeDrawer(GravityCompat.START);
-                comInstance = new CommunicationFragment();
-                replaceFragment(comInstance);
-                getSupportActionBar().setTitle("Contact");
-                txt.setText("Contact");
-            }
-            Bundle param = new Bundle();
-            param.putString("name", String.valueOf(getSupportActionBar().getTitle()));
+                    if (id == R.id.home) {
+                        checkedItem = R.id.home;
+                        fragment = new FoldableListFragment(100);
+                        getSupportActionBar().setTitle("Home");
+                        txt.setText("Home");
+                    }
+                    else if (id == R.id.explore) {
+
+                        checkedItem = R.id.explore;
+                        fragment = new FoldableListFragment(35);
+                        getSupportActionBar().setTitle("Explore Amdavad");
+                        txt.setText("Explore Amdavad");
+                    }
+                    else if (id == R.id.flavor) {
+                        checkedItem = R.id.flavor;
+                        fragment = new FoldableListFragment(36);
+
+                        getSupportActionBar().setTitle("Flavors of Amdavad");
+                        txt.setText("Flavors of Amdavad");
+                    }
+                    else if (id == R.id.news) {
+                        checkedItem = R.id.news;
+                        fragment = new FoldableListFragment(5);
+                        getSupportActionBar().setTitle("News");
+                        txt.setText("News");
+
+                    }
+                    else if (id == R.id.thingstodo) {
+                        checkedItem = R.id.thingstodo;
+                        fragment = new FoldableListFragment(37);
+                        getSupportActionBar().setTitle("Things to do");
+                        txt.setText("Things to do");
+                    }
+                    if (id == R.id.privacypolicy) {
+                        checkedItem = R.id.privacypolicy;
+                        fragment = new PrivacyPolicyFragment();
+                        getSupportActionBar().setTitle("Privacy Policy");
+                        txt.setText("Privacy Policy");
+                    }
+                    else if (id == R.id.contactus) {
+                        checkedItem = R.id.contactus;
+                        fragment = new CommunicationFragment();
+                        getSupportActionBar().setTitle("Contact");
+                        txt.setText("Contact");
+                    }
+            drawer.addDrawerListener(new DrawerLayout.DrawerListener() {
+                @Override
+                public void onDrawerSlide(@NonNull View view, float v) {
+
+                }
+                @Override
+                public void onDrawerOpened(@NonNull View view) {
+
+                }
+                @Override
+                public void onDrawerClosed(@NonNull View view) {
+                    if (navItemSelected) {
+                        navItemSelected = !navItemSelected;
+                        /**
+                         * Change fragment for all items excluding nav_five
+                         * as it opens up an Activity
+                         */
+                                getSupportFragmentManager().beginTransaction().setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
+                                        .replace(R.id.content_frame, fragment)
+                                        .commit();
+                                getSupportFragmentManager().executePendingTransactions();
+                                navigationView.setCheckedItem(checkedItem);
 
 
+
+                    }
+                }
+                @Override
+                public void onDrawerStateChanged(int i) {
+
+                }
+            });
         }
         catch (Exception ex)
         {
@@ -657,4 +744,8 @@ public class MainNavigationActivity extends AppCompatActivity
         }
         return true;
     }
+
+
 }
+
+
