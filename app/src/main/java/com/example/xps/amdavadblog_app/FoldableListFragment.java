@@ -82,7 +82,7 @@ public class FoldableListFragment extends Fragment implements SwipeRefreshLayout
             view = inflater.inflate(R.layout.fragment_foldable_list, container, false);
 
             activity = (Activity) view.getContext();
-            gifView = (GifView) view.findViewById(R.id.txx);
+            gifView = (GifView) view.findViewById(R.id.loadinggif);
             postContentAdapter = new PostContentAdapter(postList, activity);
             foldableListLayout = view.findViewById(R.id.foldable_list);
             foldableListLayout.setAdapter(postContentAdapter);
@@ -257,7 +257,7 @@ public class FoldableListFragment extends Fragment implements SwipeRefreshLayout
                 postContentAdapter.notifyDataSetChanged();
                 foldableListLayout.setVisibility(View.VISIBLE);
                 gifView.setVisibility(View.GONE);
-                //adView.resume();
+                adView.resume();
             }
             catch (Exception e) {
                 Crashlytics.logException(e);
@@ -295,7 +295,7 @@ public class FoldableListFragment extends Fragment implements SwipeRefreshLayout
             try {
                 foldableListLayout.setVisibility(View.GONE);
                 gifView.setVisibility(View.VISIBLE);
-                adView.resume();
+                //adView.resume();
             }
             catch (Exception e) {
                 Crashlytics.logException(e);

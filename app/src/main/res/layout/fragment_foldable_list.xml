@@ -20,7 +20,7 @@
             <!--android:layout_gravity="center_vertical"-->
             <!--android:layout_height="100dp" />-->
     <Helper.GifView
-        android:id="@+id/txx"
+        android:id="@+id/loadinggif"
         android:layout_width="180dp"
         android:layout_height="300dp"
         components:src="@drawable/loadinggif"

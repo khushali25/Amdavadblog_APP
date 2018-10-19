@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetManager;
+import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.text.Html;
 import android.view.LayoutInflater;
@@ -20,6 +21,9 @@ import com.example.xps.amdavadblog_app.UnfoldableDetailsActivity;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.nostra13.universalimageloader.core.assist.FailReason;
+import com.nostra13.universalimageloader.core.assist.ImageScaleType;
+import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 
@@ -36,6 +40,7 @@ import Model.Post;
 public class PostContentAdapterSearch extends ItemsAdapter<Post, PostContentAdapterSearch.ViewHolder>
 {
     public ImageLoader imgloader;
+    ImageLoaderConfiguration config;
     Context context;
     private int index;
     List<PostSearch> posts;
@@ -152,32 +157,106 @@ public class PostContentAdapterSearch extends ItemsAdapter<Post, PostContentAdap
             vh.Excerpts.setText(Html.fromHtml(item.excerpt.rendered));
             vh.Excerpts.setTypeface(custom_font3);
             GetDateTime();
+            if (item.getImagePath() != null) {
 
-            if (item.imagePath != null) {
-
-                File file = ImageLoader.getInstance().getDiskCache().get(item.imagePath);
+                final File file = ImageLoader.getInstance().getDiskCache().get(item.getImagePath());
                 if (!file.exists()) {
-                    DisplayImageOptions options = new DisplayImageOptions.Builder()
+
+                    final DisplayImageOptions options = new DisplayImageOptions.Builder()
+                            .delayBeforeLoading(0)
+                            .resetViewBeforeLoading(true)
+                            .cacheInMemory(true)
                             .cacheOnDisk(true)
+                            .bitmapConfig(Bitmap.Config.RGB_565)
+                            .imageScaleType(ImageScaleType.EXACTLY)
+                            .resetViewBeforeLoading(true)
                             .build();
-                    imgloader.displayImage(item.imagePath, vh1.Art, options);
+
+                    config = new ImageLoaderConfiguration.Builder(context)
+                            .denyCacheImageMultipleSizesInMemory()
+                            .defaultDisplayImageOptions(options)
+                            .diskCacheExtraOptions(480, 320, null)
+                            .threadPoolSize(10)
+                            .build();
+                    imgloader.displayImage(item.getImagePath(), vh1.Art, options);
+
                 } else {
+
+                    // assert imageLayout != null;
+                    // ImageView imageView = (ImageView) view.findViewById(R.id.image);
+
+                    ImageLoader.getInstance().displayImage(item.getImagePath(), vh1.Art,
+                            new ImageLoadingListener() {
+                                @Override
+                                public void onLoadingStarted(String arg0, View arg1) {
+                                    // TODO Auto-generated method stub
+                                    //vh1.Art.setImageResource(R.drawable.ic_access_time_black_24dp);
+
+
+                                }
+                                @Override
+                                public void onLoadingFailed(String arg0, View arg1,
+                                                            FailReason arg2) {
+
+                                }
+                                @Override
+                                public void onLoadingComplete(String arg0, View arg1,
+                                                              Bitmap arg2) {
+                                    // TODO Auto-generated method stub
+                                    vh1.Art.setImageURI(android.net.Uri.parse(file.getAbsolutePath()));
+                                }
+                                @Override
+                                public void onLoadingCancelled(String arg0, View arg1) {
+                                    // TODO Auto-generated method stub
+                                    vh1.Art.setImageResource(R.drawable.ic_access_time_black_24dp);
+                                }
+                            });
+                    // MemoryCacheUtils.removeFromCache(item.getFeaturedMedia().getURL(), imgloader.getMemoryCache());
                     vh1.Art.setImageURI(android.net.Uri.parse(file.getAbsolutePath()));
                 }
             } else {
                 String imageUri = "drawable://" + R.drawable.ic_home_black_24dp;
                 DisplayImageOptions options = new DisplayImageOptions.Builder()
+                        .delayBeforeLoading(0)
+                        .resetViewBeforeLoading(true)
+                        .cacheInMemory(true)
                         .cacheOnDisk(true)
+                        .bitmapConfig(Bitmap.Config.RGB_565)
+                        .imageScaleType(ImageScaleType.EXACTLY)
+                        .resetViewBeforeLoading(true)
                         .build();
                 imgloader.displayImage(imageUri, vh1.Art, options);
             }
-
-
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             Crashlytics.logException(ex);
         }
+//            if (item.imagePath != null) {
+//
+//                File file = ImageLoader.getInstance().getDiskCache().get(item.imagePath);
+//                if (!file.exists()) {
+//                    DisplayImageOptions options = new DisplayImageOptions.Builder()
+//                            .cacheOnDisk(true)
+//                            .build();
+//                    imgloader.displayImage(item.imagePath, vh1.Art, options);
+//                } else {
+//                    vh1.Art.setImageURI(android.net.Uri.parse(file.getAbsolutePath()));
+//                }
+//            } else {
+//                String imageUri = "drawable://" + R.drawable.ic_home_black_24dp;
+//                DisplayImageOptions options = new DisplayImageOptions.Builder()
+//                        .cacheOnDisk(true)
+//                        .build();
+//                imgloader.displayImage(imageUri, vh1.Art, options);
+//            }
+//
+//
+//        }
+//        catch(Exception ex)
+//        {
+//            Crashlytics.logException(ex);
+//        }
         vh1.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -185,6 +264,7 @@ public class PostContentAdapterSearch extends ItemsAdapter<Post, PostContentAdap
                     final String dateTime = vh1.date.getText().toString();
                     Intent intent;
                     intent = new Intent(context, UnfoldableDetailsActivity.class);
+                    intent.putExtra("I_CAME_FROM", "searchactivity");
                     PostSearch tempitem = getItem1(position);
                     int posttempid = tempitem.getId();
                     intent.putExtra("Position", position);
@@ -194,7 +274,7 @@ public class PostContentAdapterSearch extends ItemsAdapter<Post, PostContentAdap
                     intent.putExtra("Date", dateTime);
                     intent.putExtra("Excepts", tempitem.excerpt.rendered);
                     intent.putExtra("content", tempitem.content.getRendered());
-                    intent.putExtra("Image", item.imagePath);
+                    intent.putExtra("Image", tempitem.getImagePath());
                     context.startActivity(intent);
                 }
                 catch(Exception ex)
@@ -257,21 +337,21 @@ public class PostContentAdapterSearch extends ItemsAdapter<Post, PostContentAdap
             System.out.print(diffMinutes + " minutes, ");
             System.out.print(diffSeconds + " seconds.");
 
-            if(diffDays > 0)
+            if(diffSeconds > 0 && diffMinutes == 0 && diffHours == 0 && diffDays == 0)
             {
-                vh1.date.setText(Html.fromHtml(String.valueOf(diffDays + "d")));
+                vh1.date.setText(Html.fromHtml(String.valueOf(diffSeconds + "sec" + " " + "ago")));
             }
-            else if(diffDays == 0 && diffHours == 0)
+            else if(diffMinutes > 0 && diffHours == 0 && diffDays == 0)
             {
-                vh1.date.setText(Html.fromHtml(String.valueOf(diffMinutes + "m")));
+                vh1.date.setText(Html.fromHtml(String.valueOf(diffMinutes + "min" + " " + "ago")));
             }
-            else if(diffDays == 0 && diffHours == 0 && diffMinutes == 0)
+            else if(diffHours > 0 &&diffDays == 0)
             {
-                vh1.date.setText(Html.fromHtml(String.valueOf(diffMinutes + "s")));
+                vh1.date.setText(Html.fromHtml(String.valueOf(diffHours + "hr" + " " + "ago")));
             }
             else
             {
-                vh1.date.setVisibility(View.GONE);
+                vh1.date.setText(Html.fromHtml(String.valueOf(diffDays + "days" + " " + "ago")));
             }
         } catch (Exception e) {
             Crashlytics.logException(e);

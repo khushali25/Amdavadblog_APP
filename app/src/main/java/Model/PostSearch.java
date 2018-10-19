@@ -80,8 +80,8 @@ public class PostSearch {
         return featured_media;
     }
 
-    public void setFeatured_media(int featured_media) {
-        this.featured_media = featured_media;
+    public void setFeatured_media(int featuredMedia) {
+        this.featured_media = featuredMedia;
     }
 
     public class title

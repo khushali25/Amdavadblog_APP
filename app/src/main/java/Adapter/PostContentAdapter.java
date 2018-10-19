@@ -239,6 +239,7 @@ public class PostContentAdapter extends ItemsAdapter<Post, PostContentAdapter.Vi
                     final String dateTime = vh1.date.getText().toString();
                     Intent intent;
                     intent = new Intent(context, UnfoldableDetailsActivity.class);
+                    intent.putExtra("I_CAME_FROM", "mainactivity");
                     Post tempitem = getItem(position);
                     String posttempid = tempitem.getPostId();
                     intent.putExtra("Position", position);

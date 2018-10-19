@@ -238,7 +238,18 @@ public class UnfoldableDetailsActivity extends AppCompatActivity {
       }
       public void onBackPressed() {
              try {
-            android.support.v4.app.NavUtils.navigateUpFromSameTask(this);
+                 String flag = this.getIntent().getStringExtra("I_CAME_FROM");
+                 if(flag.equals("searchactivity"))
+                 {
+                     //you came from main activity
+                     finish();
+                    // startActivity(new Intent(this, SearchActivity.class));
+                 }
+                 else {
+                     finish();
+                    //android.support.v4.app.NavUtils.navigateUpFromSameTask(this);
+                     //startActivity(new Intent(this, MainNavigationActivity.class));
+                 }
             }
             catch (Exception ex)
             {
@@ -255,7 +266,7 @@ public class UnfoldableDetailsActivity extends AppCompatActivity {
             switch (item.getItemId()) {
 
                 case android.R.id.home:
-                    android.support.v4.app.NavUtils.navigateUpFromSameTask(this);
+                    finish();
                     return true;
             }
             }

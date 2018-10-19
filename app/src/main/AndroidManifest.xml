@@ -32,6 +32,7 @@
         </activity>
         <activity
             android:name=".MainNavigationActivity"
+            android:screenOrientation="portrait"
             android:hardwareAccelerated="false"
             android:launchMode="singleTop">
 
@@ -44,12 +45,20 @@
         </activity>
         <activity
             android:name=".UnfoldableDetailsActivity"
-            android:parentActivityName=".MainNavigationActivity"/>
-        <activity android:name=".BrowserActivity" />
+            android:screenOrientation="portrait">
+
+
+        </activity>
+
+        <activity android:name=".BrowserActivity"
+            android:screenOrientation="portrait"/>
+
         <activity
             android:name=".SearchActivity"
             android:launchMode="singleTop"
-            android:windowSoftInputMode="stateVisible" />
+            android:windowSoftInputMode="stateVisible"
+            android:configChanges="screenSize|orientation"
+            android:screenOrientation="portrait"/>
 
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
@@ -62,6 +71,7 @@
 
         <activity
             android:name="com.facebook.FacebookActivity"
+            android:screenOrientation="portrait"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:label="@string/app_name"
             android:theme="@android:style/Theme.Translucent.NoTitleBar"
@@ -109,7 +119,8 @@
         </receiver>
         <!-- ./Firebase Notifications -->
         <!-- <activity android:name=".Intro_Activity"></activity> -->
-        <activity android:name=".SplashScreenActivity">
+        <activity android:name=".SplashScreenActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

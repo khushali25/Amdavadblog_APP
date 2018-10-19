@@ -569,20 +569,16 @@ public class MainNavigationActivity extends AppCompatActivity
             if (drawer.isDrawerOpen(GravityCompat.START)) {
                 drawer.closeDrawer(GravityCompat.START);
             }
-//            else if (fragmentCurrent.equals(catInstance)) {
-//                if (catInstance.CategoryId == 100) {
-//                    getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-//                    super.onBackPressed();
-//                } else {
-//                    getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-//                    replaceFragment(catInstance);
-//                    catInstance.CategoryId = 100;
-//                    getSupportActionBar().setTitle("Home");
-//                    txt.setText("Home");
-//                }
-  //          }
+            else if(checkedItem == R.id.home)
+            {
+                finish();
+            }
             else {
-                onNavigationItemSelected(navigationView.getMenu().getItem(0));
+                checkedItem = R.id.home;
+                fragment = new FoldableListFragment(100);
+                getSupportFragmentManager().beginTransaction().setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
+                        .replace(R.id.content_frame, fragment)
+                        .commit();
                 getSupportActionBar().setTitle("Home");
                 txt.setText("Home");
             }
