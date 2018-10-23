@@ -2,18 +2,26 @@ package services;
 
 import android.app.ActivityManager;
 import android.content.Context;
+import android.graphics.Color;
+import android.net.ConnectivityManager;
 import android.os.Looper;
+import android.support.design.widget.Snackbar;
 import android.util.Log;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
 
 import java.util.List;
 
+import static com.facebook.FacebookSdk.getApplicationContext;
+
 public class ListenActivities extends Thread {
     boolean exit = false;
     ActivityManager am = null;
     Context context = null;
+    Snackbar snackbar;
 
     public ListenActivities(Context con) {
         try {

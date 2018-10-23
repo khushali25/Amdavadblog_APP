@@ -2,14 +2,19 @@ package com.example.xps.amdavadblog_app;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.net.ConnectivityManager;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
 import android.webkit.WebBackForwardList;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.ads.AdListener;
@@ -24,35 +29,40 @@ public class BrowserActivity extends AppCompatActivity {
     ImageView imageView;
     android.graphics.drawable.AnimationDrawable animation;
     private WebView webView;
+    Snackbar snackbar;
+    CoordinatorLayout coordinator;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         try {
             super.onCreate(savedInstanceState);
             setContentView(R.layout.activity_browser);
-            android.support.v7.widget.Toolbar toolbar = findViewById(R.id.toolbarbrowser);
-            setSupportActionBar(toolbar);
+            if (isNetworkConnected()) {
+                android.support.v7.widget.Toolbar toolbar = findViewById(R.id.toolbarbrowser);
+                setSupportActionBar(toolbar);
 
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_arrow_back_white_24dp);
+                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+                getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_arrow_back_white_24dp);
+                coordinator = (CoordinatorLayout) findViewById(R.id.coordinator);
+                url = getIntent().getStringExtra("url");
+                txt = findViewById(R.id.toolbartitle);
+                txt.setBackgroundColor(Color.MAGENTA);
 
-            url = getIntent().getStringExtra("url");
-            txt = findViewById(R.id.toolbartitle);
-            txt.setBackgroundColor(Color.MAGENTA);
+                if (android.text.TextUtils.isEmpty(url)) {
+                    finish();
+                }
 
-            if (android.text.TextUtils.isEmpty(url)) {
-                finish();
+                webView = findViewById(R.id.webviewbrowser);
+
+                initWebView();
+
+                webView.loadUrl(url);
+                InitializeAds();
+                getSupportActionBar().setTitle(url);
+                txt.setText(getSupportActionBar().getTitle());
+                txt.setBackgroundResource(R.drawable.browsertoolbartitile);
             }
-            imageView = findViewById(R.id.browserloading);
-            animation = (android.graphics.drawable.AnimationDrawable) imageView.getDrawable();
-            webView = findViewById(R.id.webviewbrowser);
-
-            InitializeAds();
-            initWebView();
-
-            webView.loadUrl(url);
-            getSupportActionBar().setTitle(url);
-            txt.setText(getSupportActionBar().getTitle());
-            txt.setBackgroundResource(R.drawable.browsertoolbartitile);
+            else
+            {snackbarerror();}
         }
         catch (Exception ex)
         {
@@ -90,13 +100,17 @@ public class BrowserActivity extends AppCompatActivity {
     private void initWebView()
     {
         try {
-            MyWebChromeClient client = new MyWebChromeClient(this);
-            webView.setWebViewClient(client);
-            webView.clearCache(true);
-            webView.clearHistory();
-            webView.getSettings().setJavaScriptEnabled(true);
-            webView.setHorizontalScrollBarEnabled(false);
-            webView.getSettings().setLoadWithOverviewMode(true);
+            if(isNetworkConnected()) {
+                MyWebChromeClient client = new MyWebChromeClient(this);
+                webView.setWebViewClient(client);
+                webView.clearCache(true);
+                webView.clearHistory();
+                webView.getSettings().setJavaScriptEnabled(true);
+                webView.setHorizontalScrollBarEnabled(false);
+                webView.getSettings().setLoadWithOverviewMode(true);
+            }
+            else
+            {snackbarerror();}
         }
         catch (Exception ex)
         {
@@ -108,14 +122,18 @@ public class BrowserActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         Bundle param = new Bundle();
         try {
-            param.putString("name", String.valueOf(item.getItemId()));
-            android.support.v4.app.FragmentManager fm = getSupportFragmentManager();
-            android.support.v4.app.FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            switch (item.getItemId()) {
-                case android.R.id.home:
-                    finish();
-                    return true;
+            if(isNetworkConnected()) {
+                param.putString("name", String.valueOf(item.getItemId()));
+                android.support.v4.app.FragmentManager fm = getSupportFragmentManager();
+                android.support.v4.app.FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                switch (item.getItemId()) {
+                    case android.R.id.home:
+                        finish();
+                        return true;
+                }
             }
+            else
+            {snackbarerror();}
         }
         catch (Exception ex)
         {
@@ -126,16 +144,20 @@ public class BrowserActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         try {
-            if (webView.canGoBack()) {
-                WebBackForwardList mWebBackForwardList = webView.copyBackForwardList();
-                String historyUrl = mWebBackForwardList.getItemAtIndex(mWebBackForwardList.getCurrentIndex() - 1).getUrl();
-                getSupportActionBar().setTitle(historyUrl);
-                getSupportActionBar().getTitle();
-                txt.setText(getSupportActionBar().getTitle());
-                txt.setBackgroundResource(R.drawable.browsertoolbartitile);
-                webView.goBack();
-            } else
-                super.onBackPressed();
+            if(isNetworkConnected()) {
+                if (webView.canGoBack()) {
+                    WebBackForwardList mWebBackForwardList = webView.copyBackForwardList();
+                    String historyUrl = mWebBackForwardList.getItemAtIndex(mWebBackForwardList.getCurrentIndex() - 1).getUrl();
+                    getSupportActionBar().setTitle(historyUrl);
+                    getSupportActionBar().getTitle();
+                    txt.setText(getSupportActionBar().getTitle());
+                    txt.setBackgroundResource(R.drawable.browsertoolbartitile);
+                    webView.goBack();
+                } else
+                    super.onBackPressed();
+            }
+            else
+            {snackbarerror();}
         }
         catch (Exception ex)
         {
@@ -222,6 +244,42 @@ public class BrowserActivity extends AppCompatActivity {
         {
             // Wow!  Something really interesting must have occurred!
             // Do something...
+        }
+    }
+    private boolean isNetworkConnected() {
+        ConnectivityManager cm = null;
+        try {
+            cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        }
+        catch(Exception ex)
+        {
+            Crashlytics.logException(ex);
+        }
+        return cm.getActiveNetworkInfo() != null;
+    }
+    public void snackbarerror()
+    {
+        try {
+            snackbar = Snackbar
+                    .make(coordinator, "No internet connection!", Snackbar.LENGTH_INDEFINITE)
+                    .setAction("RETRY", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            if (isNetworkConnected())
+                                snackbar.dismiss();
+                            else
+                                snackbarerror();
+                        }
+                    });
+            snackbar.setActionTextColor(Color.RED);
+            View sbView = snackbar.getView();
+            TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
+            textView.setTextColor(Color.YELLOW);
+            snackbar.show();
+        }
+        catch(Exception ex)
+        {
+            Crashlytics.logException(ex);
         }
     }
 }

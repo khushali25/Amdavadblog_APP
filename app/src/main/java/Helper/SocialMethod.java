@@ -1,10 +1,14 @@
 package Helper;
 
 import android.app.AlertDialog;
+import android.app.Application;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
+import android.net.ConnectivityManager;
+import android.support.design.widget.Snackbar;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.LayoutInflater;
@@ -27,20 +31,25 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import static android.support.constraint.Constraints.TAG;
 import static com.facebook.FacebookSdk.getApplicationContext;
 
-public class SocialMethod {
+public class SocialMethod  {
+    static Snackbar snackbar;
+
     public static void showRateApp(Context con) {
         try {
-            Intent intent = new Intent(Intent.ACTION_VIEW);
-            //Try Google play
-            intent.setData(android.net.Uri.parse("market://details?id=com.cubeactive.qnotelistfree"));
-            if (!MyStartActivity(intent, con)) {
-                //Market (Google play) app seems not installed, let's try to open a webbrowser
-                intent.setData(android.net.Uri.parse("https://play.google.com/store/apps/details?[Id]"));
+            if(isNetworkConnected()) {
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                //Try Google play
+                intent.setData(android.net.Uri.parse("market://details?id=com.cubeactive.qnotelistfree"));
                 if (!MyStartActivity(intent, con)) {
-                    //Well if this also fails, we have run out of options, inform the user.
-                    Toast.makeText(con, "Could not open Android market, please install the market app.", Toast.LENGTH_LONG).show();
+                    //Market (Google play) app seems not installed, let's try to open a webbrowser
+                    intent.setData(android.net.Uri.parse("https://play.google.com/store/apps/details?[Id]"));
+                    if (!MyStartActivity(intent, con)) {
+                        //Well if this also fails, we have run out of options, inform the user.
+                        Toast.makeText(con, "Could not open Android market, please install the market app.", Toast.LENGTH_LONG).show();
+                    }
                 }
             }
+            else{snackbarerror();}
         }
         catch(Exception ex)
         {
@@ -58,16 +67,20 @@ public class SocialMethod {
     }
     public static void showFeedback(Context context) {
         try {
-            Intent emailIntent = new Intent(Intent.ACTION_SENDTO);
-            emailIntent.setData(android.net.Uri.parse("mailto:"));
-            emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{"amdavadblogs@gmail.com"});
-            emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Amdavad Blog Feedback");
-            try {
-                context.startActivity(Intent.createChooser(emailIntent, "Send mail..."));
-            } catch (ActivityNotFoundException ex) {
-                Crashlytics.logException(ex);
-                Toast.makeText(context, "There is no email client installed.", Toast.LENGTH_LONG).show();
+            if(isNetworkConnected()) {
+                Intent emailIntent = new Intent(Intent.ACTION_SENDTO);
+                emailIntent.setData(android.net.Uri.parse("mailto:"));
+                emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{"amdavadblogs@gmail.com"});
+                emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Amdavad Blog Feedback");
+                try {
+                    context.startActivity(Intent.createChooser(emailIntent, "Send mail..."));
+                } catch (ActivityNotFoundException ex) {
+                    Crashlytics.logException(ex);
+                    Toast.makeText(context, "There is no email client installed.", Toast.LENGTH_LONG).show();
+                }
             }
+            else
+            {snackbarerror();}
         }
         catch (Exception e)
         {
@@ -77,11 +90,14 @@ public class SocialMethod {
     }
     public static void shareIt(Context context) {
         try {
-            Intent sharingIntent = new Intent(Intent.ACTION_SEND);
-            sharingIntent.setType("text/plain");
-            sharingIntent.putExtra(Intent.EXTRA_SUBJECT, "Amdavad Blogs");
-            sharingIntent.putExtra(Intent.EXTRA_TEXT, "Now follow latest blogs with Amdavad Blog click here to visit https://amdavadblog.com/");
-            context.startActivity(Intent.createChooser(sharingIntent, "Share via"));
+            if (isNetworkConnected()) {
+                Intent sharingIntent = new Intent(Intent.ACTION_SEND);
+                sharingIntent.setType("text/plain");
+                sharingIntent.putExtra(Intent.EXTRA_SUBJECT, "Amdavad Blogs");
+                sharingIntent.putExtra(Intent.EXTRA_TEXT, "Now follow latest blogs with Amdavad Blog click here to visit https://amdavadblog.com/");
+                context.startActivity(Intent.createChooser(sharingIntent, "Share via"));
+            }
+            else {snackbarerror();}
         }
         catch (Exception e)
         {
@@ -92,79 +108,79 @@ public class SocialMethod {
     public static void showSubscription(final Context context) {
         final AlertDialog alertDialog;
 
-            final Subscribe subscribe = new Subscribe();
-            Retrofit retrofitallpost = new Retrofit.Builder()
-                    .baseUrl("http://192.168.1.5:3000/amdblog/")
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .addCallAdapterFactory(SynchronousCallAdapterFactory.create())
-                    .build();
-            final ApiService apiService = retrofitallpost.create(ApiService.class);
+                final Subscribe subscribe = new Subscribe();
+                Retrofit retrofitallpost = new Retrofit.Builder()
+                        .baseUrl("http://192.168.1.5:3000/amdblog/")
+                        .addConverterFactory(GsonConverterFactory.create())
+                        .addCallAdapterFactory(SynchronousCallAdapterFactory.create())
+                        .build();
+                final ApiService apiService = retrofitallpost.create(ApiService.class);
 
-            LayoutInflater layoutinflater = LayoutInflater.from(context);
-            final View promptView = layoutinflater.inflate(R.layout.subscriptionview, null);
-            alertDialog = new AlertDialog.Builder(context)
-                    .setView(promptView)
-                    .setTitle("Subsribe")
-                    .setPositiveButton("Subscribe", null)
-                    .setNegativeButton("Cancel", null)
-                    .create();
+                LayoutInflater layoutinflater = LayoutInflater.from(context);
+                final View promptView = layoutinflater.inflate(R.layout.subscriptionview, null);
+                alertDialog = new AlertDialog.Builder(context)
+                        .setView(promptView)
+                        .setTitle("Subsribe")
+                        .setPositiveButton("Subscribe", null)
+                        .setNegativeButton("Cancel", null)
+                        .create();
 
-            alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
-                @Override
-                public void onShow(DialogInterface dialog) {
+                alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+                    @Override
+                    public void onShow(DialogInterface dialog) {
 
-                    Button buttonPositive = ((AlertDialog) dialog).getButton(DialogInterface.BUTTON_POSITIVE);
-                    buttonPositive.setOnClickListener(new View.OnClickListener() {
+                        Button buttonPositive = ((AlertDialog) dialog).getButton(DialogInterface.BUTTON_POSITIVE);
+                        buttonPositive.setOnClickListener(new View.OnClickListener() {
 
-                        @Override
-                        public void onClick(View view) {
-                            EditText userEmail = promptView.findViewById(R.id.emailid);
-                            TextView showResult = (TextView) promptView.findViewById(R.id.result);
-                            final String userValue = userEmail.getText().toString();
-                            boolean emailResult = isValidEmail(userValue);
-                            if (userValue.equals("")) {
-                                try {
-                                    showResult.setText("Please enter email id");
+                            @Override
+                            public void onClick(View view) {
+                                EditText userEmail = promptView.findViewById(R.id.emailid);
+                                TextView showResult = (TextView) promptView.findViewById(R.id.result);
+                                final String userValue = userEmail.getText().toString();
+                                boolean emailResult = isValidEmail(userValue);
+                                if (userValue.equals("")) {
+                                    try {
+                                        showResult.setText("Please enter email id");
+                                        showResult.setVisibility(View.VISIBLE);
+                                    } catch (Exception ex) {
+                                        Crashlytics.logException(ex);
+                                        new Error(ex.getMessage());
+                                    }
+                                } else if (emailResult == false) {
                                     showResult.setVisibility(View.VISIBLE);
-                                } catch (Exception ex) {
-                                    Crashlytics.logException(ex);
-                                    new Error(ex.getMessage());
+                                    showResult.setText("Please enter valid email address");
+                                } else {
+
+                                    Call<Subscribe> call = apiService.saveSubscriberEmail(userValue);
+                                    call.enqueue(new Callback<Subscribe>() {
+                                        @Override
+                                        public void onResponse(Call<Subscribe> call, Response<Subscribe> response) {
+                                            Toast.makeText(getApplicationContext(), "Thank you for subscribe", Toast.LENGTH_LONG).show();
+                                            Log.e(TAG, "Success");
+                                        }
+
+                                        @Override
+                                        public void onFailure(Call<Subscribe> call, Throwable t) {
+                                            Crashlytics.logException(t);
+                                            Log.e(TAG, "Fail" + t);
+                                        }
+                                    });
+                                    PrefService ap = new PrefService(context);
+                                    ap.saveAccessKey("subscribe", userValue);
+                                    showResult.setVisibility(View.INVISIBLE);
+                                    alertDialog.dismiss();
                                 }
-                            } else if (emailResult == false) {
-                                showResult.setVisibility(View.VISIBLE);
-                                showResult.setText("Please enter valid email address");
-                            } else {
-
-                                Call<Subscribe> call = apiService.saveSubscriberEmail(userValue);
-                                call.enqueue(new Callback<Subscribe>() {
-                                    @Override
-                                    public void onResponse(Call<Subscribe> call, Response<Subscribe> response) {
-                                        Toast.makeText(getApplicationContext(), "Thank you for subscribe", Toast.LENGTH_LONG).show();
-                                        Log.e(TAG, "Success");
-                                    }
-
-                                    @Override
-                                    public void onFailure(Call<Subscribe> call, Throwable t) {
-                                        Crashlytics.logException(t);
-                                        Log.e(TAG, "Fail" + t);
-                                    }
-                                });
-                                PrefService ap = new PrefService(context);
-                                ap.saveAccessKey("subscribe", userValue);
-                                showResult.setVisibility(View.INVISIBLE);
+                            }
+                        });
+                        Button buttonNegative = ((AlertDialog) dialog).getButton(DialogInterface.BUTTON_NEGATIVE);
+                        buttonNegative.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
                                 alertDialog.dismiss();
                             }
-                        }
-                    });
-                    Button buttonNegative = ((AlertDialog) dialog).getButton(DialogInterface.BUTTON_NEGATIVE);
-                    buttonNegative.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            alertDialog.dismiss();
-                        }
-                    });
-                }
-            });
+                        });
+                    }
+                });
 
         alertDialog.show();
     }
@@ -173,6 +189,7 @@ public class SocialMethod {
     }
     public static void alreadySubscribed(final Context context) {
         try {
+
             LayoutInflater layoutinflater = LayoutInflater.from(context);
             final AlertDialog alertDialog = new AlertDialog.Builder(context)
                     .setTitle("You have already been subscribed..!")
@@ -195,6 +212,45 @@ public class SocialMethod {
         catch (Exception e)
         {
             Crashlytics.logException(e);
+        }
+    }
+    private static boolean isNetworkConnected() {
+        ConnectivityManager cm = null;
+        try {
+            cm = (ConnectivityManager)getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        }
+        catch(Exception ex)
+        {
+            Crashlytics.logException(ex);
+        }
+        return cm.getActiveNetworkInfo() != null;
+    }
+    public static void snackbarerror()
+    {
+        try {
+            View snackbarView = snackbar.getView();
+           // Context context = SocialMethod.getAppContext();
+            snackbar = Snackbar
+                    .make(snackbarView, "No internet connection!", Snackbar.LENGTH_INDEFINITE)
+                    .setAction("RETRY", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            if (isNetworkConnected())
+                                snackbar.dismiss();
+
+                            else
+                                snackbarerror();
+                        }
+                    });
+            snackbar.setActionTextColor(Color.RED);
+            View sbView = snackbar.getView();
+            TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
+            textView.setTextColor(Color.YELLOW);
+            snackbar.show();
+        }
+        catch(Exception ex)
+        {
+            Crashlytics.logException(ex);
         }
     }
 }

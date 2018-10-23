@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:local="http://schemas.android.com/apk/res-auto"
+    xmlns:components="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#ffffff">
     <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
+        android:id="@+id/coordinator"
         android:layout_height="match_parent"
         android:fitsSystemWindows="true">
         <android.support.design.widget.AppBarLayout
@@ -41,6 +43,7 @@
             android:layout_height="match_parent"
             android:layout_marginTop="50dp"
             android:background="#ffffff">
+
             <android.webkit.WebView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -48,11 +51,14 @@
                 android:layout_marginTop="20dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp" />
-            <ImageView
-                android:id="@+id/browserloading"
-                android:layout_width="match_parent"
+            <Helper.GifView
+                android:id="@+id/loadinggifbrowser"
+                android:layout_width="230dp"
+                android:layout_height="250dp"
+                components:src="@drawable/loadinggif"
+                android:layout_centerInParent="true"
                 android:layout_gravity="center_horizontal"
-                android:layout_height="100dp" />
+                />
         </LinearLayout>
         <RelativeLayout
             android:id="@+id/footer"

@@ -5,7 +5,12 @@ import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.ActivityManager;
 import android.content.Context;
+import android.graphics.Color;
+import android.net.ConnectivityManager;
 import android.os.Build;
+import android.support.design.widget.Snackbar;
+import android.view.View;
+import android.widget.TextView;
 
 import com.crashlytics.android.Crashlytics;
 import com.google.firebase.crash.FirebaseCrash;
@@ -67,12 +72,12 @@ public class CacheService {
     private static final int REQUEST = 112;
     static Context context;
     static ActivityManager am = null;
+    static Snackbar snackbar;
 
     public static Context getContext() {
         //  return instance.getApplicationContext();
         return context;
     }
-
     static Retrofit retrofitallpost = new Retrofit.Builder()
             .baseUrl("http://api.amdavadblog.com/amdblog/")
             .addConverterFactory(GsonConverterFactory.create())
@@ -83,65 +88,68 @@ public class CacheService {
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public static List GetAllPostnew(boolean isForce, final int page) throws IOException {
         try {
-            Call<StartJsonDataClass> call = null;
-            context = getApplicationContext();
+            if(isNetworkConnected()) {
+                Call<StartJsonDataClass> call = null;
+                context = getApplicationContext();
 
-            final ApiService apiService = retrofitallpost.create(ApiService.class);
-            final String filePath = AppConstants.getPostsCacheFilePath();
+                final ApiService apiService = retrofitallpost.create(ApiService.class);
+                final String filePath = AppConstants.getPostsCacheFilePath();
 
-            if (!IsRequiredToReadFromCache(filePath) || isForce) {
-                call = apiService.getAllPostPerPage(page);
-                Response<StartJsonDataClass> response = null;
-                try {
-                    response = call.execute();
-                } catch (IOException e) {
-                    Crashlytics.logException(e);
-                    e.printStackTrace();
-                }
-                if (response.isSuccessful()) {
-                    // Toast.makeText(this, "server returned so many repositories: " + response.body().size(), Toast.LENGTH_SHORT).show();
-                    // todo display the data instead of just a toast
-                    if (page == 1) {
-                        AllPost = response.body().getData();
-
-                    } else {
-                        currentPost = response.body().getData();
-                        AllPost.addAll(currentPost);
-                        if (currentPost.size() < 10 || currentPost.isEmpty()) {
-                            reachedMax = true;
-                        }
-                    }
-                } else {
-                }
-                Gson gsonBuilder = new GsonBuilder().create();
-                String jsonFromJavaArrayList = gsonBuilder.toJson(currentPost);
-                String json = jsonFromJavaArrayList;
-                if (page == 1) {
+                if (!IsRequiredToReadFromCache(filePath) || isForce) {
+                    call = apiService.getAllPostPerPage(page);
+                    Response<StartJsonDataClass> response = null;
                     try {
-                        SaveData(filePath, gsonBuilder.toJson(AllPost));
-
+                        response = call.execute();
                     } catch (IOException e) {
                         Crashlytics.logException(e);
                         e.printStackTrace();
                     }
-                } else {
-                    if (json.length() > 5)
+                    if (response.isSuccessful()) {
+                        // Toast.makeText(this, "server returned so many repositories: " + response.body().size(), Toast.LENGTH_SHORT).show();
+                        // todo display the data instead of just a toast
+                        if (page == 1) {
+                            AllPost = response.body().getData();
 
+                        } else {
+                            currentPost = response.body().getData();
+                            AllPost.addAll(currentPost);
+                            if (currentPost.size() < 10 || currentPost.isEmpty()) {
+                                reachedMax = true;
+                            }
+                        }
+                    } else {
+                    }
+                    Gson gsonBuilder = new GsonBuilder().create();
+                    String jsonFromJavaArrayList = gsonBuilder.toJson(currentPost);
+                    String json = jsonFromJavaArrayList;
+                    if (page == 1) {
                         try {
-                            AppendData(filePath, json);
+                            SaveData(filePath, gsonBuilder.toJson(AllPost));
+
                         } catch (IOException e) {
                             Crashlytics.logException(e);
                             e.printStackTrace();
                         }
-                }
+                    } else {
+                        if (json.length() > 5)
 
-            } else {
-                String json = GetData(filePath);
-                Gson gson = new Gson();
-                Type listType = new TypeToken<ArrayList<Post>>() {
-                }.getType();
-                AllPost = new Gson().fromJson(json, listType);
+                            try {
+                                AppendData(filePath, json);
+                            } catch (IOException e) {
+                                Crashlytics.logException(e);
+                                e.printStackTrace();
+                            }
+                    }
+
+                } else {
+                    String json = GetData(filePath);
+                    Gson gson = new Gson();
+                    Type listType = new TypeToken<ArrayList<Post>>() {
+                    }.getType();
+                    AllPost = new Gson().fromJson(json, listType);
+                }
             }
+            else {snackbarerror();}
         }
         catch (IOException e) {
             Crashlytics.logException(e);
@@ -151,65 +159,68 @@ public class CacheService {
     }
     public static List GetPostByCategoryId(int page, int categoryId, boolean b) throws IOException {
         try {
-            Call<StartJsonDataClass> call = null;
-            context = getApplicationContext();
+            if (isNetworkConnected()) {
+                Call<StartJsonDataClass> call = null;
+                context = getApplicationContext();
 
-            final ApiService apiService = retrofitallpost.create(ApiService.class);
-            final String filePath = AppConstants.getPostsCacheFilePathByCategory(categoryId);
+                final ApiService apiService = retrofitallpost.create(ApiService.class);
+                final String filePath = AppConstants.getPostsCacheFilePathByCategory(categoryId);
 
-            if (!IsRequiredToReadFromCache(filePath) || b) {
-                call = apiService.getAllPostByCategoryId(page, categoryId);
-                Response<StartJsonDataClass> response = null;
-                try {
-                    response = call.execute();
-                } catch (IOException e) {
-                    Crashlytics.logException(e);
-                    e.printStackTrace();
-                }
-                if (response.isSuccessful()) {
-                    // Toast.makeText(this, "server returned so many repositories: " + response.body().size(), Toast.LENGTH_SHORT).show();
-                    // todo display the data instead of just a toast
-                    if (page == 1) {
-                        AllPost = response.body().getData();
-
-                    } else {
-                        currentPost = response.body().getData();
-                        AllPost.addAll(currentPost);
-                        if (currentPost.size() < 10 || currentPost.isEmpty()) {
-                            reachedMax = true;
-                        }
-                    }
-                } else {
-                }
-                Gson gsonBuilder = new GsonBuilder().create();
-                String jsonFromJavaArrayList = gsonBuilder.toJson(currentPost);
-                String json = jsonFromJavaArrayList;
-                if (page == 1) {
+                if (!IsRequiredToReadFromCache(filePath) || b) {
+                    call = apiService.getAllPostByCategoryId(page, categoryId);
+                    Response<StartJsonDataClass> response = null;
                     try {
-                        SaveData(filePath, gsonBuilder.toJson(AllPost));
-
+                        response = call.execute();
                     } catch (IOException e) {
                         Crashlytics.logException(e);
                         e.printStackTrace();
                     }
-                } else {
-                    if (json.length() > 5)
+                    if (response.isSuccessful()) {
+                        // Toast.makeText(this, "server returned so many repositories: " + response.body().size(), Toast.LENGTH_SHORT).show();
+                        // todo display the data instead of just a toast
+                        if (page == 1) {
+                            AllPost = response.body().getData();
 
+                        } else {
+                            currentPost = response.body().getData();
+                            AllPost.addAll(currentPost);
+                            if (currentPost.size() < 10 || currentPost.isEmpty()) {
+                                reachedMax = true;
+                            }
+                        }
+                    } else {
+                    }
+                    Gson gsonBuilder = new GsonBuilder().create();
+                    String jsonFromJavaArrayList = gsonBuilder.toJson(currentPost);
+                    String json = jsonFromJavaArrayList;
+                    if (page == 1) {
                         try {
-                            AppendData(filePath, json);
+                            SaveData(filePath, gsonBuilder.toJson(AllPost));
+
                         } catch (IOException e) {
                             Crashlytics.logException(e);
                             e.printStackTrace();
                         }
-                }
+                    } else {
+                        if (json.length() > 5)
 
-            } else {
-                String json = GetData(filePath);
-                Gson gson = new Gson();
-                Type listType = new TypeToken<ArrayList<Post>>() {
-                }.getType();
-                AllPost = new Gson().fromJson(json, listType);
+                            try {
+                                AppendData(filePath, json);
+                            } catch (IOException e) {
+                                Crashlytics.logException(e);
+                                e.printStackTrace();
+                            }
+                    }
+
+                } else {
+                    String json = GetData(filePath);
+                    Gson gson = new Gson();
+                    Type listType = new TypeToken<ArrayList<Post>>() {
+                    }.getType();
+                    AllPost = new Gson().fromJson(json, listType);
+                }
             }
+            else{snackbarerror();}
         }
         catch (IOException e) {
             Crashlytics.logException(e);
@@ -221,10 +232,9 @@ public class CacheService {
     @SuppressLint("NewApi")
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private static String GetData(String filePath) throws IOException {
-
-        BufferedReader br = new BufferedReader(new FileReader(filePath));
-
-            StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder();
+        if(isNetworkConnected()) {
+            BufferedReader br = new BufferedReader(new FileReader(filePath));
             String line = br.readLine();
 
             while (line != null) {
@@ -232,60 +242,58 @@ public class CacheService {
                 sb.append("\n");
                 line = br.readLine();
             }
+        }
+        else
+        {snackbarerror();}
             return sb.toString();
     }
 
     @SuppressLint("NewApi")
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private static void AppendData(String filePath, String json) throws IOException {
-        try
-        {
-        String content2 = "";
-        int size = (int) filePath.length();
-        byte[] bytes = new byte[size];
         try {
-            BufferedInputStream buf = new BufferedInputStream(new FileInputStream(filePath));
-            buf.read(bytes, 0, bytes.length);
-            buf.close();
-            content2 = buf.toString();
-        } catch (FileNotFoundException e) {
-            // TODO Auto-generated catch block
-            Crashlytics.logException(e);
-            e.printStackTrace();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            Crashlytics.logException(e);
-            e.printStackTrace();
-        }
+            if (isNetworkConnected()) {
+                String content2 = "";
+                int size = (int) filePath.length();
+                byte[] bytes = new byte[size];
+                try {
+                    BufferedInputStream buf = new BufferedInputStream(new FileInputStream(filePath));
+                    buf.read(bytes, 0, bytes.length);
+                    buf.close();
+                    content2 = buf.toString();
+                } catch (FileNotFoundException e) {
+                    // TODO Auto-generated catch block
+                    Crashlytics.logException(e);
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    Crashlytics.logException(e);
+                    e.printStackTrace();
+                }
 
-        content2 = content2.replace("]", ",");
-        json = json.substring(1);
-        String finalData = content2 + json;
-        if ((new File(filePath)).isFile()) {
-            (new File(filePath)).delete();
-        }
-//        Files.write(Paths.get(filePath), finalData.getBytes());
-//
-//        BasicFileAttributes attr = null;
-//
-//            attr = Files.readAttributes(Paths.get(filePath), BasicFileAttributes.class);
-        // BasicFileAttributes attr = Files.readAttributes(file, BasicFileAttributes.class);
-        OutputStreamWriter outputStreamWriter = new OutputStreamWriter(context.openFileOutput("config.txt", Context.MODE_PRIVATE));
-        outputStreamWriter.write(finalData);
-        outputStreamWriter.close();
+                content2 = content2.replace("]", ",");
+                json = json.substring(1);
+                String finalData = content2 + json;
+                if ((new File(filePath)).isFile()) {
+                    (new File(filePath)).delete();
+                }
+                OutputStreamWriter outputStreamWriter = new OutputStreamWriter(context.openFileOutput("config.txt", Context.MODE_PRIVATE));
+                outputStreamWriter.write(finalData);
+                outputStreamWriter.close();
 
-            DateFormat dt = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
-            Date date = new Date();
-            String d =dt.format(date).toString();
+                DateFormat dt = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
+                Date date = new Date();
+                String d = dt.format(date).toString();
 
-            File dir = new File("E:\\");
-            File f = new File(filePath+d);
-            if(f.createNewFile())
-            {
-                System.out.println("file creates");
-            }
+                File dir = new File("E:\\");
+                File f = new File(filePath + d);
+                if (f.createNewFile()) {
+                    System.out.println("file creates");
+                }
 
-    } catch (IOException e) {
+            }else
+            {snackbarerror();}
+        }catch (IOException e) {
         Crashlytics.logException(e);
         System.out.println("error! " + e.getMessage());
     }
@@ -296,25 +304,28 @@ public class CacheService {
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private static void SaveData(String filePath, String json) throws IOException {
         try {
-        if ((new File(filePath)).isFile()) {
-            (new File(filePath)).delete();
-        }
-            BufferedWriter writer = new BufferedWriter(new FileWriter(filePath));
-            writer.write(json);
-            writer.close();
+            if (isNetworkConnected()) {
+                if ((new File(filePath)).isFile()) {
+                    (new File(filePath)).delete();
+                }
+                BufferedWriter writer = new BufferedWriter(new FileWriter(filePath));
+                writer.write(json);
+                writer.close();
 
-            DateFormat dt = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
-            Date date = new Date();
-            String d =dt.format(date).toString();
+                DateFormat dt = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
+                Date date = new Date();
+                String d = dt.format(date).toString();
 
-            File dir = new File("E:\\");
-            File f = new File(filePath+d);
-            if(f.createNewFile())
-            {
-                System.out.println("file creates");
+                File dir = new File("E:\\");
+                File f = new File(filePath + d);
+                if (f.createNewFile()) {
+                    System.out.println("file creates");
+                }
+
             }
-
-        } catch (IOException e) {
+            else
+            {snackbarerror();}
+        }catch (IOException e) {
             Crashlytics.logException(e);
             System.out.println("error! " + e.getMessage());
         }
@@ -327,19 +338,23 @@ public class CacheService {
         int frequency = 1;
         boolean result = false;
         try {
-            if ((new File(filePath)).isFile()) {
+            if(isNetworkConnected()) {
+                if ((new File(filePath)).isFile()) {
                     File f = new File(filePath);
                     Date date = new Date();
                     Date filedate = new Date(f.lastModified());
 
-                long diff = new Date().getTime() - filedate.getTime();
-                long seconds = diff / 1000;
-                long minutes = seconds / 60;
+                    long diff = new Date().getTime() - filedate.getTime();
+                    long seconds = diff / 1000;
+                    long minutes = seconds / 60;
 
                     if (minutes < frequency) {
                         return true;            //read from cache
                     }
+                }
             }
+            else
+            {snackbarerror();}
         }
           catch(Exception ex)
             {
@@ -349,4 +364,42 @@ public class CacheService {
             return result;
 //
     }
+    private static boolean isNetworkConnected() {
+        ConnectivityManager cm = null;
+        try {
+            cm = (ConnectivityManager)getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        }
+        catch(Exception ex)
+        {
+            Crashlytics.logException(ex);
+        }
+        return cm.getActiveNetworkInfo() != null;
     }
+    public static void snackbarerror()
+    {
+        try {
+            View snackbarView = snackbar.getView();
+            // Context context = SocialMethod.getAppContext();
+            snackbar = Snackbar
+                    .make(snackbarView, "No internet connection!", Snackbar.LENGTH_INDEFINITE)
+                    .setAction("RETRY", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            if (isNetworkConnected())
+                                snackbar.dismiss();
+                            else
+                                snackbarerror();
+                        }
+                    });
+            snackbar.setActionTextColor(Color.RED);
+            View sbView = snackbar.getView();
+            TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
+            textView.setTextColor(Color.YELLOW);
+            snackbar.show();
+        }
+        catch(Exception ex)
+        {
+            Crashlytics.logException(ex);
+        }
+    }
+ }

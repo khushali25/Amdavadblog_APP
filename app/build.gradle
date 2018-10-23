@@ -3,6 +3,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'io.fabric'
 
 android {
+
     compileSdkVersion 28
     defaultConfig {
         applicationId "com.example.xps.amdavadblog_app"
@@ -19,8 +20,8 @@ android {
     buildTypes {
         release {
             //Enable the proguard
-            minifyEnabled true
-            shrinkResources true
+            minifyEnabled false
+            //shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), "proguard-rules.pro"
             debuggable true
         }

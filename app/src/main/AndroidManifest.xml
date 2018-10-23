@@ -21,7 +21,6 @@
         android:allowBackup="true"
         android:debuggable="true"
         android:icon="@drawable/ic_launcher"
-
         android:label="Amdavad Blog"
         android:supportsRtl="true"
         android:theme="@style/MyBaseTheme"
@@ -33,7 +32,6 @@
         <activity
             android:name=".MainNavigationActivity"
             android:screenOrientation="portrait"
-            android:hardwareAccelerated="false"
             android:launchMode="singleTop">
 
             <!-- <intent-filter> -->

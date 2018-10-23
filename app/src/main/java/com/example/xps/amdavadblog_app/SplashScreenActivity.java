@@ -226,6 +226,7 @@ public class SplashScreenActivity extends AppCompatActivity implements ActivityC
                     ActivityCompat.requestPermissions(this, PERMISSIONS, REQUEST);
                 } else {
                     //do here
+
                     getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                             WindowManager.LayoutParams.FLAG_FULLSCREEN);
                     setContentView(R.layout.activity_splash_screen);
@@ -381,5 +382,27 @@ public class SplashScreenActivity extends AppCompatActivity implements ActivityC
         {
 
         }
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        try {
+//            if(isNetworkConnected()) {
+                super.onActivityResult(requestCode, resultCode, data);
+                //callbackManager.onActivityResult(requestCode, resultCode, data);
+                if (requestCode == 1) {
+                    SharedPreferences settings = getSharedPreferences("prefs", 0);
+                    SharedPreferences.Editor editor = settings.edit();
+                    editor.putBoolean("firstRun", false);
+                    editor.commit();
+                }
+//            }
+//            else
+//                snackbarerror();
+        }
+        catch(Exception ex)
+        {
+            Crashlytics.logException(ex);
+        }
+        Log.e("data", data.toString());
     }
 }

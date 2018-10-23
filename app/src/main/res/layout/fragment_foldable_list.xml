@@ -2,6 +2,7 @@
 
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:local="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/framelayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:components="http://schemas.android.com/tools"
@@ -21,11 +22,11 @@
             <!--android:layout_height="100dp" />-->
     <Helper.GifView
         android:id="@+id/loadinggif"
-        android:layout_width="180dp"
-        android:layout_height="300dp"
+        android:layout_width="230dp"
+        android:layout_height="250dp"
         components:src="@drawable/loadinggif"
         android:layout_centerInParent="true"
-        android:layout_gravity="center"
+        android:layout_gravity="center_horizontal"
         />
 
         <com.alexvasilkov.foldablelayout.FoldableListLayout

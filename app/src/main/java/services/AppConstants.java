@@ -3,12 +3,17 @@ package services;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.graphics.Color;
+import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.os.StrictMode;
 import android.support.annotation.RequiresApi;
+import android.support.design.widget.Snackbar;
 import android.support.v4.content.FileProvider;
+import android.view.View;
+import android.widget.TextView;
 
 import com.crashlytics.android.Crashlytics;
 import com.example.xps.amdavadblog_app.BuildConfig;
@@ -28,6 +33,8 @@ public class AppConstants
     static String PostsCacheFilePath;
     StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
     static Context context;
+    static Snackbar snackbar;
+
     public enum CacheType
     {
         Category,
@@ -101,6 +108,43 @@ public class AppConstants
         }
         return main.getPath();
     }
-
+    private static boolean isNetworkConnected() {
+        ConnectivityManager cm = null;
+        try {
+            cm = (ConnectivityManager)getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        }
+        catch(Exception ex)
+        {
+            Crashlytics.logException(ex);
+        }
+        return cm.getActiveNetworkInfo() != null;
+    }
+    public static void snackbarerror()
+    {
+        try {
+            View snackbarView = snackbar.getView();
+            // Context context = SocialMethod.getAppContext();
+            snackbar = Snackbar
+                    .make(snackbarView, "No internet connection!", Snackbar.LENGTH_INDEFINITE)
+                    .setAction("RETRY", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            if (isNetworkConnected())
+                                snackbar.dismiss();
+                            else
+                                snackbarerror();
+                        }
+                    });
+            snackbar.setActionTextColor(Color.RED);
+            View sbView = snackbar.getView();
+            TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
+            textView.setTextColor(Color.YELLOW);
+            snackbar.show();
+        }
+        catch(Exception ex)
+        {
+            Crashlytics.logException(ex);
+        }
+    }
 
 }

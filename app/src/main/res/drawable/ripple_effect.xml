@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--<ripple xmlns:android="http://schemas.android.com/apk/res/android"-->
+    <!--xmlns:tools="http://schemas.android.com/tools"-->
+    <!--android:color="@color/colorAccent"-->
+    <!--tools:targetApi="lollipop">-->
+    <!--<item android:id="@android:id/mask">-->
+        <!--<shape android:shape="rectangle">-->
+            <!--<solid android:color="@color/colorAccent" />-->
+        <!--</shape>-->
+    <!--</item>-->
+<!--</ripple>-->
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:color="?android:colorControlHighlight"
+    tools:targetApi="lollipop">
+    <item
+        android:id="@+id/mask"
+        android:drawable="@color/colorTransparent" />
+</ripple>
+<!--<selector xmlns:android="http://schemas.android.com/apk/res/android">-->
+    <!--<item android:drawable="@drawable/button_pressed"-->
+        <!--android:state_pressed="true" />-->
+    <!--<item android:drawable="@drawable/button_focused"-->
+        <!--android:state_focused="true" />-->
+    <!--<item android:drawable="@drawable/button_normal" />-->
+<!--</selector>-->
