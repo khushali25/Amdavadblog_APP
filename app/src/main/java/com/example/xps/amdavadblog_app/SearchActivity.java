@@ -137,7 +137,6 @@ public class SearchActivity extends AppCompatActivity {
             {snackbarerror();}
         }catch (Exception exx) {
             Crashlytics.logException(exx);
-            // Log.ERROR("Initialize UI failed", exx.getMessage());
         }
         try {
             if (isNetworkConnected()) {
@@ -205,22 +204,9 @@ public class SearchActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-
     private class loadingsearch extends AsyncTask<Void, Void, Void> {
         Call<List<PostSearch>> call = null;
         ApiService apiService;
-//        @Override
-//        protected void onPreExecute() {
-//            try {
-//                foldableListLayout.setVisibility(View.GONE);
-//
-//                //adView.resume();
-//            } catch (Exception e) {
-//                Crashlytics.logException(e);
-//                e.printStackTrace();
-//            }
-//        }
-
         @Override
         protected Void doInBackground(Void... voids) {
             if(isNetworkConnected()) {
@@ -277,9 +263,7 @@ public class SearchActivity extends AppCompatActivity {
                                     txtnotfound.setVisibility(View.VISIBLE);
                                     gifView.setVisibility(View.GONE);
                                 }
-                                //  postContentAdapter.setData1(response.body());
                             }
-                            // return null;
                         }
 
                         @Override
@@ -287,12 +271,6 @@ public class SearchActivity extends AppCompatActivity {
                             Crashlytics.logException(t);
                         }
                     });
-                    // foldableListLayout.setVisibility(View.VISIBLE);
-                    // postContentAdapter.setData1(response.body());
-                    // postContentAdapter.notifyDataSetChanged();
-                    // gifView.setVisibility(View.GONE);
-
-                    //adView.resume();
                 }
                 else
                 {snackbarerror();}
@@ -300,7 +278,6 @@ public class SearchActivity extends AppCompatActivity {
                 Crashlytics.logException(e);
                 e.printStackTrace();
             }
-
         }
     }
     private boolean isNetworkConnected() {

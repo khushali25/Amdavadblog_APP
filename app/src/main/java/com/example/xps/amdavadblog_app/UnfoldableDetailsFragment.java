@@ -6,7 +6,6 @@ import android.content.res.AssetManager;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -22,13 +21,13 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.crashlytics.android.Crashlytics;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import org.apache.commons.lang3.StringEscapeUtils;
 import Core.Helper.SynchronousCallAdapterFactory;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+
 /**
  * A simple {@link Fragment} subclass.
  */
@@ -78,45 +77,6 @@ public class UnfoldableDetailsFragment extends Fragment {
             Crashlytics.logException(ex);
         }
         return view;
-//        listTouchInterceptor = Views.find(this, R.id.touch_interceptor_view);
-//        listTouchInterceptor.setClickable(false);
-//        detailsLayout = Views.find(this, R.id.details_layout);
-//        detailsLayout.setVisibility(View.INVISIBLE);
-//
-//        unfoldableView = Views.find(this, R.id.unfoldable_view);
-//
-//        Bitmap glance = BitmapFactory.decodeResource(getResources(), R.drawable.unfold_glance);
-//        unfoldableView.setFoldShading(new GlanceFoldShading(glance));
-//
-//        //  detailsLayout = Views.find(this,R.id.details_layout);
-//        //  detailsLayout.setVisibility(View.INVISIBLE);
-//        image = Views.find(detailsLayout, R.id.details_image);
-//
-//        description = Views.find(detailsLayout, R.id.details_text);
-//
-//        unfoldableView.setOnFoldingListener(new UnfoldableView.SimpleFoldingListener() {
-//            @Override
-//            public void onUnfolding(UnfoldableView unfoldableView) {
-//                listTouchInterceptor.setClickable(true);
-//                detailsLayout.setVisibility(View.VISIBLE);
-//            }
-//
-//            @Override
-//            public void onUnfolded(UnfoldableView unfoldableView) {
-//                listTouchInterceptor.setClickable(false);
-//            }
-//
-//            @Override
-//            public void onFoldingBack(UnfoldableView unfoldableView) {
-//                listTouchInterceptor.setClickable(true);
-//            }
-//
-//            @Override
-//            public void onFoldedBack(UnfoldableView unfoldableView) {
-//                listTouchInterceptor.setClickable(false);
-//                detailsLayout.setVisibility(View.INVISIBLE);
-//            }
-//        });
     }
 
     private void WebViewInitialize() {
@@ -125,8 +85,8 @@ public class UnfoldableDetailsFragment extends Fragment {
                 AssetManager am = getContext().getAssets();
                 Typeface custom_font = Typeface.createFromAsset(am, "font/Lora-Bold.ttf");
                 Typeface custom_font1 = Typeface.createFromAsset(am, "font/Martel-Bold.ttf");
+                int id1 = this.getActivity().getIntent().getIntExtra("BlogId",0);
 
-                final String id1 = this.getActivity().getIntent().getStringExtra("BlogId");
                 String title = this.getActivity().getIntent().getStringExtra("Title");
                 String decodedtitle = StringEscapeUtils.unescapeHtml3(title);
                 String author = this.getActivity().getIntent().getStringExtra("Author");
@@ -152,7 +112,7 @@ public class UnfoldableDetailsFragment extends Fragment {
                 detail = stylestr + Content + pas;
 
                 Bundle param = new Bundle();
-                param.putString("id", id1);
+                param.putInt("id", id1);
                 WebSettings webSetting = webviewLayout.getSettings();
                 webSetting.setTextSize(WebSettings.TextSize.NORMAL);
                 webSetting.setJavaScriptEnabled(true);
@@ -170,7 +130,6 @@ public class UnfoldableDetailsFragment extends Fragment {
             Crashlytics.logException(ex);
         }
     }
-
     @JavascriptInterface
     public void resize(final float height) {
         try {

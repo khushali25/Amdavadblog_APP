@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/relativedetaillayoutnotifi"
+    android:background="#ffffff"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <ScrollView
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_above="@+id/footernotifi"
+        android:fillViewport="true">
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
+            <TextView
+                android:layout_height="wrap_content"
+                android:textSize="20dp"
+                android:textColor="#201D1C"
+                android:layout_width="match_parent"
+                android:id="@+id/posttitletextnotifi"
+                android:text="textview"
+                android:layout_below="@+id/imgpostnotifi"
+                android:textStyle="bold"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="20dp"
+                app:layout_scrollFlags="scroll|enterAlwaysCollapsed" />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:id="@+id/viewlinenotifi"
+                android:layout_below="@id/posttitletextnotifi"
+                android:layout_marginTop="11dp"
+                android:background="#b3b9bf" />
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:id="@+id/linearlayout">
+
+                <TextView
+                    android:id="@+id/postauthornotifi"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/viewlinenotifi"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginTop="15dp"
+                    android:drawableLeft="@drawable/author_icon"
+                    android:text="textview"
+                    android:textColor="#767676"
+                    android:textSize="13dp"
+                    android:textStyle="normal"
+                    app:layout_scrollFlags="scroll|enterAlwaysCollapsed" />
+
+                <TextView
+                    android:layout_height="wrap_content"
+                    android:textSize="13dp"
+                    android:textColor="#767676"
+                    android:layout_width="wrap_content"
+                    android:id="@+id/postdatenotifi"
+                    android:drawableLeft="@drawable/datetime_icon"
+                    android:text="textview"
+                    android:layout_below="@+id/viewlinenotifi"
+                    android:textStyle="normal"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginTop="15dp"
+                    app:layout_scrollFlags="scroll|enterAlwaysCollapsed" />
+            </LinearLayout>
+            <ImageView
+                android:id="@+id/webviewloadingnotifi"
+                android:layout_width="match_parent"
+                android:layout_gravity="center_horizontal"
+                android:layout_height="100dp" />
+            <!-- android:src="@anim/LoadingAnimation"-->
+            <android.webkit.WebView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/webViewnotifi"
+                android:layout_marginTop="5dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginBottom="50dp"
+                android:layout_below="@id/linearlayout" />
+        </LinearLayout>
+    </ScrollView>
+</RelativeLayout>

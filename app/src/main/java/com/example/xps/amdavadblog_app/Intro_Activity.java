@@ -56,8 +56,6 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-import static com.facebook.FacebookSdk.getApplicationContext;
-
 public class Intro_Activity extends AppCompatActivity {
     private ViewPager mViewPager;
     private int[] layouts;
@@ -73,20 +71,15 @@ public class Intro_Activity extends AppCompatActivity {
     Bitmap img;
     private LinearLayout dotsLayout;
     private TextView[] dots;
-    final String PREFS_NAME = "MyPrefsFile";
-    final String PREFS_FIRST_RUN = "first_run";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         try {
-
                 requestWindowFeature(Window.FEATURE_NO_TITLE);
                 getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
                 facebookSDKInitialize();
                 setContentView(R.layout.activity_intro);
-                // checkFirstRun();
 
                 callbackManager = CallbackManager.Factory.create();
 
@@ -191,46 +184,7 @@ public class Intro_Activity extends AppCompatActivity {
 
         }
     };
-//    private void checkFirstRun() {
-//        try
-//        {
-//            if(isNetworkConnected()) {
-//                SharedPreferences sharedPreferences = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
-//                // If the app is launched for first time, view splash screen and setup 'Next >>' link.
-//                if (sharedPreferences.getBoolean(PREFS_FIRST_RUN, true)) {
-//                    // Record that user have done first run.
-//                    sharedPreferences.edit().putBoolean(PREFS_FIRST_RUN, false).apply();
-//                } else {
-//                    goToMainActivity();
-//                }
-//            }
-//            else
-//            {
-//                snackbarerror();
-//            }
-//        }
-//         catch(Exception ex)
-//        {
-//            Crashlytics.logException(ex);
-//        }
-//    }
-//    private void goToMainActivity() {
-//        try {
-//            if(isNetworkConnected()) {
-//                Intent intent = new Intent(this, MainNavigationActivity.class);
-//                startActivity(intent);
-//                finish();
-//            }
-//            else
-//            {
-//                snackbarerror();
-//            }
-//        }
-//        catch(Exception ex)
-//        {
-//            Crashlytics.logException(ex);
-//        }
-//    }
+
     private void getLoginDetails(Button fblogincustombtn) {
         try {
             if(isNetworkConnected()) {
@@ -303,7 +257,6 @@ public class Intro_Activity extends AppCompatActivity {
         try {
             if(isNetworkConnected()) {
                 startActivity(new Intent(this, MainNavigationActivity.class));
-               // finish();
             }
             else
             {

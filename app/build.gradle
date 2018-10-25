@@ -1,6 +1,7 @@
 //noinspection GradleCompatible
 apply plugin: 'com.android.application'
 apply plugin: 'io.fabric'
+apply plugin: 'com.google.gms.google-services'
 
 android {
 
@@ -64,6 +65,5 @@ dependencies {
     api 'com.android.support:design:28.0.0-alpha1'
 
 
-}
 
-apply plugin: 'com.google.gms.google-services'
+}

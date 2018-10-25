@@ -1,18 +1,13 @@
 package com.example.xps.amdavadblog_app;
 
-import android.content.Context;
-import android.graphics.Color;
-import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
 import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
@@ -26,7 +21,6 @@ public class PrivacyPolicyFragment extends Fragment {
 
     String page;
     TextView txtprivacy;
-    public int PrivacyInstance;
     View view;
     Snackbar snackbar;
     RelativeLayout frmprivacy;
@@ -39,8 +33,6 @@ public class PrivacyPolicyFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         try {
-
-
                 view = inflater.inflate(R.layout.fragment_privacy_policy, container, false);
                 frmprivacy = view.findViewById(R.id.frmprivacy);
                 txtprivacy = view.findViewById(R.id.txtprivacy);

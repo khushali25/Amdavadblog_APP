@@ -1,7 +1,6 @@
 package Helper;
 
 import android.app.AlertDialog;
-import android.app.Application;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -17,7 +16,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.crashlytics.android.Crashlytics;
 import com.example.xps.amdavadblog_app.R;
 import Core.Helper.ApiService;

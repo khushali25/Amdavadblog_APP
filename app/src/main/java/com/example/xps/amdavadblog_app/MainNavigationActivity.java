@@ -1,6 +1,5 @@
 package com.example.xps.amdavadblog_app;
 
-import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
@@ -13,15 +12,12 @@ import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.PersistableBundle;
 import android.os.StrictMode;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -32,7 +28,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -53,8 +48,6 @@ import com.facebook.appevents.AppEventsLogger;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
-import com.google.firebase.FirebaseApp;
-import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.gson.JsonObject;
 import org.json.JSONException;
@@ -192,15 +185,6 @@ public class MainNavigationActivity extends AppCompatActivity
                             intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://twitter.com/amdavadblog"));
                             startActivity(intent);
                         }
-
-//                        try {
-//                            Intent intent = new Intent(Intent.ACTION_VIEW,
-//                                    Uri.parse("twitter://user?screen_name=[amdavadblog]"));
-//                            startActivity(intent);
-//                        } catch (Exception e) {
-//                            startActivity(new Intent(Intent.ACTION_VIEW,
-//                                    Uri.parse("https://twitter.com/amdavadblog")));
-//                        }
                     }
                 });
                 instaicon.setOnClickListener(new View.OnClickListener() {
@@ -289,7 +273,6 @@ public class MainNavigationActivity extends AppCompatActivity
         catch (Exception ex)
         {
            Crashlytics.logException(ex);
-           // Android.Util.Log.Error("Initialize UI failed", ex.Message);
         }
     }
 
@@ -301,7 +284,6 @@ public class MainNavigationActivity extends AppCompatActivity
         catch (Exception ex)
         {
             Crashlytics.logException(ex);
-            // Android.Util.Log.Error("Initialize UI failed", ex.Message);
         }
     }
 
@@ -313,7 +295,6 @@ public class MainNavigationActivity extends AppCompatActivity
         catch (Exception ex)
         {
             Crashlytics.logException(ex);
-            // Android.Util.Log.Error("Initialize UI failed", ex.Message);
         }
     }
 
@@ -325,7 +306,6 @@ public class MainNavigationActivity extends AppCompatActivity
         catch (Exception ex)
         {
             Crashlytics.logException(ex);
-            // Android.Util.Log.Error("Initialize UI failed", ex.Message);
         }
     }
 
@@ -628,23 +608,6 @@ public class MainNavigationActivity extends AppCompatActivity
             Crashlytics.logException(ex);
         }
     }
-
-    private void replaceFragment(Fragment fragment){
-        fragmentCurrent = fragment;
-        try {
-            if(isNetworkConnected()) {
-                getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, fragment)
-                        .addToBackStack(null).commit();
-            }
-            else
-            {snackbarerror();}
-        }
-        catch (Exception ex)
-        {
-            Crashlytics.logException(ex);
-        }
-
-    }
     @Override
     public void onBackPressed() {
         try {
@@ -662,6 +625,8 @@ public class MainNavigationActivity extends AppCompatActivity
                             .commit();
                     getSupportActionBar().setTitle("Home");
                     txt.setText("Home");
+                    navigationView.setCheckedItem(R.id.home);
+
                 }
             }
             else
@@ -758,6 +723,7 @@ public class MainNavigationActivity extends AppCompatActivity
                     fragment = new FoldableListFragment(35);
                     getSupportActionBar().setTitle("Explore Amdavad");
                     txt.setText("Explore Amdavad");
+
                 } else if (id == R.id.flavor) {
                     checkedItem = R.id.flavor;
                     fragment = new FoldableListFragment(36);
@@ -782,11 +748,14 @@ public class MainNavigationActivity extends AppCompatActivity
                     fragment = new PrivacyPolicyFragment();
                     getSupportActionBar().setTitle("Privacy Policy");
                     txt.setText("Privacy Policy");
+                    navigationView.setCheckedItem(R.id.privacypolicy);
+
                 } else if (id == R.id.contactus) {
                     checkedItem = R.id.contactus;
                     fragment = new CommunicationFragment();
                     getSupportActionBar().setTitle("Contact");
                     txt.setText("Contact");
+                    navigationView.setCheckedItem(R.id.contactus);
                 }
             }
             else

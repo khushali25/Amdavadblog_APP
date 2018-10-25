@@ -8,7 +8,6 @@ import android.net.ConnectivityManager;
 import android.support.design.widget.Snackbar;
 import android.view.View;
 import android.widget.TextView;
-
 import com.crashlytics.android.Crashlytics;
 
 import static com.facebook.FacebookSdk.getApplicationContext;

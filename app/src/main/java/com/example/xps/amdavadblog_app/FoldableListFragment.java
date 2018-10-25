@@ -16,19 +16,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.alexvasilkov.foldablelayout.FoldableListLayout;
 import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
-
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
-
 import Adapter.PostContentAdapter;
 import Core.Helper.SynchronousCallAdapterFactory;
 import Helper.GifView;
@@ -37,13 +35,11 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import services.CacheService;
 
-
 /**
  * A simple {@link Fragment} subclass.
  */
 public class FoldableListFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
-    List<Post> currentPost;
     List<Post> postList = null;
     AdView adView;
     public int CategoryId;
@@ -60,7 +56,6 @@ public class FoldableListFragment extends Fragment implements SwipeRefreshLayout
         CategoryId = categoryId;
     }
     int page = 1,postcount;
-    SwipeRefreshLayout mSwipeRefreshLayout;
     boolean loading = false;
     boolean reachedMax = false;
     GifView gifView;
@@ -148,7 +143,6 @@ public class FoldableListFragment extends Fragment implements SwipeRefreshLayout
             try {
                 if (postContentAdapter != null)
                     postContentAdapter.notifyDataSetChanged();
-                // mSwipeRefreshLayout.setRefreshing(false);
             } catch (Exception ex) {
                 Crashlytics.logException(ex);
             }
@@ -161,11 +155,6 @@ public class FoldableListFragment extends Fragment implements SwipeRefreshLayout
     public void onPause() {
         try {
             super.onPause();
-//            if (mSwipeRefreshLayout != null) {
-//                mSwipeRefreshLayout.setRefreshing(false);
-//                mSwipeRefreshLayout.destroyDrawingCache();
-//                mSwipeRefreshLayout.clearAnimation();
-//            }
         }
         catch (Exception ex)
         {
@@ -202,7 +191,6 @@ public class FoldableListFragment extends Fragment implements SwipeRefreshLayout
             else
             {snackbarerror();}
         }
-
     };
 
     private Runnable returnRes = new Runnable() {
@@ -229,7 +217,6 @@ public class FoldableListFragment extends Fragment implements SwipeRefreshLayout
             new loadingview().execute();
             else
                 snackbarerror();
-            //adView.resume();
         }
         catch (Exception ex)
         {
@@ -323,7 +310,6 @@ public class FoldableListFragment extends Fragment implements SwipeRefreshLayout
                 }
                 else
                 {snackbarerror();}
-                //adView.resume();
             }
             catch (Exception e) {
                 Crashlytics.logException(e);

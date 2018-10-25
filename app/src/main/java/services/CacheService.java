@@ -1,6 +1,5 @@
 package services;
 
-
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.ActivityManager;
@@ -11,13 +10,10 @@ import android.os.Build;
 import android.support.design.widget.Snackbar;
 import android.view.View;
 import android.widget.TextView;
-
 import com.crashlytics.android.Crashlytics;
-import com.google.firebase.crash.FirebaseCrash;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -27,31 +23,13 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.lang.reflect.Type;
-
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.nio.file.attribute.BasicFileAttributes;
-import java.nio.file.attribute.FileTime;
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.Duration;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-import java.time.temporal.Temporal;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.TimeZone;
-import java.util.concurrent.TimeUnit;
-
 import Core.Helper.ApiService;
 import Core.Helper.SynchronousCallAdapterFactory;
 import Model.Post;
@@ -60,9 +38,7 @@ import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-
 import static com.facebook.FacebookSdk.getApplicationContext;
-import static java.nio.file.Files.*;
 
 public class CacheService {
     static List AllPost;
@@ -75,7 +51,6 @@ public class CacheService {
     static Snackbar snackbar;
 
     public static Context getContext() {
-        //  return instance.getApplicationContext();
         return context;
     }
     static Retrofit retrofitallpost = new Retrofit.Builder()
@@ -188,38 +163,41 @@ public class CacheService {
                                 reachedMax = true;
                             }
                         }
-                    } else {
                     }
-                    Gson gsonBuilder = new GsonBuilder().create();
-                    String jsonFromJavaArrayList = gsonBuilder.toJson(currentPost);
-                    String json = jsonFromJavaArrayList;
-                    if (page == 1) {
-                        try {
-                            SaveData(filePath, gsonBuilder.toJson(AllPost));
 
-                        } catch (IOException e) {
-                            Crashlytics.logException(e);
-                            e.printStackTrace();
+                else {
                         }
-                    } else {
-                        if (json.length() > 5)
-
+                        Gson gsonBuilder = new GsonBuilder().create();
+                        String jsonFromJavaArrayList = gsonBuilder.toJson(currentPost);
+                        String json = jsonFromJavaArrayList;
+                        if (page == 1) {
                             try {
-                                AppendData(filePath, json);
+                                SaveData(filePath, gsonBuilder.toJson(AllPost));
+
                             } catch (IOException e) {
                                 Crashlytics.logException(e);
                                 e.printStackTrace();
                             }
-                    }
+                        } else {
+                            if (json.length() > 5)
 
-                } else {
-                    String json = GetData(filePath);
-                    Gson gson = new Gson();
-                    Type listType = new TypeToken<ArrayList<Post>>() {
-                    }.getType();
-                    AllPost = new Gson().fromJson(json, listType);
+                                try {
+                                    AppendData(filePath, json);
+                                } catch (IOException e) {
+                                    Crashlytics.logException(e);
+                                    e.printStackTrace();
+                                }
+                        }
+
+                    } else {
+                        String json = GetData(filePath);
+                        Gson gson = new Gson();
+                        Type listType = new TypeToken<ArrayList<Post>>() {
+                        }.getType();
+                        AllPost = new Gson().fromJson(json, listType);
+                    }
                 }
-            }
+
             else{snackbarerror();}
         }
         catch (IOException e) {
@@ -335,7 +313,7 @@ public class CacheService {
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private static boolean IsRequiredToReadFromCache(String filePath) {
        // return false;
-        int frequency = 1;
+        int frequency = 15;
         boolean result = false;
         try {
             if(isNetworkConnected()) {
@@ -359,10 +337,8 @@ public class CacheService {
           catch(Exception ex)
             {
                 Crashlytics.logException(ex);
-              //  FirebaseCrash.Report(ex);
             }
             return result;
-//
     }
     private static boolean isNetworkConnected() {
         ConnectivityManager cm = null;
@@ -379,7 +355,6 @@ public class CacheService {
     {
         try {
             View snackbarView = snackbar.getView();
-            // Context context = SocialMethod.getAppContext();
             snackbar = Snackbar
                     .make(snackbarView, "No internet connection!", Snackbar.LENGTH_INDEFINITE)
                     .setAction("RETRY", new View.OnClickListener() {

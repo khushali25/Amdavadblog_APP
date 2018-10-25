@@ -1,19 +1,15 @@
 package Core.Helper;
 
-import android.annotation.TargetApi;
-import android.os.Build;
-import android.support.annotation.RequiresApi;
-
 import com.google.gson.JsonObject;
 import java.util.List;
 import Model.Author;
 import Model.Category;
 import Model.Contact;
 import Model.Media;
+import Model.NotificationDataClass;
 import Model.PostSearch;
 import Model.StartJsonDataClass;
 import Model.Subscribe;
-import io.reactivex.Observable;
 import retrofit2.Call;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
@@ -24,9 +20,11 @@ import retrofit2.http.Query;
 
 public interface ApiService {
 
-
     @GET("GetAllPosts")
     Call<StartJsonDataClass> getAllPostPerPage(@Query("page") int PostId);
+
+    @GET("GetPostDetailById")
+    Call<NotificationDataClass> getPostDetailById(@Query("PostId") int PostId);
 
     @GET("GetAllPostsByCategoryId")
     Call<StartJsonDataClass> getAllPostByCategoryId(@Query("page") int PostId, @Query("CategoryId") int catId);

@@ -15,7 +15,7 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_gravity="center"
-        android:layout_marginTop="121dp"
+        android:layout_marginTop="60dp"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         android:elevation="40dp"
@@ -87,21 +87,22 @@
                     android:layout_height="wrap_content"
                     android:hint="Message" />
             </android.support.design.widget.TextInputLayout>
+            <Button
+                android:id="@+id/submitbtn"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="30dp"
+                android:layout_gravity="bottom|center_horizontal"
+                android:background="@drawable/gradient_colors"
+                android:shadowColor="@color/com_facebook_button_background_color_disabled"
+                android:text="Submit"
+                android:textColor="@color/com_facebook_button_login_silver_background_color_pressed" />
         </LinearLayout>
     </android.support.design.card.MaterialCardView>
 
-    <Button
-        android:id="@+id/submitbtn"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|center_horizontal"
-        android:layout_marginLeft="46dp"
-        android:layout_marginRight="46dp"
-        android:layout_marginTop="470dp"
-        android:background="@drawable/gradient_colors"
-        android:shadowColor="@color/com_facebook_button_background_color_disabled"
-        android:text="Submit"
-        android:textColor="@color/com_facebook_button_login_silver_background_color_pressed"  />
+
 
     <LinearLayout
         android:layout_width="match_parent"

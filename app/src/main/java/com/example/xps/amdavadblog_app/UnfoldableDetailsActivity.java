@@ -1,8 +1,5 @@
 package com.example.xps.amdavadblog_app;
 
-import android.animation.Animator;
-import android.annotation.SuppressLint;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -13,11 +10,9 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
-
 import com.crashlytics.android.Crashlytics;
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
-
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.graphics.Palette;
@@ -41,9 +36,7 @@ import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
-
 import org.apache.commons.lang3.StringEscapeUtils;
-
 import Helper.PrefService;
 import Helper.SocialMethod;
 
@@ -179,7 +172,7 @@ public class UnfoldableDetailsActivity extends AppCompatActivity {
             if (isNetworkConnected()) {
                 String refreshedToken = FirebaseInstanceId.getInstance().getToken();
                 Log.d(TAG, "Refreshed token: " + refreshedToken);
-                int id = this.getIntent().getIntExtra("BlogId", 0);
+               int id = this.getIntent().getIntExtra("BlogId", 0);
                 AppImageLoader = ImageLoader.getInstance();
                 DisplayImageOptions opts = new DisplayImageOptions.Builder().imageScaleType(ImageScaleType.NONE).build();
                 img1 = this.getIntent().getStringExtra("Image");
@@ -192,11 +185,17 @@ public class UnfoldableDetailsActivity extends AppCompatActivity {
                             @Override
                             public void onGenerated(@Nullable Palette palette) {
                                 Palette.Swatch darkMutedSwatch = palette.getDarkMutedSwatch();
-                                if (darkMutedSwatch == null) {
-                                    Palette.Swatch mutedSwatch = palette.getLightMutedSwatch();
+                                Palette.Swatch mutedSwatch = palette.getLightMutedSwatch();
+                                if (mutedSwatch != null) {
                                     materialDesignFAM.setMenuButtonColorNormal(mutedSwatch.getRgb());
-                                } else {
+                                }
+                                else if(darkMutedSwatch != null)
+                                {
                                     materialDesignFAM.setMenuButtonColorNormal(darkMutedSwatch.getRgb());
+                                }
+                                else
+                                {
+                                    materialDesignFAM.setMenuButtonColorNormal(Color.BLACK);
                                 }
                             }
                         });
@@ -258,11 +257,8 @@ public class UnfoldableDetailsActivity extends AppCompatActivity {
                      if (flag.equals("searchactivity")) {
                          //you came from main activity
                          finish();
-                         // startActivity(new Intent(this, SearchActivity.class));
                      } else {
                          finish();
-                         //android.support.v4.app.NavUtils.navigateUpFromSameTask(this);
-                         //startActivity(new Intent(this, MainNavigationActivity.class));
                      }
                  }
                  else
